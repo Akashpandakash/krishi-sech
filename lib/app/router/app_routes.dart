@@ -1,0 +1,23 @@
+abstract final class AppRoutes {
+  static const splash = '/';
+  static const onboarding = '/onboarding';
+  static const onboardingSecond = '/onboarding/second';
+  static const onboardingThird = '/onboarding/third';
+  static const languageSelection = '/language-selection';
+  static const manualLocation = '/location/manual';
+  static const weatherDetails = '/weather/details';
+  static const seasonalAdviceDetails = '/seasonal-advice/details';
+  static const login = '/login';
+  static const home = '/home';
+  static const myCrop = '/my-crop';
+  static const addCrop = '/my-crop/add';
+  static const editCrop = '/my-crop/edit';
+  static const cropDetails = '/my-crop/details';
+  static const cropCalendar = '/my-crop/calendar';
+  static const addCropTask = '/my-crop/calendar/add';
+  static const editCropTask = '/my-crop/calendar/edit';
+  static const aiAssistant = '/ai-assistant';
+  static const market = '/market';
+  static const shorts = '/shorts';
+  static const profile = '/profile';
+}
