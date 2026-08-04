@@ -5,6 +5,7 @@ import 'package:krishi_sech/features/market/presentation/pages/market_page.dart'
 import 'package:krishi_sech/features/my_crop/presentation/pages/my_crop_page.dart';
 import 'package:krishi_sech/features/profile/presentation/pages/profile_page.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({this.initialIndex = 0, super.key});
@@ -42,30 +43,45 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           setState(() => _currentIndex = index);
         },
         destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: context.l10n.navHome,
+          AppPressable(
+            haptic: AppPressableHaptic.selection,
+            child: NavigationDestination(
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home),
+              label: context.l10n.navHome,
+            ),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.eco_outlined),
-            selectedIcon: const Icon(Icons.eco),
-            label: context.l10n.navMyCrops,
+          AppPressable(
+            haptic: AppPressableHaptic.selection,
+            child: NavigationDestination(
+              icon: const Icon(Icons.eco_outlined),
+              selectedIcon: const Icon(Icons.eco),
+              label: context.l10n.navMyCrops,
+            ),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.auto_awesome_outlined),
-            selectedIcon: const Icon(Icons.auto_awesome),
-            label: context.l10n.navAiAssistant,
+          AppPressable(
+            haptic: AppPressableHaptic.selection,
+            child: NavigationDestination(
+              icon: const Icon(Icons.auto_awesome_outlined),
+              selectedIcon: const Icon(Icons.auto_awesome),
+              label: context.l10n.navAiAssistant,
+            ),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.storefront_outlined),
-            selectedIcon: const Icon(Icons.storefront),
-            label: context.l10n.navMarket,
+          AppPressable(
+            haptic: AppPressableHaptic.selection,
+            child: NavigationDestination(
+              icon: const Icon(Icons.storefront_outlined),
+              selectedIcon: const Icon(Icons.storefront),
+              label: context.l10n.navMarket,
+            ),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            selectedIcon: const Icon(Icons.person),
-            label: context.l10n.navProfile,
+          AppPressable(
+            haptic: AppPressableHaptic.selection,
+            child: NavigationDestination(
+              icon: const Icon(Icons.person_outline),
+              selectedIcon: const Icon(Icons.person),
+              label: context.l10n.navProfile,
+            ),
           ),
         ],
       ),

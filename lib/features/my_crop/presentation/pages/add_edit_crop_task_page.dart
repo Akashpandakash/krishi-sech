@@ -7,6 +7,7 @@ import 'package:krishi_sech/features/my_crop/presentation/crop_task_labels.dart'
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class AddEditCropTaskPage extends StatefulWidget {
   const AddEditCropTaskPage({this.taskId, this.initialDate, super.key});
@@ -252,19 +253,23 @@ class _AddEditCropTaskPageState extends State<AddEditCropTaskPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                FilledButton.icon(
-                  key: const Key('save_task_button'),
-                  onPressed: canSave ? _save : null,
-                  icon: _saving
-                      ? const SizedBox.square(
-                          dimension: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.check),
-                  label: Text(context.l10n.saveTask),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    minimumSize: const Size.fromHeight(52),
+                AppPressable(
+                  enabled: canSave,
+                  haptic: AppPressableHaptic.medium,
+                  child: FilledButton.icon(
+                    key: const Key('save_task_button'),
+                    onPressed: canSave ? _save : null,
+                    icon: _saving
+                        ? const SizedBox.square(
+                            dimension: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.check),
+                    label: Text(context.l10n.saveTask),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      minimumSize: const Size.fromHeight(52),
+                    ),
                   ),
                 ),
               ],

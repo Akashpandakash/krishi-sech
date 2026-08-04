@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/features/ai_assistant/domain/entities/chat_message.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/ai_chat_scope.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/ai_response_content.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
+import 'package:krishi_sech/features/disease_scan/data/repositories/image_picker_repository.dart';
+import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_scan_page.dart';
 import 'package:krishi_sech/features/location/presentation/location_scope.dart';
 import 'package:krishi_sech/features/weather/presentation/weather_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class AiAssistantPage extends StatefulWidget {
   const AiAssistantPage({super.key});
@@ -63,37 +68,81 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
     );
   }
 
-  void _showPhotoPlaceholder() {
-    showModalBottomSheet<void>(
+  Future<void> _openDiseaseScan() async {
+    final source = await showModalBottomSheet<_CropImageSource>(
       context: context,
       showDragHandle: true,
-      builder: (context) => SafeArea(
+      builder: (sheetContext) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 28),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(
-                Icons.image_search_outlined,
-                size: 44,
-                color: AppColors.primary,
-              ),
-              const SizedBox(height: 12),
               Text(
-                context.l10n.photoFeatureComingNext,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleMedium,
+                context.l10n.scanCrop,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
               ),
-              const SizedBox(height: 8),
-              Text(
-                context.l10n.photoFeatureDisclaimer,
-                textAlign: TextAlign.center,
+              const SizedBox(height: 10),
+              ListTile(
+                key: const Key('disease_take_photo'),
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text(context.l10n.takePhoto),
+                onTap: () =>
+                    Navigator.pop(sheetContext, _CropImageSource.camera),
+              ),
+              ListTile(
+                key: const Key('disease_choose_gallery'),
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text(context.l10n.chooseFromGallery),
+                onTap: () =>
+                    Navigator.pop(sheetContext, _CropImageSource.gallery),
+              ),
+              TextButton(
+                key: const Key('disease_cancel'),
+                onPressed: () => Navigator.pop(sheetContext),
+                child: Text(context.l10n.cancel),
               ),
             ],
           ),
         ),
       ),
     );
+    if (source == null || !mounted) return;
+
+    try {
+      final repository = ImagePickerRepository();
+      final path = source == _CropImageSource.camera
+          ? await repository.takePhoto()
+          : await repository.chooseFromGallery();
+      if (path != null && mounted) {
+        await Navigator.of(context).pushNamed(
+          AppRoutes.diseasePreview,
+          arguments: DiseaseScanImageArguments(imagePath: path),
+        );
+      }
+    } on PlatformException catch (error) {
+      if (!mounted) return;
+      final denied =
+          error.code.toLowerCase().contains('denied') ||
+          error.code.toLowerCase().contains('permission');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            denied
+                ? context.l10n.imagePermissionDenied
+                : context.l10n.imageCouldNotBeOpened,
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.imageCouldNotBeOpened)),
+      );
+    }
   }
 
   @override
@@ -183,6 +232,8 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
                                 weather.rainProbabilityPercent ?? 0,
                               ),
                       ),
+                      const SizedBox(height: 12),
+                      _DiseaseScanEntry(onTap: _openDiseaseScan),
                       const SizedBox(height: 18),
                       if (controller.messages.isEmpty) ...[
                         Text(
@@ -196,11 +247,15 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
                           runSpacing: 8,
                           children: _suggestions(context)
                               .map(
-                                (question) => ActionChip(
-                                  label: Text(question),
-                                  onPressed: controller.isTyping
-                                      ? null
-                                      : () => _submit(question),
+                                (question) => AppPressable(
+                                  enabled: !controller.isTyping,
+                                  haptic: AppPressableHaptic.selection,
+                                  child: ActionChip(
+                                    label: Text(question),
+                                    onPressed: controller.isTyping
+                                        ? null
+                                        : () => _submit(question),
+                                  ),
                                 ),
                               )
                               .toList(),
@@ -235,16 +290,20 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
             child: Row(
               children: [
-                IconButton.filledTonal(
-                  key: const Key('ai_photo_button'),
-                  onPressed: _showPhotoPlaceholder,
-                  icon: const Icon(Icons.camera_alt_outlined),
+                AppPressable(
+                  child: IconButton.filledTonal(
+                    key: const Key('ai_photo_button'),
+                    onPressed: _openDiseaseScan,
+                    icon: const Icon(Icons.camera_alt_outlined),
+                  ),
                 ),
                 const SizedBox(width: 6),
-                IconButton.filledTonal(
-                  key: const Key('ai_voice_button'),
-                  onPressed: _showVoiceMessage,
-                  icon: const Icon(Icons.mic_none),
+                AppPressable(
+                  child: IconButton.filledTonal(
+                    key: const Key('ai_voice_button'),
+                    onPressed: _showVoiceMessage,
+                    icon: const Icon(Icons.mic_none),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -263,10 +322,13 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton.filled(
-                  key: const Key('ai_send_button'),
-                  onPressed: controller.isTyping ? null : _submit,
-                  icon: const Icon(Icons.send_rounded),
+                AppPressable(
+                  enabled: !controller.isTyping,
+                  child: IconButton.filled(
+                    key: const Key('ai_send_button'),
+                    onPressed: controller.isTyping ? null : _submit,
+                    icon: const Icon(Icons.send_rounded),
+                  ),
                 ),
               ],
             ),
@@ -283,6 +345,47 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
     context.l10n.suggestRain,
     context.l10n.suggestPests,
   ];
+}
+
+enum _CropImageSource { camera, gallery }
+
+class _DiseaseScanEntry extends StatelessWidget {
+  const _DiseaseScanEntry({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppPressable(
+      onTap: onTap,
+      child: Material(
+        color: AppColors.lightGreen,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          key: const Key('scan_crop_disease_entry'),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.document_scanner_outlined,
+                color: AppColors.primary,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  context.l10n.scanCrop,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppColors.primary),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _ContextCard extends StatelessWidget {
@@ -320,7 +423,7 @@ class _MessageBubble extends StatelessWidget {
     final isUser = message.author == ChatAuthor.user;
     final text = isUser
         ? message.text!
-        : localizedAiResponse(context, message.responseType!);
+        : message.text ?? localizedAiResponse(context, message.responseType!);
     final time = MaterialLocalizations.of(
       context,
     ).formatTimeOfDay(TimeOfDay.fromDateTime(message.createdAt));

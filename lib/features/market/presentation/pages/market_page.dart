@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class MarketPage extends StatelessWidget {
   const MarketPage({super.key});
@@ -41,9 +42,11 @@ class MarketPage extends StatelessWidget {
                               ?.copyWith(fontWeight: FontWeight.w800),
                         ),
                       ),
-                      IconButton.filledTonal(
-                        onPressed: () {},
-                        icon: const Icon(Icons.shopping_cart_outlined),
+                      AppPressable(
+                        child: IconButton.filledTonal(
+                          onPressed: () {},
+                          icon: const Icon(Icons.shopping_cart_outlined),
+                        ),
                       ),
                     ],
                   ),
@@ -107,10 +110,13 @@ class _CategoryChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: FilterChip(
-        selected: selected,
-        onSelected: (_) {},
-        label: Text(label),
+      child: AppPressable(
+        haptic: AppPressableHaptic.selection,
+        child: FilterChip(
+          selected: selected,
+          onSelected: (_) {},
+          label: Text(label),
+        ),
       ),
     );
   }
@@ -135,7 +141,7 @@ class _ProductCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
       ),
-      child: InkWell(
+      child: AppPressable(
         onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

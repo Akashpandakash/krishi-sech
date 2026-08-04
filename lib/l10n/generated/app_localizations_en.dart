@@ -204,6 +204,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Your simple companion for smarter farming';
 
   @override
+  String get authVerifyOtp => 'Verify OTP';
+
+  @override
+  String get authOtpLabel => '6-digit OTP';
+
+  @override
+  String authOtpSent(String phone) {
+    return 'Enter the OTP sent to $phone';
+  }
+
+  @override
+  String get authInvalidPhone => 'Enter a valid 10-digit mobile number.';
+
+  @override
+  String get authInvalidOtp => 'Enter a valid 6-digit OTP.';
+
+  @override
+  String get authOffline => 'You are offline. Check your connection and retry.';
+
+  @override
+  String get authTimeout => 'The request timed out. Please retry.';
+
+  @override
+  String get authRequestFailed =>
+      'Authentication could not be completed. Please retry.';
+
+  @override
   String get mobileNumber => 'Mobile number';
 
   @override
@@ -622,6 +649,140 @@ class AppLocalizationsEn extends AppLocalizations {
       'No photo was uploaded and disease detection has not been performed.';
 
   @override
+  String get scanCropDisease => 'Scan Crop Disease';
+
+  @override
+  String get takePhoto => 'Take Photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String get imagePreview => 'Image Preview';
+
+  @override
+  String get chooseAnother => 'Choose Another';
+
+  @override
+  String get processingImage => 'Processing Image';
+
+  @override
+  String get addClearCropPhoto =>
+      'Take or choose a clear photo of the affected crop area.';
+
+  @override
+  String get selectCropImage => 'Select a crop image';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get retake => 'Retake';
+
+  @override
+  String get chooseAnotherImage => 'Choose Another Image';
+
+  @override
+  String get analyze => 'Analyze';
+
+  @override
+  String get analyzingCrop => 'Analyzing crop...';
+
+  @override
+  String get placeholderAnalysisNotice =>
+      'Phase 1 uses demonstration results only. No AI model is connected.';
+
+  @override
+  String get imageCouldNotBeOpened =>
+      'The image could not be opened. Please try again.';
+
+  @override
+  String get analysisFailed =>
+      'Analysis could not be completed. Please try again.';
+
+  @override
+  String get diseaseResult => 'Disease Result';
+
+  @override
+  String get sampleDiseaseName => 'Leaf spot (sample)';
+
+  @override
+  String get demoResult => 'Demo result • Placeholder data';
+
+  @override
+  String get scanCrop => 'Scan Crop';
+
+  @override
+  String get consultExpert => 'Consult Expert';
+
+  @override
+  String get imagePermissionDenied =>
+      'Camera or photo access was denied. Allow access in app settings and try again.';
+
+  @override
+  String uploadProgress(int progress) {
+    return 'Uploading $progress%';
+  }
+
+  @override
+  String get diseaseScanOffline =>
+      'You appear to be offline. Check your connection and retry.';
+
+  @override
+  String get diseaseScanTimeout =>
+      'The scan took too long. Please retry with a stable connection.';
+
+  @override
+  String get diseaseScanInvalidResponse =>
+      'The scan service returned an invalid response. Please retry.';
+
+  @override
+  String get diseaseScanServerError =>
+      'The scan service is temporarily unavailable. Please retry.';
+
+  @override
+  String get observation => 'Observation';
+
+  @override
+  String get sampleDiseaseSummary =>
+      'Small discoloured spots were found in this placeholder analysis.';
+
+  @override
+  String get recommendedNextStep => 'Recommended next step';
+
+  @override
+  String get sampleDiseaseRecommendation =>
+      'Keep the leaves dry, monitor new growth, and consult a crop expert before treatment.';
+
+  @override
+  String get notMedicalDiagnosis =>
+      'This demonstration result is not a confirmed diagnosis. Consult an agricultural expert before treatment.';
+
+  @override
+  String get lowConfidenceResult =>
+      'Low-confidence result. An expert review is recommended before taking action.';
+
+  @override
+  String scanConfidence(int confidence) {
+    return 'Confidence: $confidence%';
+  }
+
+  @override
+  String get visibleSymptoms => 'Visible symptoms';
+
+  @override
+  String get recommendedActions => 'Recommended actions';
+
+  @override
+  String get expertReviewRecommended => 'Expert review recommended';
+
+  @override
+  String get followUpQuestions => 'Follow-up questions';
+
+  @override
   String get retryResponse => 'Retry response';
 
   @override
@@ -968,6 +1129,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get irrigationManual => 'Manual';
 
   @override
+  String get plantAge => 'Plant age';
+
+  @override
+  String get soilType => 'Soil type';
+
+  @override
+  String get irrigationMethod => 'Irrigation method';
+
+  @override
+  String get plantingMethod => 'Planting method';
+
+  @override
+  String get seedBrand => 'Seed brand';
+
+  @override
+  String get lastFertilizerUsed => 'Last fertilizer used';
+
+  @override
+  String get lastPesticideUsed => 'Last pesticide used';
+
+  @override
+  String get otherOption => 'Other';
+
+  @override
+  String get soilAlluvial => 'Alluvial';
+
+  @override
+  String get soilBlack => 'Black soil';
+
+  @override
+  String get soilRed => 'Red soil';
+
+  @override
+  String get soilLaterite => 'Laterite';
+
+  @override
+  String get soilSandy => 'Sandy';
+
+  @override
+  String get soilClay => 'Clay';
+
+  @override
+  String get soilLoamy => 'Loamy';
+
+  @override
+  String get plantingDirectSowing => 'Direct sowing';
+
+  @override
+  String get plantingTransplanting => 'Transplanting';
+
+  @override
+  String get plantingBroadcasting => 'Broadcasting';
+
+  @override
+  String get plantingRaisedBed => 'Raised bed';
+
+  @override
   String get taskIrrigationReminder => 'Irrigation reminder';
 
   @override
@@ -1098,6 +1316,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cropNotFound => 'Crop not found.';
 
   @override
+  String get cropHealthRecord => 'Crop Health Record';
+
+  @override
+  String get diseaseHistory => 'Disease History';
+
+  @override
+  String get fertilizerHistory => 'Fertilizer History';
+
+  @override
+  String get irrigationHistory => 'Irrigation History';
+
+  @override
+  String get sprayHistory => 'Spray History';
+
+  @override
+  String get scanHistory => 'Scan History';
+
+  @override
+  String get photoHistory => 'Photo History';
+
+  @override
+  String get addRecord => 'Add Record';
+
+  @override
+  String get editRecord => 'Edit Record';
+
+  @override
+  String get deleteRecord => 'Delete Record';
+
+  @override
+  String get deleteRecordConfirmation =>
+      'Are you sure you want to delete this record?';
+
+  @override
+  String get noHealthRecords => 'No crop health records yet.';
+
+  @override
+  String get recordType => 'Record type';
+
+  @override
+  String get recordTitle => 'Title';
+
+  @override
+  String get recordTitleRequired => 'Please enter a record title.';
+
+  @override
+  String get recordDate => 'Record date';
+
+  @override
+  String get recordDetails => 'Details (optional)';
+
+  @override
+  String get saveRecord => 'Save Record';
+
+  @override
+  String get scanDisease => 'Scan Disease';
+
+  @override
   String inDays(int days) {
     return 'in $days days';
   }
@@ -1220,4 +1496,72 @@ class AppLocalizationsEn extends AppLocalizations {
   ) {
     return '$cropName $taskName is due at $dueTime. Open Krishi Sech to view the task.';
   }
+
+  @override
+  String get cropOfflineCache =>
+      'Offline — showing saved crops. Changes will sync automatically.';
+
+  @override
+  String get cropServerError => 'Crops could not be updated. Please retry.';
+
+  @override
+  String get cropChangesPending => 'Crop changes are waiting to sync.';
+
+  @override
+  String get todaysSmartFarming => 'Today\'s Smart Farming';
+
+  @override
+  String get smartTodaysWeather => 'Today\'s Weather';
+
+  @override
+  String get smartIrrigationRecommendation => 'Irrigation Recommendation';
+
+  @override
+  String get smartFertilizerRecommendation => 'Fertilizer Recommendation';
+
+  @override
+  String get smartTodaysCropTasks => 'Today\'s Crop Tasks';
+
+  @override
+  String get smartDiseaseRisk => 'Disease Risk';
+
+  @override
+  String get smartDataUnavailable => 'Data unavailable';
+
+  @override
+  String get smartOfflineData => 'Offline — showing saved recommendations';
+
+  @override
+  String get smartNoIrrigation => 'No irrigation needed today';
+
+  @override
+  String smartIrrigationRequired(int liters) {
+    return 'Irrigate with $liters L/acre';
+  }
+
+  @override
+  String smartTaskCount(int count) {
+    return '$count tasks remaining';
+  }
+
+  @override
+  String get smartRiskLow => 'Low risk';
+
+  @override
+  String get smartRiskMedium => 'Moderate risk';
+
+  @override
+  String get smartRiskHigh => 'High risk';
+
+  @override
+  String get smartReady => 'Ready';
+
+  @override
+  String get smartCached => 'Saved';
+
+  @override
+  String get smartUpToDate => 'Up to date';
+
+  @override
+  String get smartNeedsAttention => 'Check now';
 }

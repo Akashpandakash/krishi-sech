@@ -4,3 +4,8 @@ import 'package:krishi_sech/features/weather/domain/entities/current_weather.dar
 abstract interface class WeatherRepository {
   Future<CurrentWeather> fetchCurrentWeather(FarmLocation location);
 }
+
+abstract interface class WeatherSyncAwareRepository
+    implements WeatherRepository {
+  bool get isUsingCachedData;
+}

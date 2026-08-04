@@ -33,6 +33,18 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Generated application packages and checksums
+*.apk
+*.aab
+*.sha
+*.sha1
+*.sha256
+
+# Flutter-generated platform plugin registrants
+**/flutter/generated_plugin_registrant.*
+**/flutter/generated_plugins.cmake
+macos/Flutter/GeneratedPluginRegistrant.swift
+
 # Symbolication related
 app.*.symbols
 
@@ -43,3 +55,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Node.js backend
+node_modules/
+dist/
+.env*
+!.env.example
+!.env.staging.example
+!.env.production.example
+npm-debug.log*

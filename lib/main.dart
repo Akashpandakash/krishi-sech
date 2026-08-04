@@ -6,27 +6,45 @@ import 'package:krishi_sech/app/app.dart';
 import 'package:krishi_sech/app/router/app_router.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/core/localization/locale_controller.dart';
+import 'package:krishi_sech/core/config/app_environment.dart';
+import 'package:krishi_sech/core/network/api_config.dart';
 import 'package:krishi_sech/core/notifications/local_notification_service.dart';
 import 'package:krishi_sech/core/notifications/notification_service.dart';
 import 'package:krishi_sech/features/ai_assistant/data/repositories/local_ai_response_repository.dart';
+import 'package:krishi_sech/features/ai_assistant/data/datasources/local_ai_chat_history_store.dart';
+import 'package:krishi_sech/features/ai_assistant/data/datasources/remote_ai_chat_data_source.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
 import 'package:krishi_sech/features/location/data/repositories/location_repository_impl.dart';
+import 'package:krishi_sech/features/login/data/datasources/auth_remote_data_source.dart';
+import 'package:krishi_sech/features/login/data/datasources/auth_token_storage.dart';
+import 'package:krishi_sech/features/login/data/repositories/auth_repository_impl.dart';
+import 'package:krishi_sech/features/login/presentation/controllers/auth_controller.dart';
 import 'package:krishi_sech/features/location/data/services/location_service.dart';
 import 'package:krishi_sech/features/location/presentation/controllers/location_controller.dart';
 import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_data_source.dart';
+import 'package:krishi_sech/features/my_crop/data/datasources/remote_crop_data_source.dart';
+import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_health_record_data_source.dart';
 import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_task_data_source.dart';
-import 'package:krishi_sech/features/my_crop/data/repositories/crop_repository_impl.dart';
-import 'package:krishi_sech/features/my_crop/data/repositories/crop_task_repository_impl.dart';
+import 'package:krishi_sech/features/my_crop/data/datasources/remote_crop_task_data_source.dart';
+import 'package:krishi_sech/features/my_crop/data/repositories/crop_health_record_repository_impl.dart';
+import 'package:krishi_sech/features/my_crop/data/repositories/synced_crop_repository.dart';
+import 'package:krishi_sech/features/my_crop/data/repositories/synced_crop_task_repository.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
+import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_health_record_controller.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_task_controller.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/controllers/seasonal_advice_controller.dart';
 import 'package:krishi_sech/features/weather/data/repositories/weather_repository_impl.dart';
+import 'package:krishi_sech/features/weather/data/datasources/local_weather_data_source.dart';
 import 'package:krishi_sech/features/weather/data/services/weather_service.dart';
 import 'package:krishi_sech/features/weather/presentation/controllers/weather_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  AppEnvironment.validate();
+  PaintingBinding.instance.imageCache
+    ..maximumSize = 150
+    ..maximumSizeBytes = 64 * 1024 * 1024;
   runApp(const _KrishiSechBootstrap());
 }
 
@@ -45,12 +63,41 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
   AiChatController? _aiChatController;
   CropController? _cropController;
   CropTaskController? _cropTaskController;
+  CropHealthRecordController? _cropHealthRecordController;
+  AuthController? _authController;
   int _revision = 0;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initializeServices());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      unawaited(ApiConfig.checkDevelopmentConnectivity());
+      await _initializeAuthentication();
+      await _initializeServices();
+    });
+  }
+
+  Future<void> _initializeAuthentication() async {
+    final controller = AuthController(
+      AuthRepositoryImpl(
+        AuthRemoteDataSource(baseUrl: ApiConfig.baseUrl),
+        const SecureAuthTokenStorage(),
+      ),
+    );
+    if (!mounted) {
+      controller.dispose();
+      return;
+    }
+    setState(() {
+      _authController?.dispose();
+      _authController = controller;
+      _revision++;
+    });
+    await _safeLoad(
+      'authentication',
+      controller.initialize,
+      const Duration(seconds: 8),
+    );
   }
 
   Future<void> _initializeServices() async {
@@ -95,7 +142,17 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
         : await _safeLoad(
                 'crop repository',
                 () => CropController.load(
-                  CropRepositoryImpl(LocalCropDataSource(preferences)),
+                  SyncedCropRepository(
+                    LocalCropDataSource(preferences),
+                    RemoteCropDataSource(
+                      baseUrl: ApiConfig.baseUrl,
+                      accessTokenProvider: ({bool forceRefresh = false}) =>
+                          _authController?.getAccessToken(
+                            forceRefresh: forceRefresh,
+                          ) ??
+                          Future<String?>.value(),
+                    ),
+                  ),
                 ),
                 const Duration(seconds: 4),
               ) ??
@@ -106,8 +163,16 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
         : await _safeLoad(
                 'crop task repository',
                 () => CropTaskController.load(
-                  repository: CropTaskRepositoryImpl(
+                  repository: SyncedCropTaskRepository(
                     LocalCropTaskDataSource(preferences),
+                    RemoteCropTaskDataSource(
+                      baseUrl: ApiConfig.baseUrl,
+                      accessTokenProvider: ({bool forceRefresh = false}) =>
+                          _authController?.getAccessToken(
+                            forceRefresh: forceRefresh,
+                          ) ??
+                          Future<String?>.value(),
+                    ),
                   ),
                   cropController: cropController,
                   notificationService: notificationService,
@@ -118,8 +183,29 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
               ) ??
               CropTaskController.inMemory(cropController: cropController);
 
+    final cropHealthRecordController = preferences == null
+        ? CropHealthRecordController.inMemory()
+        : await _safeLoad(
+                'crop health record repository',
+                () => CropHealthRecordController.load(
+                  CropHealthRecordRepositoryImpl(
+                    LocalCropHealthRecordDataSource(preferences),
+                  ),
+                ),
+                const Duration(seconds: 4),
+              ) ??
+              CropHealthRecordController.inMemory();
+
     final weatherController = WeatherController(
-      repository: const WeatherRepositoryImpl(WeatherService()),
+      repository: preferences == null
+          ? null
+          : WeatherRepositoryImpl(
+              WeatherService(
+                baseUrl: ApiConfig.baseUrl,
+                languageProvider: () => localeController.locale.languageCode,
+              ),
+              LocalWeatherDataSource(preferences),
+            ),
       locationController: locationController,
     );
     final seasonalAdviceController = SeasonalAdviceController(
@@ -130,10 +216,22 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       repository: const LocalAiResponseRepository(),
       locationController: locationController,
       weatherController: weatherController,
+      gateway: RemoteAiChatDataSource(
+        baseUrl: ApiConfig.baseUrl,
+        accessTokenProvider: ({bool forceRefresh = false}) =>
+            _authController?.getAccessToken(forceRefresh: forceRefresh) ??
+            Future<String?>.value(),
+      ),
+      historyStore: preferences == null
+          ? null
+          : LocalAiChatHistoryStore(preferences),
+      languageProvider: () => localeController.locale.languageCode,
     );
+    await aiChatController.restoreHistory();
 
     if (!mounted) {
       cropTaskController.dispose();
+      cropHealthRecordController.dispose();
       cropController.dispose();
       aiChatController.dispose();
       seasonalAdviceController.dispose();
@@ -150,6 +248,7 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       _aiChatController = aiChatController;
       _cropController = cropController;
       _cropTaskController = cropTaskController;
+      _cropHealthRecordController = cropHealthRecordController;
       _revision++;
     });
   }
@@ -169,7 +268,7 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     try {
       return await load().timeout(timeout);
     } catch (error, stackTrace) {
-      if (kDebugMode) {
+      if (kDebugMode && AppEnvironment.loggingEnabled) {
         debugPrint('Startup service failed: $name: $error');
         debugPrintStack(stackTrace: stackTrace);
       }
@@ -180,12 +279,14 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
   @override
   void dispose() {
     _cropTaskController?.dispose();
+    _cropHealthRecordController?.dispose();
     _cropController?.dispose();
     _aiChatController?.dispose();
     _seasonalAdviceController?.dispose();
     _weatherController?.dispose();
     _locationController?.dispose();
     _localeController?.dispose();
+    _authController?.dispose();
     super.dispose();
   }
 
@@ -199,5 +300,7 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     aiChatController: _aiChatController,
     cropController: _cropController,
     cropTaskController: _cropTaskController,
+    cropHealthRecordController: _cropHealthRecordController,
+    authController: _authController,
   );
 }

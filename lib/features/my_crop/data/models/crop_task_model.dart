@@ -57,12 +57,15 @@ class CropTaskModel {
     taskType: json['taskType'] as String,
     dueDate: DateTime.parse(json['dueDate'] as String),
     notes: json['notes'] as String?,
-    isCompleted: json['isCompleted'] as bool? ?? false,
+    isCompleted: json['isCompleted'] as bool? ?? json['status'] == 'completed',
     isGenerated: json['isGenerated'] as bool? ?? false,
     isCustomized: json['isCustomized'] as bool? ?? false,
     isDeleted: json['isDeleted'] as bool? ?? false,
     reminderTime:
-        json['reminderTime'] as String? ?? TaskReminderTime.atDueTime.name,
+        json['reminderTime'] as String? ??
+        (json['reminderEnabled'] == false
+            ? TaskReminderTime.none.name
+            : TaskReminderTime.atDueTime.name),
     notificationId: json['notificationId'] as int?,
     createdAt: DateTime.parse(json['createdAt'] as String),
     updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -84,6 +87,35 @@ class CropTaskModel {
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
   };
+
+  Map<String, dynamic> toApiJson() => {
+    'id': id,
+    'cropId': cropId,
+    'taskType': taskType,
+    'dueDate': dueDate.toUtc().toIso8601String(),
+    'status': isCompleted ? 'completed' : 'pending',
+    'notes': notes,
+    'reminderEnabled': reminderTime != TaskReminderTime.none.name,
+  };
+
+  CropTaskModel mergeLocalMetadata(CropTaskModel? local) => CropTaskModel(
+    id: id,
+    userId: userId,
+    cropId: cropId,
+    taskType: taskType,
+    dueDate: dueDate.toLocal(),
+    notes: notes,
+    isCompleted: isCompleted,
+    isGenerated: local?.isGenerated ?? false,
+    isCustomized: local?.isCustomized ?? false,
+    isDeleted: local?.isDeleted ?? false,
+    reminderTime: reminderTime == TaskReminderTime.none.name
+        ? TaskReminderTime.none.name
+        : local?.reminderTime ?? TaskReminderTime.atDueTime.name,
+    notificationId: local?.notificationId,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 
   CropTask toEntity() => CropTask(
     id: id,

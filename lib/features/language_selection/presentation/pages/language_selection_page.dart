@@ -3,6 +3,7 @@ import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 enum AppLanguage { bangla, hindi, english }
 
@@ -120,21 +121,24 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                               ),
                             ),
                           SizedBox(height: compact ? 12 : 20),
-                          FilledButton.icon(
-                            key: const Key('language_continue'),
-                            onPressed: _openLogin,
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size.fromHeight(54),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(17),
+                          AppPressable(
+                            haptic: AppPressableHaptic.medium,
+                            child: FilledButton.icon(
+                              key: const Key('language_continue'),
+                              onPressed: _openLogin,
+                              style: FilledButton.styleFrom(
+                                minimumSize: const Size.fromHeight(54),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(17),
+                                ),
                               ),
+                              label: Text(
+                                context.l10n.continueLabel,
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              iconAlignment: IconAlignment.end,
+                              icon: const Icon(Icons.arrow_forward_rounded),
                             ),
-                            label: Text(
-                              context.l10n.continueLabel,
-                              style: TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                            iconAlignment: IconAlignment.end,
-                            icon: const Icon(Icons.arrow_forward_rounded),
                           ),
                           SizedBox(height: compact ? 14 : 22),
                           const _BottomIllustration(),
@@ -174,10 +178,10 @@ class _LanguageCard extends StatelessWidget {
     return Material(
       color: selected ? AppColors.lightGreen : Colors.white,
       borderRadius: BorderRadius.circular(18),
-      child: InkWell(
+      child: AppPressable(
         key: Key('language_${data.language.name}'),
+        haptic: AppPressableHaptic.selection,
         onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),

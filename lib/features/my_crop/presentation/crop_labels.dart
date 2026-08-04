@@ -68,6 +68,26 @@ String irrigationLabel(BuildContext context, IrrigationType type) =>
       IrrigationType.manual => context.l10n.irrigationManual,
     };
 
+String soilTypeLabel(BuildContext context, SoilType type) => switch (type) {
+  SoilType.alluvial => context.l10n.soilAlluvial,
+  SoilType.black => context.l10n.soilBlack,
+  SoilType.red => context.l10n.soilRed,
+  SoilType.laterite => context.l10n.soilLaterite,
+  SoilType.sandy => context.l10n.soilSandy,
+  SoilType.clay => context.l10n.soilClay,
+  SoilType.loamy => context.l10n.soilLoamy,
+  SoilType.other => context.l10n.otherOption,
+};
+
+String plantingMethodLabel(BuildContext context, PlantingMethod method) =>
+    switch (method) {
+      PlantingMethod.directSowing => context.l10n.plantingDirectSowing,
+      PlantingMethod.transplanting => context.l10n.plantingTransplanting,
+      PlantingMethod.broadcasting => context.l10n.plantingBroadcasting,
+      PlantingMethod.raisedBed => context.l10n.plantingRaisedBed,
+      PlantingMethod.other => context.l10n.otherOption,
+    };
+
 String cropTaskLabel(BuildContext context, CropTaskType task) => switch (task) {
   CropTaskType.irrigation => context.l10n.taskIrrigationReminder,
   CropTaskType.fertilizer => context.l10n.taskFertilizerReminder,

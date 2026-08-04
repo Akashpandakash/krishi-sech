@@ -1,0 +1,9 @@
+{
+  "APP_ENV": "development",
+  "API_BASE_URL": "http://10.0.2.2:3000",
+  "REQUEST_TIMEOUT_MS": "25000",
+  "LOGGING_ENABLED": "true",
+  "DEMO_LOGIN_ENABLED": "true",
+  "DEBUG_OTP_ENABLED": "true",
+  "OPENAI_ENABLED": "true"
+}

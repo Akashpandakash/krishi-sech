@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class OnboardingSecondPlaceholderPage extends StatelessWidget {
   const OnboardingSecondPlaceholderPage({super.key});
@@ -432,24 +433,30 @@ class _BottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        TextButton.icon(
-          key: const Key('onboarding_second_back'),
-          onPressed: onBack,
-          icon: const Icon(Icons.arrow_back_rounded, size: 19),
-          label: Text(context.l10n.back),
+        AppPressable(
+          haptic: AppPressableHaptic.selection,
+          child: TextButton.icon(
+            key: const Key('onboarding_second_back'),
+            onPressed: onBack,
+            icon: const Icon(Icons.arrow_back_rounded, size: 19),
+            label: Text(context.l10n.back),
+          ),
         ),
         const Spacer(),
         const _PageIndicators(activeIndex: 1),
         const Spacer(),
-        FilledButton.icon(
-          key: const Key('onboarding_second_next'),
-          onPressed: onNext,
-          style: FilledButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
+        AppPressable(
+          haptic: AppPressableHaptic.selection,
+          child: FilledButton.icon(
+            key: const Key('onboarding_second_next'),
+            onPressed: onNext,
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
+            ),
+            label: Text(context.l10n.next),
+            iconAlignment: IconAlignment.end,
+            icon: const Icon(Icons.arrow_forward_rounded, size: 19),
           ),
-          label: Text(context.l10n.next),
-          iconAlignment: IconAlignment.end,
-          icon: const Icon(Icons.arrow_forward_rounded, size: 19),
         ),
       ],
     );

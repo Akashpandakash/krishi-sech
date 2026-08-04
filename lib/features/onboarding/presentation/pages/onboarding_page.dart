@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -377,20 +378,23 @@ class _BottomCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              IconButton.filled(
-                key: const Key('onboarding_next'),
-                tooltip: context.l10n.next,
-                onPressed: () {
-                  Navigator.of(
-                    context,
-                  ).pushReplacementNamed(AppRoutes.onboardingSecond);
-                },
-                style: IconButton.styleFrom(
-                  minimumSize: const Size.square(58),
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+              AppPressable(
+                haptic: AppPressableHaptic.selection,
+                child: IconButton.filled(
+                  key: const Key('onboarding_next'),
+                  tooltip: context.l10n.next,
+                  onPressed: () {
+                    Navigator.of(
+                      context,
+                    ).pushReplacementNamed(AppRoutes.onboardingSecond);
+                  },
+                  style: IconButton.styleFrom(
+                    minimumSize: const Size.square(58),
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: const Icon(Icons.arrow_forward_rounded, size: 27),
                 ),
-                icon: const Icon(Icons.arrow_forward_rounded, size: 27),
               ),
             ],
           ),

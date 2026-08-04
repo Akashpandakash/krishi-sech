@@ -4,6 +4,7 @@ import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class AddEditCropPage extends StatefulWidget {
   const AddEditCropPage({this.cropId, super.key});
@@ -21,12 +22,17 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
   late final TextEditingController _areaController;
   late final TextEditingController _farmController;
   late final TextEditingController _notesController;
+  late final TextEditingController _seedBrandController;
+  late final TextEditingController _fertilizerController;
+  late final TextEditingController _pesticideController;
   CropKind? _kind;
   DateTime? _sowingDate;
   DateTime? _harvestDate;
   LandAreaUnit _areaUnit = LandAreaUnit.acre;
   GrowthStage _stage = GrowthStage.sowing;
   IrrigationType _irrigation = IrrigationType.manual;
+  SoilType _soilType = SoilType.other;
+  PlantingMethod _plantingMethod = PlantingMethod.other;
   CropHealth _health = CropHealth.healthy;
   bool _initialized = false;
   bool _saving = false;
@@ -44,6 +50,8 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
     _areaUnit = crop?.landAreaUnit ?? LandAreaUnit.acre;
     _stage = crop?.growthStage ?? GrowthStage.sowing;
     _irrigation = crop?.irrigationType ?? IrrigationType.manual;
+    _soilType = crop?.soilType ?? SoilType.other;
+    _plantingMethod = crop?.plantingMethod ?? PlantingMethod.other;
     _health = crop?.health ?? CropHealth.healthy;
     _varietyController = TextEditingController(text: crop?.variety);
     _customNameController = TextEditingController(text: crop?.customName);
@@ -52,6 +60,11 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
     );
     _farmController = TextEditingController(text: crop?.farmName);
     _notesController = TextEditingController(text: crop?.notes);
+    _seedBrandController = TextEditingController(text: crop?.seedBrand);
+    _fertilizerController = TextEditingController(
+      text: crop?.lastFertilizerUsed,
+    );
+    _pesticideController = TextEditingController(text: crop?.lastPesticideUsed);
     _initialized = true;
   }
 
@@ -62,6 +75,9 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
     _areaController.dispose();
     _farmController.dispose();
     _notesController.dispose();
+    _seedBrandController.dispose();
+    _fertilizerController.dispose();
+    _pesticideController.dispose();
     super.dispose();
   }
 
@@ -118,6 +134,11 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
       landAreaUnit: _areaUnit,
       growthStage: _stage,
       irrigationType: _irrigation,
+      soilType: _soilType,
+      plantingMethod: _plantingMethod,
+      seedBrand: _emptyToNull(_seedBrandController.text),
+      lastFertilizerUsed: _emptyToNull(_fertilizerController.text),
+      lastPesticideUsed: _emptyToNull(_pesticideController.text),
       farmName: _emptyToNull(_farmController.text),
       expectedHarvestDate: _harvestDate,
       notes: _emptyToNull(_notesController.text),
@@ -125,12 +146,18 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
       createdAt: existing?.createdAt ?? now,
       updatedAt: now,
     );
-    if (widget.cropId == null) {
-      await controller.addCrop(crop);
+    final saved = widget.cropId == null
+        ? await controller.addCrop(crop)
+        : await controller.updateCrop(crop);
+    if (!mounted) return;
+    if (saved) {
+      Navigator.of(context).pop();
     } else {
-      await controller.updateCrop(crop);
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.cropServerError)));
     }
-    if (mounted) Navigator.of(context).pop();
   }
 
   String? _emptyToNull(String value) =>
@@ -261,11 +288,50 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
                     ),
                     const SizedBox(height: 12),
                     _EnumDropdown<IrrigationType>(
-                      label: context.l10n.irrigationType,
+                      label: context.l10n.irrigationMethod,
                       value: _irrigation,
                       values: IrrigationType.values,
                       labelBuilder: (value) => irrigationLabel(context, value),
                       onChanged: (value) => setState(() => _irrigation = value),
+                    ),
+                    const SizedBox(height: 12),
+                    _EnumDropdown<SoilType>(
+                      label: context.l10n.soilType,
+                      value: _soilType,
+                      values: SoilType.values,
+                      labelBuilder: (value) => soilTypeLabel(context, value),
+                      onChanged: (value) => setState(() => _soilType = value),
+                    ),
+                    const SizedBox(height: 12),
+                    _EnumDropdown<PlantingMethod>(
+                      label: context.l10n.plantingMethod,
+                      value: _plantingMethod,
+                      values: PlantingMethod.values,
+                      labelBuilder: (value) =>
+                          plantingMethodLabel(context, value),
+                      onChanged: (value) =>
+                          setState(() => _plantingMethod = value),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _seedBrandController,
+                      decoration: InputDecoration(
+                        labelText: context.l10n.seedBrand,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _fertilizerController,
+                      decoration: InputDecoration(
+                        labelText: context.l10n.lastFertilizerUsed,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _pesticideController,
+                      decoration: InputDecoration(
+                        labelText: context.l10n.lastPesticideUsed,
+                      ),
                     ),
                     if (widget.cropId != null) ...[
                       const SizedBox(height: 12),
@@ -302,10 +368,14 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
                     const SizedBox(height: 22),
                     SizedBox(
                       width: double.infinity,
-                      child: FilledButton(
-                        key: const Key('save_crop_button'),
-                        onPressed: _saving ? null : _save,
-                        child: Text(context.l10n.saveCrop),
+                      child: AppPressable(
+                        enabled: !_saving,
+                        haptic: AppPressableHaptic.medium,
+                        child: FilledButton(
+                          key: const Key('save_crop_button'),
+                          onPressed: _saving ? null : _save,
+                          child: Text(context.l10n.saveCrop),
+                        ),
                       ),
                     ),
                   ],

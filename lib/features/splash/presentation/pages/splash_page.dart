@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
+import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 
 class SplashPage extends StatefulWidget {
@@ -37,9 +38,21 @@ class _SplashPageState extends State<SplashPage>
 
   void _openOnboarding() {
     if (mounted) {
+      final authController = AuthScope.of(context);
+      if (authController.isLoading) {
+        _navigationTimer = Timer(
+          const Duration(milliseconds: 250),
+          _openOnboarding,
+        );
+        return;
+      }
       final hasSavedLocale = LocaleScope.of(context).hasSavedLocale;
       Navigator.of(context).pushReplacementNamed(
-        hasSavedLocale ? AppRoutes.login : AppRoutes.onboarding,
+        authController.isAuthenticated
+            ? AppRoutes.home
+            : hasSavedLocale
+            ? AppRoutes.login
+            : AppRoutes.onboarding,
       );
     }
   }

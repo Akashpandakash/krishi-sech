@@ -1,0 +1,9 @@
+{
+  "APP_ENV": "production",
+  "API_BASE_URL": "https://api.krishisech.com",
+  "REQUEST_TIMEOUT_MS": "25000",
+  "LOGGING_ENABLED": "false",
+  "DEMO_LOGIN_ENABLED": "false",
+  "DEBUG_OTP_ENABLED": "false",
+  "OPENAI_ENABLED": "true"
+}

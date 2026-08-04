@@ -17,6 +17,12 @@ class CropController extends ChangeNotifier {
   bool get hasUserCrops => _hasUserCrops;
   bool get isLoading => _isLoading;
   Object? get error => _error;
+  CropSyncIssue? get syncIssue => repository is CropSyncAwareRepository
+      ? (repository! as CropSyncAwareRepository).lastSyncIssue
+      : null;
+  bool get hasPendingChanges =>
+      repository is CropSyncAwareRepository &&
+      (repository! as CropSyncAwareRepository).hasPendingChanges;
   int get totalCount => _crops.length;
   int get healthyCount =>
       _crops.where((crop) => crop.health == CropHealth.healthy).length;
@@ -27,8 +33,8 @@ class CropController extends ChangeNotifier {
 
   static Future<CropController> load(CropRepository repository) async {
     final controller = CropController._(repository: repository);
-    controller._hasUserCrops = await repository.hasUserCrops();
     final crops = await repository.getCrops();
+    controller._hasUserCrops = await repository.hasUserCrops();
     controller._crops = controller._hasUserCrops ? crops : _samples();
     return controller;
   }
@@ -53,8 +59,8 @@ class CropController extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      _hasUserCrops = await repository!.hasUserCrops();
       final saved = await repository!.getCrops();
+      _hasUserCrops = await repository!.hasUserCrops();
       _crops = _hasUserCrops ? saved : _samples();
     } catch (error) {
       _error = error;
@@ -64,44 +70,57 @@ class CropController extends ChangeNotifier {
     }
   }
 
-  Future<void> addCrop(Crop crop) async {
-    if (!_hasUserCrops) {
-      _crops = [];
+  Future<bool> addCrop(Crop crop) async {
+    _startMutation();
+    try {
+      final created = await repository?.addCrop(crop) ?? crop;
+      if (!_hasUserCrops) _crops = [];
       _hasUserCrops = true;
+      _crops.add(created);
+      return true;
+    } catch (error) {
+      _error = error;
+      return false;
+    } finally {
+      _finishMutation();
     }
-    final created = await repository?.addCrop(crop) ?? crop;
-    _crops.add(created);
-    notifyListeners();
   }
 
-  Future<void> updateCrop(Crop crop) async {
+  Future<bool> updateCrop(Crop crop) async {
     final index = _crops.indexWhere((item) => item.id == crop.id);
-    if (index == -1) return;
+    if (index == -1) return false;
     final existing = _crops[index];
     final updated = crop.copyWith(
       createdAt: existing.createdAt,
       updatedAt: DateTime.now(),
     );
-    if (!_hasUserCrops) {
-      _crops = [];
+    _startMutation();
+    try {
+      final result = await repository?.updateCrop(updated) ?? updated;
+      _crops[index] = result;
       _hasUserCrops = true;
-      final created = await repository?.addCrop(updated) ?? updated;
-      _crops.add(created);
-    } else {
-      _crops[index] = await repository?.updateCrop(updated) ?? updated;
+      return true;
+    } catch (error) {
+      _error = error;
+      return false;
+    } finally {
+      _finishMutation();
     }
-    notifyListeners();
   }
 
-  Future<void> deleteCrop(String id) async {
-    if (!_hasUserCrops) {
-      _crops = [];
-      _hasUserCrops = true;
-    } else {
+  Future<bool> deleteCrop(String id) async {
+    _startMutation();
+    try {
+      await repository?.deleteCrop(id);
       _crops.removeWhere((crop) => crop.id == id);
+      _hasUserCrops = true;
+      return true;
+    } catch (error) {
+      _error = error;
+      return false;
+    } finally {
+      _finishMutation();
     }
-    await repository?.deleteCrop(id);
-    notifyListeners();
   }
 
   Future<void> setHealth(String id, CropHealth health) async {
@@ -112,6 +131,17 @@ class CropController extends ChangeNotifier {
   Future<void> setGrowthStage(String id, GrowthStage stage) async {
     final crop = cropById(id);
     if (crop != null) await updateCrop(crop.copyWith(growthStage: stage));
+  }
+
+  void _startMutation() {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+  }
+
+  void _finishMutation() {
+    _isLoading = false;
+    notifyListeners();
   }
 
   static List<Crop> _samples() {

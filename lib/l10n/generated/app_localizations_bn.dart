@@ -202,6 +202,34 @@ class AppLocalizationsBn extends AppLocalizations {
   String get loginSubtitle => 'স্মার্ট কৃষির সহজ সঙ্গী';
 
   @override
+  String get authVerifyOtp => 'ওটিপি যাচাই করুন';
+
+  @override
+  String get authOtpLabel => '৬ সংখ্যার ওটিপি';
+
+  @override
+  String authOtpSent(String phone) {
+    return '$phone নম্বরে পাঠানো ওটিপি লিখুন';
+  }
+
+  @override
+  String get authInvalidPhone => 'সঠিক ১০ সংখ্যার মোবাইল নম্বর লিখুন।';
+
+  @override
+  String get authInvalidOtp => 'সঠিক ৬ সংখ্যার ওটিপি লিখুন।';
+
+  @override
+  String get authOffline =>
+      'ইন্টারনেট সংযোগ নেই। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।';
+
+  @override
+  String get authTimeout => 'অনুরোধের সময় শেষ হয়েছে। আবার চেষ্টা করুন।';
+
+  @override
+  String get authRequestFailed =>
+      'প্রমাণীকরণ সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
   String get mobileNumber => 'মোবাইল নম্বর';
 
   @override
@@ -615,6 +643,138 @@ class AppLocalizationsBn extends AppLocalizations {
       'কোনো ছবি আপলোড করা হয়নি এবং রোগ শনাক্ত করা হয়নি।';
 
   @override
+  String get scanCropDisease => 'ফসলের রোগ স্ক্যান করুন';
+
+  @override
+  String get takePhoto => 'ছবি তুলুন';
+
+  @override
+  String get chooseFromGallery => 'গ্যালারি থেকে বেছে নিন';
+
+  @override
+  String get imagePreview => 'ছবির প্রিভিউ';
+
+  @override
+  String get chooseAnother => 'অন্যটি বেছে নিন';
+
+  @override
+  String get processingImage => 'ছবি প্রক্রিয়া করা হচ্ছে';
+
+  @override
+  String get addClearCropPhoto =>
+      'আক্রান্ত ফসলের অংশের একটি পরিষ্কার ছবি তুলুন বা বেছে নিন।';
+
+  @override
+  String get selectCropImage => 'ফসলের ছবি নির্বাচন করুন';
+
+  @override
+  String get camera => 'ক্যামেরা';
+
+  @override
+  String get gallery => 'গ্যালারি';
+
+  @override
+  String get retake => 'আবার তুলুন';
+
+  @override
+  String get chooseAnotherImage => 'অন্য ছবি বেছে নিন';
+
+  @override
+  String get analyze => 'বিশ্লেষণ করুন';
+
+  @override
+  String get analyzingCrop => 'ফসল বিশ্লেষণ করা হচ্ছে...';
+
+  @override
+  String get placeholderAnalysisNotice =>
+      'প্রথম পর্যায়ে শুধু নমুনা ফলাফল ব্যবহার করা হচ্ছে। কোনো AI মডেল যুক্ত নেই।';
+
+  @override
+  String get imageCouldNotBeOpened => 'ছবিটি খোলা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get analysisFailed => 'বিশ্লেষণ সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get diseaseResult => 'রোগের ফলাফল';
+
+  @override
+  String get sampleDiseaseName => 'পাতার দাগ (নমুনা)';
+
+  @override
+  String get demoResult => 'নমুনা ফলাফল • স্থানীয় তথ্য';
+
+  @override
+  String get scanCrop => 'ফসল স্ক্যান করুন';
+
+  @override
+  String get consultExpert => 'বিশেষজ্ঞের পরামর্শ নিন';
+
+  @override
+  String get imagePermissionDenied =>
+      'ক্যামেরা বা ছবির অনুমতি দেওয়া হয়নি। অ্যাপ সেটিংসে অনুমতি দিয়ে আবার চেষ্টা করুন।';
+
+  @override
+  String uploadProgress(int progress) {
+    return 'আপলোড হচ্ছে $progress%';
+  }
+
+  @override
+  String get diseaseScanOffline =>
+      'ইন্টারনেট সংযোগ নেই। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।';
+
+  @override
+  String get diseaseScanTimeout =>
+      'স্ক্যান করতে বেশি সময় লেগেছে। স্থিতিশীল সংযোগে আবার চেষ্টা করুন।';
+
+  @override
+  String get diseaseScanInvalidResponse =>
+      'স্ক্যান সেবা থেকে সঠিক উত্তর পাওয়া যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get diseaseScanServerError =>
+      'স্ক্যান সেবা সাময়িকভাবে পাওয়া যাচ্ছে না। আবার চেষ্টা করুন।';
+
+  @override
+  String get observation => 'পর্যবেক্ষণ';
+
+  @override
+  String get sampleDiseaseSummary =>
+      'এই নমুনা বিশ্লেষণে ছোট বিবর্ণ দাগ পাওয়া গেছে।';
+
+  @override
+  String get recommendedNextStep => 'পরবর্তী করণীয়';
+
+  @override
+  String get sampleDiseaseRecommendation =>
+      'পাতা শুকনো রাখুন, নতুন বৃদ্ধি পর্যবেক্ষণ করুন এবং চিকিৎসার আগে ফসল বিশেষজ্ঞের পরামর্শ নিন।';
+
+  @override
+  String get notMedicalDiagnosis =>
+      'এই নমুনা ফলাফল নিশ্চিত রোগ নির্ণয় নয়। চিকিৎসার আগে কৃষি বিশেষজ্ঞের পরামর্শ নিন।';
+
+  @override
+  String get lowConfidenceResult =>
+      'ফলাফলের নির্ভরযোগ্যতা কম। পদক্ষেপ নেওয়ার আগে বিশেষজ্ঞের পর্যালোচনা নিন।';
+
+  @override
+  String scanConfidence(int confidence) {
+    return 'নির্ভরযোগ্যতা: $confidence%';
+  }
+
+  @override
+  String get visibleSymptoms => 'দৃশ্যমান লক্ষণ';
+
+  @override
+  String get recommendedActions => 'প্রস্তাবিত পদক্ষেপ';
+
+  @override
+  String get expertReviewRecommended => 'বিশেষজ্ঞের পর্যালোচনা প্রয়োজন';
+
+  @override
+  String get followUpQuestions => 'পরবর্তী প্রশ্ন';
+
+  @override
   String get retryResponse => 'উত্তর আবার চেষ্টা করুন';
 
   @override
@@ -962,6 +1122,63 @@ class AppLocalizationsBn extends AppLocalizations {
   String get irrigationManual => 'হাতে';
 
   @override
+  String get plantAge => 'গাছের বয়স';
+
+  @override
+  String get soilType => 'মাটির ধরন';
+
+  @override
+  String get irrigationMethod => 'সেচ পদ্ধতি';
+
+  @override
+  String get plantingMethod => 'রোপণ পদ্ধতি';
+
+  @override
+  String get seedBrand => 'বীজের ব্র্যান্ড';
+
+  @override
+  String get lastFertilizerUsed => 'সর্বশেষ ব্যবহৃত সার';
+
+  @override
+  String get lastPesticideUsed => 'সর্বশেষ ব্যবহৃত কীটনাশক';
+
+  @override
+  String get otherOption => 'অন্যান্য';
+
+  @override
+  String get soilAlluvial => 'পলিমাটি';
+
+  @override
+  String get soilBlack => 'কালো মাটি';
+
+  @override
+  String get soilRed => 'লাল মাটি';
+
+  @override
+  String get soilLaterite => 'ল্যাটেরাইট';
+
+  @override
+  String get soilSandy => 'বেলে মাটি';
+
+  @override
+  String get soilClay => 'এঁটেল মাটি';
+
+  @override
+  String get soilLoamy => 'দোআঁশ মাটি';
+
+  @override
+  String get plantingDirectSowing => 'সরাসরি বপন';
+
+  @override
+  String get plantingTransplanting => 'চারা রোপণ';
+
+  @override
+  String get plantingBroadcasting => 'ছিটিয়ে বপন';
+
+  @override
+  String get plantingRaisedBed => 'উঁচু বেড';
+
+  @override
   String get taskIrrigationReminder => 'সেচের স্মরণিকা';
 
   @override
@@ -1091,6 +1308,63 @@ class AppLocalizationsBn extends AppLocalizations {
   String get cropNotFound => 'ফসল পাওয়া যায়নি।';
 
   @override
+  String get cropHealthRecord => 'ফসলের স্বাস্থ্য রেকর্ড';
+
+  @override
+  String get diseaseHistory => 'রোগের ইতিহাস';
+
+  @override
+  String get fertilizerHistory => 'সারের ইতিহাস';
+
+  @override
+  String get irrigationHistory => 'সেচের ইতিহাস';
+
+  @override
+  String get sprayHistory => 'স্প্রে ইতিহাস';
+
+  @override
+  String get scanHistory => 'স্ক্যান ইতিহাস';
+
+  @override
+  String get photoHistory => 'ছবির ইতিহাস';
+
+  @override
+  String get addRecord => 'রেকর্ড যোগ করুন';
+
+  @override
+  String get editRecord => 'রেকর্ড সম্পাদনা';
+
+  @override
+  String get deleteRecord => 'রেকর্ড মুছুন';
+
+  @override
+  String get deleteRecordConfirmation => 'আপনি কি এই রেকর্ডটি মুছতে চান?';
+
+  @override
+  String get noHealthRecords => 'এখনও কোনো ফসলের স্বাস্থ্য রেকর্ড নেই।';
+
+  @override
+  String get recordType => 'রেকর্ডের ধরন';
+
+  @override
+  String get recordTitle => 'শিরোনাম';
+
+  @override
+  String get recordTitleRequired => 'রেকর্ডের শিরোনাম লিখুন।';
+
+  @override
+  String get recordDate => 'রেকর্ডের তারিখ';
+
+  @override
+  String get recordDetails => 'বিস্তারিত (ঐচ্ছিক)';
+
+  @override
+  String get saveRecord => 'রেকর্ড সংরক্ষণ করুন';
+
+  @override
+  String get scanDisease => 'রোগ স্ক্যান করুন';
+
+  @override
   String inDays(int days) {
     return '$days দিনের মধ্যে';
   }
@@ -1212,4 +1486,73 @@ class AppLocalizationsBn extends AppLocalizations {
   ) {
     return '$cropName $taskName কাজটি $dueTime-এ নির্ধারিত। কাজটি দেখতে কৃষি সেচ খুলুন।';
   }
+
+  @override
+  String get cropOfflineCache =>
+      'অফলাইন — সংরক্ষিত ফসল দেখানো হচ্ছে। পরিবর্তন স্বয়ংক্রিয়ভাবে সিঙ্ক হবে।';
+
+  @override
+  String get cropServerError =>
+      'ফসলের তথ্য আপডেট করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get cropChangesPending => 'ফসলের পরিবর্তন সিঙ্ক হওয়ার অপেক্ষায় আছে।';
+
+  @override
+  String get todaysSmartFarming => 'আজকের স্মার্ট কৃষি';
+
+  @override
+  String get smartTodaysWeather => 'আজকের আবহাওয়া';
+
+  @override
+  String get smartIrrigationRecommendation => 'সেচের পরামর্শ';
+
+  @override
+  String get smartFertilizerRecommendation => 'সারের পরামর্শ';
+
+  @override
+  String get smartTodaysCropTasks => 'আজকের ফসলের কাজ';
+
+  @override
+  String get smartDiseaseRisk => 'রোগের ঝুঁকি';
+
+  @override
+  String get smartDataUnavailable => 'তথ্য পাওয়া যায়নি';
+
+  @override
+  String get smartOfflineData => 'অফলাইন — সংরক্ষিত পরামর্শ দেখানো হচ্ছে';
+
+  @override
+  String get smartNoIrrigation => 'আজ সেচের প্রয়োজন নেই';
+
+  @override
+  String smartIrrigationRequired(int liters) {
+    return 'একরপ্রতি $liters লিটার সেচ দিন';
+  }
+
+  @override
+  String smartTaskCount(int count) {
+    return 'আরও $countটি কাজ বাকি';
+  }
+
+  @override
+  String get smartRiskLow => 'কম ঝুঁকি';
+
+  @override
+  String get smartRiskMedium => 'মাঝারি ঝুঁকি';
+
+  @override
+  String get smartRiskHigh => 'উচ্চ ঝুঁকি';
+
+  @override
+  String get smartReady => 'প্রস্তুত';
+
+  @override
+  String get smartCached => 'সংরক্ষিত';
+
+  @override
+  String get smartUpToDate => 'হালনাগাদ';
+
+  @override
+  String get smartNeedsAttention => 'এখনই দেখুন';
 }

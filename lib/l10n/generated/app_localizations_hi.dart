@@ -202,6 +202,34 @@ class AppLocalizationsHi extends AppLocalizations {
   String get loginSubtitle => 'स्मार्ट खेती का आपका सरल साथी';
 
   @override
+  String get authVerifyOtp => 'ओटीपी सत्यापित करें';
+
+  @override
+  String get authOtpLabel => '6 अंकों का ओटीपी';
+
+  @override
+  String authOtpSent(String phone) {
+    return '$phone पर भेजा गया ओटीपी दर्ज करें';
+  }
+
+  @override
+  String get authInvalidPhone => 'मान्य 10 अंकों का मोबाइल नंबर दर्ज करें।';
+
+  @override
+  String get authInvalidOtp => 'मान्य 6 अंकों का ओटीपी दर्ज करें।';
+
+  @override
+  String get authOffline =>
+      'इंटरनेट कनेक्शन उपलब्ध नहीं है। जाँचकर फिर प्रयास करें।';
+
+  @override
+  String get authTimeout => 'अनुरोध का समय समाप्त हो गया। फिर प्रयास करें।';
+
+  @override
+  String get authRequestFailed =>
+      'प्रमाणीकरण पूरा नहीं हो सका। फिर प्रयास करें।';
+
+  @override
   String get mobileNumber => 'मोबाइल नंबर';
 
   @override
@@ -615,6 +643,139 @@ class AppLocalizationsHi extends AppLocalizations {
       'कोई फोटो अपलोड नहीं हुई और रोग की पहचान नहीं की गई है।';
 
   @override
+  String get scanCropDisease => 'फसल रोग स्कैन करें';
+
+  @override
+  String get takePhoto => 'फोटो लें';
+
+  @override
+  String get chooseFromGallery => 'गैलरी से चुनें';
+
+  @override
+  String get imagePreview => 'तस्वीर का पूर्वावलोकन';
+
+  @override
+  String get chooseAnother => 'दूसरी चुनें';
+
+  @override
+  String get processingImage => 'तस्वीर प्रोसेस हो रही है';
+
+  @override
+  String get addClearCropPhoto =>
+      'प्रभावित फसल वाले भाग की साफ़ तस्वीर लें या चुनें।';
+
+  @override
+  String get selectCropImage => 'फसल की तस्वीर चुनें';
+
+  @override
+  String get camera => 'कैमरा';
+
+  @override
+  String get gallery => 'गैलरी';
+
+  @override
+  String get retake => 'फिर से लें';
+
+  @override
+  String get chooseAnotherImage => 'दूसरी तस्वीर चुनें';
+
+  @override
+  String get analyze => 'विश्लेषण करें';
+
+  @override
+  String get analyzingCrop => 'फसल का विश्लेषण हो रहा है...';
+
+  @override
+  String get placeholderAnalysisNotice =>
+      'पहले चरण में केवल नमूना परिणाम हैं। कोई AI मॉडल जुड़ा नहीं है।';
+
+  @override
+  String get imageCouldNotBeOpened =>
+      'तस्वीर खोली नहीं जा सकी। फिर से कोशिश करें।';
+
+  @override
+  String get analysisFailed => 'विश्लेषण पूरा नहीं हो सका। फिर से कोशिश करें।';
+
+  @override
+  String get diseaseResult => 'रोग परिणाम';
+
+  @override
+  String get sampleDiseaseName => 'पत्ती धब्बा (नमूना)';
+
+  @override
+  String get demoResult => 'नमूना परिणाम • स्थानीय डेटा';
+
+  @override
+  String get scanCrop => 'फसल स्कैन करें';
+
+  @override
+  String get consultExpert => 'विशेषज्ञ से सलाह लें';
+
+  @override
+  String get imagePermissionDenied =>
+      'कैमरा या फोटो की अनुमति नहीं दी गई। ऐप सेटिंग में अनुमति देकर फिर प्रयास करें।';
+
+  @override
+  String uploadProgress(int progress) {
+    return 'अपलोड हो रहा है $progress%';
+  }
+
+  @override
+  String get diseaseScanOffline =>
+      'इंटरनेट कनेक्शन उपलब्ध नहीं है। कनेक्शन जाँचकर फिर प्रयास करें।';
+
+  @override
+  String get diseaseScanTimeout =>
+      'स्कैन में बहुत अधिक समय लगा। स्थिर कनेक्शन के साथ फिर प्रयास करें।';
+
+  @override
+  String get diseaseScanInvalidResponse =>
+      'स्कैन सेवा से अमान्य उत्तर मिला। कृपया फिर प्रयास करें।';
+
+  @override
+  String get diseaseScanServerError =>
+      'स्कैन सेवा अस्थायी रूप से उपलब्ध नहीं है। कृपया फिर प्रयास करें।';
+
+  @override
+  String get observation => 'अवलोकन';
+
+  @override
+  String get sampleDiseaseSummary =>
+      'इस नमूना विश्लेषण में छोटे बदरंग धब्बे पाए गए।';
+
+  @override
+  String get recommendedNextStep => 'अगला सुझाया कदम';
+
+  @override
+  String get sampleDiseaseRecommendation =>
+      'पत्तियों को सूखा रखें, नई बढ़त पर नज़र रखें और उपचार से पहले फसल विशेषज्ञ से सलाह लें।';
+
+  @override
+  String get notMedicalDiagnosis =>
+      'यह नमूना परिणाम पक्की रोग पहचान नहीं है। उपचार से पहले कृषि विशेषज्ञ से सलाह लें।';
+
+  @override
+  String get lowConfidenceResult =>
+      'परिणाम का भरोसा कम है। कदम उठाने से पहले विशेषज्ञ समीक्षा लें।';
+
+  @override
+  String scanConfidence(int confidence) {
+    return 'विश्वसनीयता: $confidence%';
+  }
+
+  @override
+  String get visibleSymptoms => 'दिखाई देने वाले लक्षण';
+
+  @override
+  String get recommendedActions => 'सुझाए गए कदम';
+
+  @override
+  String get expertReviewRecommended => 'विशेषज्ञ समीक्षा की सलाह';
+
+  @override
+  String get followUpQuestions => 'आगे के प्रश्न';
+
+  @override
   String get retryResponse => 'उत्तर फिर प्राप्त करें';
 
   @override
@@ -960,6 +1121,63 @@ class AppLocalizationsHi extends AppLocalizations {
   String get irrigationManual => 'हाथ से';
 
   @override
+  String get plantAge => 'पौधे की आयु';
+
+  @override
+  String get soilType => 'मिट्टी का प्रकार';
+
+  @override
+  String get irrigationMethod => 'सिंचाई विधि';
+
+  @override
+  String get plantingMethod => 'रोपण विधि';
+
+  @override
+  String get seedBrand => 'बीज ब्रांड';
+
+  @override
+  String get lastFertilizerUsed => 'अंतिम उपयोग किया उर्वरक';
+
+  @override
+  String get lastPesticideUsed => 'अंतिम उपयोग किया कीटनाशक';
+
+  @override
+  String get otherOption => 'अन्य';
+
+  @override
+  String get soilAlluvial => 'जलोढ़ मिट्टी';
+
+  @override
+  String get soilBlack => 'काली मिट्टी';
+
+  @override
+  String get soilRed => 'लाल मिट्टी';
+
+  @override
+  String get soilLaterite => 'लेटराइट';
+
+  @override
+  String get soilSandy => 'रेतीली मिट्टी';
+
+  @override
+  String get soilClay => 'चिकनी मिट्टी';
+
+  @override
+  String get soilLoamy => 'दोमट मिट्टी';
+
+  @override
+  String get plantingDirectSowing => 'सीधी बुवाई';
+
+  @override
+  String get plantingTransplanting => 'रोपाई';
+
+  @override
+  String get plantingBroadcasting => 'छिटकवाँ बुवाई';
+
+  @override
+  String get plantingRaisedBed => 'उठी हुई क्यारी';
+
+  @override
   String get taskIrrigationReminder => 'सिंचाई स्मरण';
 
   @override
@@ -1089,6 +1307,63 @@ class AppLocalizationsHi extends AppLocalizations {
   String get cropNotFound => 'फसल नहीं मिली।';
 
   @override
+  String get cropHealthRecord => 'फसल स्वास्थ्य रिकॉर्ड';
+
+  @override
+  String get diseaseHistory => 'रोग इतिहास';
+
+  @override
+  String get fertilizerHistory => 'उर्वरक इतिहास';
+
+  @override
+  String get irrigationHistory => 'सिंचाई इतिहास';
+
+  @override
+  String get sprayHistory => 'छिड़काव इतिहास';
+
+  @override
+  String get scanHistory => 'स्कैन इतिहास';
+
+  @override
+  String get photoHistory => 'फोटो इतिहास';
+
+  @override
+  String get addRecord => 'रिकॉर्ड जोड़ें';
+
+  @override
+  String get editRecord => 'रिकॉर्ड संपादित करें';
+
+  @override
+  String get deleteRecord => 'रिकॉर्ड हटाएँ';
+
+  @override
+  String get deleteRecordConfirmation => 'क्या आप यह रिकॉर्ड हटाना चाहते हैं?';
+
+  @override
+  String get noHealthRecords => 'अभी कोई फसल स्वास्थ्य रिकॉर्ड नहीं है।';
+
+  @override
+  String get recordType => 'रिकॉर्ड प्रकार';
+
+  @override
+  String get recordTitle => 'शीर्षक';
+
+  @override
+  String get recordTitleRequired => 'रिकॉर्ड का शीर्षक दर्ज करें।';
+
+  @override
+  String get recordDate => 'रिकॉर्ड तारीख';
+
+  @override
+  String get recordDetails => 'विवरण (वैकल्पिक)';
+
+  @override
+  String get saveRecord => 'रिकॉर्ड सहेजें';
+
+  @override
+  String get scanDisease => 'रोग स्कैन करें';
+
+  @override
   String inDays(int days) {
     return '$days दिनों में';
   }
@@ -1210,4 +1485,74 @@ class AppLocalizationsHi extends AppLocalizations {
   ) {
     return '$cropName $taskName का समय $dueTime है। कार्य देखने के लिए कृषि सेच खोलें।';
   }
+
+  @override
+  String get cropOfflineCache =>
+      'ऑफ़लाइन — सहेजी गई फसलें दिखाई जा रही हैं। बदलाव अपने आप सिंक होंगे।';
+
+  @override
+  String get cropServerError =>
+      'फसल की जानकारी अपडेट नहीं हो सकी। फिर कोशिश करें।';
+
+  @override
+  String get cropChangesPending =>
+      'फसल के बदलाव सिंक होने की प्रतीक्षा में हैं।';
+
+  @override
+  String get todaysSmartFarming => 'आज की स्मार्ट खेती';
+
+  @override
+  String get smartTodaysWeather => 'आज का मौसम';
+
+  @override
+  String get smartIrrigationRecommendation => 'सिंचाई सुझाव';
+
+  @override
+  String get smartFertilizerRecommendation => 'उर्वरक सुझाव';
+
+  @override
+  String get smartTodaysCropTasks => 'आज के फसल कार्य';
+
+  @override
+  String get smartDiseaseRisk => 'रोग जोखिम';
+
+  @override
+  String get smartDataUnavailable => 'डेटा उपलब्ध नहीं';
+
+  @override
+  String get smartOfflineData => 'ऑफ़लाइन — सहेजे गए सुझाव दिखाए जा रहे हैं';
+
+  @override
+  String get smartNoIrrigation => 'आज सिंचाई की जरूरत नहीं';
+
+  @override
+  String smartIrrigationRequired(int liters) {
+    return 'प्रति एकड़ $liters लीटर सिंचाई करें';
+  }
+
+  @override
+  String smartTaskCount(int count) {
+    return '$count कार्य बाकी';
+  }
+
+  @override
+  String get smartRiskLow => 'कम जोखिम';
+
+  @override
+  String get smartRiskMedium => 'मध्यम जोखिम';
+
+  @override
+  String get smartRiskHigh => 'उच्च जोखिम';
+
+  @override
+  String get smartReady => 'तैयार';
+
+  @override
+  String get smartCached => 'सहेजा हुआ';
+
+  @override
+  String get smartUpToDate => 'अप-टू-डेट';
+
+  @override
+  String get smartNeedsAttention => 'अभी जाँचें';
 }

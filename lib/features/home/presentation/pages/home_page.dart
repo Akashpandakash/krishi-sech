@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/core/network/api_config.dart';
+import 'package:krishi_sech/features/disease_scan/data/datasources/local_disease_diagnosis_store.dart';
 import 'package:krishi_sech/features/location/data/services/location_service.dart';
 import 'package:krishi_sech/features/location/domain/entities/farm_location.dart';
 import 'package:krishi_sech/features/location/presentation/location_scope.dart';
+import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_task.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
@@ -15,11 +20,17 @@ import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/controllers/seasonal_advice_controller.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/seasonal_advice_content.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/seasonal_advice_scope.dart';
+import 'package:krishi_sech/features/smart_dashboard/data/datasources/remote_smart_recommendation_data_source.dart';
+import 'package:krishi_sech/features/smart_dashboard/data/datasources/smart_recommendation_cache.dart';
+import 'package:krishi_sech/features/smart_dashboard/data/repositories/smart_recommendation_repository.dart';
+import 'package:krishi_sech/features/smart_dashboard/presentation/controllers/smart_recommendation_controller.dart';
+import 'package:krishi_sech/features/smart_dashboard/presentation/widgets/smart_farming_dashboard.dart';
 import 'package:krishi_sech/features/weather/presentation/controllers/weather_controller.dart';
 import 'package:krishi_sech/features/weather/presentation/weather_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
 import 'package:krishi_sech/shared/presentation/widgets/section_header.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,6 +40,55 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  SmartRecommendationController? _smartController;
+  String? _smartLanguage;
+  Future<void>? _refreshInFlight;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _smartController ??= SmartRecommendationController(
+      SmartRecommendationRepository(
+        RemoteSmartRecommendationDataSource(
+          baseUrl: ApiConfig.baseUrl,
+          accessTokenProvider: ({bool forceRefresh = false}) async =>
+              AuthScope.maybeOf(
+                context,
+              )?.getAccessToken(forceRefresh: forceRefresh),
+        ),
+        SmartRecommendationCache(),
+        LocalDiseaseDiagnosisStore(),
+      ),
+    );
+    final language = Localizations.localeOf(context).languageCode;
+    if (_smartLanguage != language) {
+      _smartLanguage = language;
+      unawaited(_smartController!.refresh(language));
+    }
+  }
+
+  Future<void> _refreshHome() async {
+    if (_refreshInFlight != null) return _refreshInFlight!;
+    final refresh = Future.wait([
+      WeatherScope.of(context).refresh(),
+      CropScope.of(context).refresh(),
+      CropTaskScope.of(context).refresh(),
+      _smartController!.refresh(Localizations.localeOf(context).languageCode),
+    ]);
+    _refreshInFlight = refresh;
+    try {
+      await refresh;
+    } finally {
+      _refreshInFlight = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _smartController?.dispose();
+    super.dispose();
+  }
+
   Future<void> _showLocationSheet() {
     return showModalBottomSheet<void>(
       context: context,
@@ -47,6 +107,14 @@ class _HomePageState extends State<HomePage> {
     final cropController = CropScope.of(context);
     final cropTaskController = CropTaskScope.of(context);
     final crops = cropController.crops;
+    final activeCrops = crops
+        .where((crop) => crop.growthStage != GrowthStage.harvested)
+        .toList(growable: false);
+    final currentCrop = activeCrops.isNotEmpty
+        ? activeCrops.first
+        : crops.isNotEmpty
+        ? crops.first
+        : null;
     final marketPrices = [
       _MarketItem(context.l10n.wheat, '₹2,425', '+1.8%', Icons.grass),
       _MarketItem(context.l10n.mustard, '₹5,680', '+0.9%', Icons.local_florist),
@@ -62,7 +130,7 @@ class _HomePageState extends State<HomePage> {
 
     return SafeArea(
       child: RefreshIndicator(
-        onRefresh: weatherController.refresh,
+        onRefresh: _refreshHome,
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
@@ -75,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 22),
                     const _GreetingSection(),
                     const SizedBox(height: 22),
-                    const _WeatherCard(),
+                    const HomeWeatherCard(),
                     const SizedBox(height: 18),
                     const _FarmingBanner(),
                     const SizedBox(height: 18),
@@ -152,6 +220,13 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     ),
+                    const SizedBox(height: 28),
+                    SmartFarmingDashboard(
+                      controller: _smartController!,
+                      weather: weatherController.weather,
+                      tasks: tasks,
+                      currentCrop: currentCrop,
+                    ),
                   ],
                 ),
               ),
@@ -174,25 +249,25 @@ class _LocationBar extends StatelessWidget {
 
     return Row(
       children: [
-        Material(
-          color: AppColors.lightGreen,
-          shape: const CircleBorder(),
-          child: InkWell(
-            key: const Key('home_location_icon'),
-            onTap: onTap,
-            customBorder: const CircleBorder(),
-            child: const SizedBox.square(
+        AppPressable(
+          haptic: AppPressableHaptic.selection,
+          onTap: onTap,
+          child: Material(
+            color: AppColors.lightGreen,
+            shape: const CircleBorder(),
+            child: SizedBox.square(
+              key: const Key('home_location_icon'),
               dimension: 42,
-              child: Icon(Icons.location_on, color: AppColors.primary),
+              child: const Icon(Icons.location_on, color: AppColors.primary),
             ),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: InkWell(
+          child: AppPressable(
             key: const Key('home_location_area'),
+            haptic: AppPressableHaptic.selection,
             onTap: onTap,
-            borderRadius: BorderRadius.circular(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -223,10 +298,12 @@ class _LocationBar extends StatelessWidget {
             ),
           ),
         ),
-        IconButton.filledTonal(
-          tooltip: context.l10n.notifications,
-          onPressed: () {},
-          icon: const Badge(child: Icon(Icons.notifications_none)),
+        AppPressable(
+          child: IconButton.filledTonal(
+            tooltip: context.l10n.notifications,
+            onPressed: () {},
+            icon: const Badge(child: Icon(Icons.notifications_none)),
+          ),
         ),
       ],
     );
@@ -595,28 +672,43 @@ class _GreetingSection extends StatelessWidget {
               const SizedBox(height: 3),
               Text(
                 'Ramesh Kumar 👋',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 5),
-              Text(context.l10n.productiveFarm),
+              Text(
+                context.l10n.productiveFarm,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),
         const SizedBox(width: 12),
-        const CircleAvatar(
-          radius: 29,
-          backgroundColor: AppColors.lightGreen,
-          child: Icon(Icons.person, size: 34, color: AppColors.primary),
+        Semantics(
+          button: true,
+          label: context.l10n.profile,
+          child: AppPressable(
+            onTap: () => Navigator.of(context).pushNamed(AppRoutes.profile),
+            child: const SizedBox.square(
+              dimension: 56,
+              child: CircleAvatar(
+                backgroundColor: AppColors.lightGreen,
+                child: Icon(Icons.person, size: 32, color: AppColors.primary),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 }
 
-class _WeatherCard extends StatelessWidget {
-  const _WeatherCard();
+class HomeWeatherCard extends StatelessWidget {
+  const HomeWeatherCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -644,16 +736,21 @@ class _WeatherCard extends StatelessWidget {
             final weather = controller.weather;
             final isLoading = controller.status == WeatherStatus.loading;
             final hasError = controller.status == WeatherStatus.error;
+            final cached = controller.isUsingCachedData;
             final temperature = weather == null
                 ? '--°C'
                 : '${weather.temperatureCelsius.round()}°C';
-            final condition = hasError
-                ? context.l10n.weatherUnavailable
+            final condition = weather != null
+                ? _weatherCondition(context, weather.weatherCode)
+                : hasError
+                ? kDebugMode && controller.errorReason != null
+                      ? controller.errorReason!
+                      : context.l10n.weatherUnavailable
                 : isLoading
                 ? context.l10n.loadingWeather
                 : weather == null
                 ? context.l10n.weatherLocationRequired
-                : _weatherCondition(context, weather.weatherCode);
+                : context.l10n.weatherUnavailable;
             final details = weather == null
                 ? (hasError ? context.l10n.pullToRefresh : '')
                 : context.l10n.humidityWindValues(
@@ -668,10 +765,10 @@ class _WeatherCard extends StatelessWidget {
                 : () =>
                       Navigator.of(context).pushNamed(AppRoutes.weatherDetails);
 
-            return InkWell(
+            return AppPressable(
               key: const Key('weather_card'),
+              enabled: onTap != null,
               onTap: onTap,
-              borderRadius: BorderRadius.circular(22),
               child: Padding(
                 padding: const EdgeInsets.all(18),
                 child: Row(
@@ -698,23 +795,68 @@ class _WeatherCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final temperatureText = Text(
                                 key: const Key('weather_temperature'),
                                 temperature,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context).textTheme.headlineSmall
                                     ?.copyWith(fontWeight: FontWeight.w800),
-                              ),
-                              const SizedBox(width: 9),
-                              Flexible(child: Text(condition)),
-                            ],
+                              );
+                              final conditionText = Text(
+                                condition,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              );
+                              if (constraints.maxWidth < 150) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [temperatureText, conditionText],
+                                );
+                              }
+                              return Row(
+                                children: [
+                                  Flexible(child: temperatureText),
+                                  const SizedBox(width: 9),
+                                  Expanded(child: conditionText),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(height: 5),
-                          Text(
-                            details,
-                            style: Theme.of(context).textTheme.bodySmall,
+                          LayoutBuilder(
+                            builder: (context, constraints) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  weather?.rainProbabilityPercent == null
+                                      ? details
+                                      : '$details • ${context.l10n.rainProbability} ${weather!.rainProbabilityPercent}%',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                                if (cached) ...[
+                                  const SizedBox(height: 4),
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: constraints.maxWidth,
+                                    ),
+                                    child: _WeatherBadge(
+                                      label: context.l10n.smartOfflineData,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
+                          if (weather?.updatedAt != null)
+                            Text(
+                              '${context.l10n.lastUpdated}: ${TimeOfDay.fromDateTime(weather!.updatedAt!.toLocal()).format(context)}',
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
                         ],
                       ),
                     ),
@@ -724,9 +866,28 @@ class _WeatherCard extends StatelessWidget {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     else
-                      const Icon(
-                        Icons.chevron_right,
-                        key: Key('weather_card_arrow'),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Semantics(
+                            button: true,
+                            label: context.l10n.refreshWeather,
+                            child: IconButton(
+                              key: const Key('weather_refresh_action'),
+                              tooltip: context.l10n.refreshWeather,
+                              onPressed: controller.refresh,
+                              icon: const Icon(Icons.refresh),
+                              constraints: const BoxConstraints(
+                                minWidth: 48,
+                                minHeight: 48,
+                              ),
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right,
+                            key: Key('weather_card_arrow'),
+                          ),
+                        ],
                       ),
                   ],
                 ),
@@ -737,6 +898,25 @@ class _WeatherCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _WeatherBadge extends StatelessWidget {
+  const _WeatherBadge({required this.label});
+  final String label;
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+    decoration: BoxDecoration(
+      color: AppColors.lightGreen,
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: Text(
+      label,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: Theme.of(context).textTheme.labelSmall,
+    ),
+  );
 }
 
 String _weatherCondition(BuildContext context, int code) {
@@ -805,10 +985,10 @@ class _FarmingBanner extends StatelessWidget {
                   colors: [Color(0xFF2F8E4C), AppColors.primaryDark],
                 ),
               ),
-              child: InkWell(
+              child: AppPressable(
                 key: const Key('seasonal_advice_card'),
+                enabled: !isLoading,
                 onTap: isLoading ? null : handleTap,
-                borderRadius: BorderRadius.circular(26),
                 child: Padding(
                   padding: const EdgeInsets.all(22),
                   child: Stack(
@@ -878,21 +1058,23 @@ class _FarmingBanner extends StatelessWidget {
                             ),
                           ],
                           const SizedBox(height: 16),
-                          FilledButton(
-                            key: const Key('view_seasonal_recommendation'),
-                            onPressed: isLoading ? null : handleTap,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: AppColors.primaryDark,
+                          IgnorePointer(
+                            child: FilledButton(
+                              key: const Key('view_seasonal_recommendation'),
+                              onPressed: isLoading ? null : handleTap,
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.primaryDark,
+                              ),
+                              child: isLoading
+                                  ? const SizedBox.square(
+                                      dimension: 17,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(context.l10n.viewRecommendation),
                             ),
-                            child: isLoading
-                                ? const SizedBox.square(
-                                    dimension: 17,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : Text(context.l10n.viewRecommendation),
                           ),
                         ],
                       ),
@@ -916,10 +1098,9 @@ class _AiAssistantCard extends StatelessWidget {
     return Material(
       color: const Color(0xFFEAF5FF),
       borderRadius: BorderRadius.circular(22),
-      child: InkWell(
+      child: AppPressable(
         key: const Key('home_ai_assistant_card'),
         onTap: () => Navigator.of(context).pushNamed(AppRoutes.aiAssistant),
-        borderRadius: BorderRadius.circular(22),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Row(
@@ -1188,9 +1369,8 @@ class _ServiceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
       ),
-      child: InkWell(
+      child: AppPressable(
         onTap: () {},
-        borderRadius: BorderRadius.circular(18),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(

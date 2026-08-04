@@ -28,6 +28,16 @@ enum LandAreaUnit { acre, hectare, bigha, katha }
 
 enum IrrigationType { drip, sprinkler, flood, rainFed, manual }
 
+enum SoilType { alluvial, black, red, laterite, sandy, clay, loamy, other }
+
+enum PlantingMethod {
+  directSowing,
+  transplanting,
+  broadcasting,
+  raisedBed,
+  other,
+}
+
 enum CropTaskType {
   irrigation,
   fertilizer,
@@ -49,6 +59,11 @@ class Crop {
     this.userId = 'local-user',
     this.customName,
     this.farmName,
+    this.soilType = SoilType.other,
+    this.plantingMethod = PlantingMethod.other,
+    this.seedBrand,
+    this.lastFertilizerUsed,
+    this.lastPesticideUsed,
     this.expectedHarvestDate,
     this.notes,
     this.health = CropHealth.healthy,
@@ -67,6 +82,11 @@ class Crop {
   final LandAreaUnit landAreaUnit;
   final GrowthStage growthStage;
   final IrrigationType irrigationType;
+  final SoilType soilType;
+  final PlantingMethod plantingMethod;
+  final String? seedBrand;
+  final String? lastFertilizerUsed;
+  final String? lastPesticideUsed;
   final String? farmName;
   final DateTime? expectedHarvestDate;
   final String? notes;
@@ -76,6 +96,7 @@ class Crop {
 
   int get ageInDays =>
       DateTime.now().difference(sowingDate).inDays.clamp(0, 99999);
+  int get plantAgeInDays => ageInDays;
   int get progressPercent => growthStage == GrowthStage.harvested
       ? 100
       : (((growthStage.index + 1) / GrowthStage.values.length) * 100).round();
@@ -107,6 +128,11 @@ class Crop {
     LandAreaUnit? landAreaUnit,
     GrowthStage? growthStage,
     IrrigationType? irrigationType,
+    SoilType? soilType,
+    PlantingMethod? plantingMethod,
+    String? seedBrand,
+    String? lastFertilizerUsed,
+    String? lastPesticideUsed,
     String? farmName,
     DateTime? expectedHarvestDate,
     String? notes,
@@ -125,6 +151,11 @@ class Crop {
     landAreaUnit: landAreaUnit ?? this.landAreaUnit,
     growthStage: growthStage ?? this.growthStage,
     irrigationType: irrigationType ?? this.irrigationType,
+    soilType: soilType ?? this.soilType,
+    plantingMethod: plantingMethod ?? this.plantingMethod,
+    seedBrand: seedBrand ?? this.seedBrand,
+    lastFertilizerUsed: lastFertilizerUsed ?? this.lastFertilizerUsed,
+    lastPesticideUsed: lastPesticideUsed ?? this.lastPesticideUsed,
     farmName: farmName ?? this.farmName,
     expectedHarvestDate: expectedHarvestDate ?? this.expectedHarvestDate,
     notes: notes ?? this.notes,

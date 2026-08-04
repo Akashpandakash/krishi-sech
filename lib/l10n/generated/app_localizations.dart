@@ -478,6 +478,54 @@ abstract class AppLocalizations {
   /// **'Your simple companion for smarter farming'**
   String get loginSubtitle;
 
+  /// No description provided for @authVerifyOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify OTP'**
+  String get authVerifyOtp;
+
+  /// No description provided for @authOtpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit OTP'**
+  String get authOtpLabel;
+
+  /// No description provided for @authOtpSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the OTP sent to {phone}'**
+  String authOtpSent(String phone);
+
+  /// No description provided for @authInvalidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 10-digit mobile number.'**
+  String get authInvalidPhone;
+
+  /// No description provided for @authInvalidOtp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 6-digit OTP.'**
+  String get authInvalidOtp;
+
+  /// No description provided for @authOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Check your connection and retry.'**
+  String get authOffline;
+
+  /// No description provided for @authTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The request timed out. Please retry.'**
+  String get authTimeout;
+
+  /// No description provided for @authRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication could not be completed. Please retry.'**
+  String get authRequestFailed;
+
   /// No description provided for @mobileNumber.
   ///
   /// In en, this message translates to:
@@ -1240,6 +1288,240 @@ abstract class AppLocalizations {
   /// **'No photo was uploaded and disease detection has not been performed.'**
   String get photoFeatureDisclaimer;
 
+  /// No description provided for @scanCropDisease.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Crop Disease'**
+  String get scanCropDisease;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @imagePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Image Preview'**
+  String get imagePreview;
+
+  /// No description provided for @chooseAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Another'**
+  String get chooseAnother;
+
+  /// No description provided for @processingImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing Image'**
+  String get processingImage;
+
+  /// No description provided for @addClearCropPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take or choose a clear photo of the affected crop area.'**
+  String get addClearCropPhoto;
+
+  /// No description provided for @selectCropImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a crop image'**
+  String get selectCropImage;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @retake.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake'**
+  String get retake;
+
+  /// No description provided for @chooseAnotherImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Another Image'**
+  String get chooseAnotherImage;
+
+  /// No description provided for @analyze.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze'**
+  String get analyze;
+
+  /// No description provided for @analyzingCrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing crop...'**
+  String get analyzingCrop;
+
+  /// No description provided for @placeholderAnalysisNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Phase 1 uses demonstration results only. No AI model is connected.'**
+  String get placeholderAnalysisNotice;
+
+  /// No description provided for @imageCouldNotBeOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'The image could not be opened. Please try again.'**
+  String get imageCouldNotBeOpened;
+
+  /// No description provided for @analysisFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis could not be completed. Please try again.'**
+  String get analysisFailed;
+
+  /// No description provided for @diseaseResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Disease Result'**
+  String get diseaseResult;
+
+  /// No description provided for @sampleDiseaseName.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaf spot (sample)'**
+  String get sampleDiseaseName;
+
+  /// No description provided for @demoResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo result • Placeholder data'**
+  String get demoResult;
+
+  /// No description provided for @scanCrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Crop'**
+  String get scanCrop;
+
+  /// No description provided for @consultExpert.
+  ///
+  /// In en, this message translates to:
+  /// **'Consult Expert'**
+  String get consultExpert;
+
+  /// No description provided for @imagePermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera or photo access was denied. Allow access in app settings and try again.'**
+  String get imagePermissionDenied;
+
+  /// No description provided for @uploadProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading {progress}%'**
+  String uploadProgress(int progress);
+
+  /// No description provided for @diseaseScanOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You appear to be offline. Check your connection and retry.'**
+  String get diseaseScanOffline;
+
+  /// No description provided for @diseaseScanTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan took too long. Please retry with a stable connection.'**
+  String get diseaseScanTimeout;
+
+  /// No description provided for @diseaseScanInvalidResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan service returned an invalid response. Please retry.'**
+  String get diseaseScanInvalidResponse;
+
+  /// No description provided for @diseaseScanServerError.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan service is temporarily unavailable. Please retry.'**
+  String get diseaseScanServerError;
+
+  /// No description provided for @observation.
+  ///
+  /// In en, this message translates to:
+  /// **'Observation'**
+  String get observation;
+
+  /// No description provided for @sampleDiseaseSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Small discoloured spots were found in this placeholder analysis.'**
+  String get sampleDiseaseSummary;
+
+  /// No description provided for @recommendedNextStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended next step'**
+  String get recommendedNextStep;
+
+  /// No description provided for @sampleDiseaseRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the leaves dry, monitor new growth, and consult a crop expert before treatment.'**
+  String get sampleDiseaseRecommendation;
+
+  /// No description provided for @notMedicalDiagnosis.
+  ///
+  /// In en, this message translates to:
+  /// **'This demonstration result is not a confirmed diagnosis. Consult an agricultural expert before treatment.'**
+  String get notMedicalDiagnosis;
+
+  /// No description provided for @lowConfidenceResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-confidence result. An expert review is recommended before taking action.'**
+  String get lowConfidenceResult;
+
+  /// No description provided for @scanConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence: {confidence}%'**
+  String scanConfidence(int confidence);
+
+  /// No description provided for @visibleSymptoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible symptoms'**
+  String get visibleSymptoms;
+
+  /// No description provided for @recommendedActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended actions'**
+  String get recommendedActions;
+
+  /// No description provided for @expertReviewRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Expert review recommended'**
+  String get expertReviewRecommended;
+
+  /// No description provided for @followUpQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up questions'**
+  String get followUpQuestions;
+
   /// No description provided for @retryResponse.
   ///
   /// In en, this message translates to:
@@ -1864,6 +2146,120 @@ abstract class AppLocalizations {
   /// **'Manual'**
   String get irrigationManual;
 
+  /// No description provided for @plantAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Plant age'**
+  String get plantAge;
+
+  /// No description provided for @soilType.
+  ///
+  /// In en, this message translates to:
+  /// **'Soil type'**
+  String get soilType;
+
+  /// No description provided for @irrigationMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Irrigation method'**
+  String get irrigationMethod;
+
+  /// No description provided for @plantingMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Planting method'**
+  String get plantingMethod;
+
+  /// No description provided for @seedBrand.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed brand'**
+  String get seedBrand;
+
+  /// No description provided for @lastFertilizerUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last fertilizer used'**
+  String get lastFertilizerUsed;
+
+  /// No description provided for @lastPesticideUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Last pesticide used'**
+  String get lastPesticideUsed;
+
+  /// No description provided for @otherOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherOption;
+
+  /// No description provided for @soilAlluvial.
+  ///
+  /// In en, this message translates to:
+  /// **'Alluvial'**
+  String get soilAlluvial;
+
+  /// No description provided for @soilBlack.
+  ///
+  /// In en, this message translates to:
+  /// **'Black soil'**
+  String get soilBlack;
+
+  /// No description provided for @soilRed.
+  ///
+  /// In en, this message translates to:
+  /// **'Red soil'**
+  String get soilRed;
+
+  /// No description provided for @soilLaterite.
+  ///
+  /// In en, this message translates to:
+  /// **'Laterite'**
+  String get soilLaterite;
+
+  /// No description provided for @soilSandy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sandy'**
+  String get soilSandy;
+
+  /// No description provided for @soilClay.
+  ///
+  /// In en, this message translates to:
+  /// **'Clay'**
+  String get soilClay;
+
+  /// No description provided for @soilLoamy.
+  ///
+  /// In en, this message translates to:
+  /// **'Loamy'**
+  String get soilLoamy;
+
+  /// No description provided for @plantingDirectSowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct sowing'**
+  String get plantingDirectSowing;
+
+  /// No description provided for @plantingTransplanting.
+  ///
+  /// In en, this message translates to:
+  /// **'Transplanting'**
+  String get plantingTransplanting;
+
+  /// No description provided for @plantingBroadcasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcasting'**
+  String get plantingBroadcasting;
+
+  /// No description provided for @plantingRaisedBed.
+  ///
+  /// In en, this message translates to:
+  /// **'Raised bed'**
+  String get plantingRaisedBed;
+
   /// No description provided for @taskIrrigationReminder.
   ///
   /// In en, this message translates to:
@@ -2122,6 +2518,120 @@ abstract class AppLocalizations {
   /// **'Crop not found.'**
   String get cropNotFound;
 
+  /// No description provided for @cropHealthRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop Health Record'**
+  String get cropHealthRecord;
+
+  /// No description provided for @diseaseHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Disease History'**
+  String get diseaseHistory;
+
+  /// No description provided for @fertilizerHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertilizer History'**
+  String get fertilizerHistory;
+
+  /// No description provided for @irrigationHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Irrigation History'**
+  String get irrigationHistory;
+
+  /// No description provided for @sprayHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Spray History'**
+  String get sprayHistory;
+
+  /// No description provided for @scanHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan History'**
+  String get scanHistory;
+
+  /// No description provided for @photoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo History'**
+  String get photoHistory;
+
+  /// No description provided for @addRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Record'**
+  String get addRecord;
+
+  /// No description provided for @editRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Record'**
+  String get editRecord;
+
+  /// No description provided for @deleteRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Record'**
+  String get deleteRecord;
+
+  /// No description provided for @deleteRecordConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this record?'**
+  String get deleteRecordConfirmation;
+
+  /// No description provided for @noHealthRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'No crop health records yet.'**
+  String get noHealthRecords;
+
+  /// No description provided for @recordType.
+  ///
+  /// In en, this message translates to:
+  /// **'Record type'**
+  String get recordType;
+
+  /// No description provided for @recordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get recordTitle;
+
+  /// No description provided for @recordTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a record title.'**
+  String get recordTitleRequired;
+
+  /// No description provided for @recordDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Record date'**
+  String get recordDate;
+
+  /// No description provided for @recordDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details (optional)'**
+  String get recordDetails;
+
+  /// No description provided for @saveRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Record'**
+  String get saveRecord;
+
+  /// No description provided for @scanDisease.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Disease'**
+  String get scanDisease;
+
   /// No description provided for @inDays.
   ///
   /// In en, this message translates to:
@@ -2353,6 +2863,132 @@ abstract class AppLocalizations {
     String taskName,
     String dueTime,
   );
+
+  /// No description provided for @cropOfflineCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline — showing saved crops. Changes will sync automatically.'**
+  String get cropOfflineCache;
+
+  /// No description provided for @cropServerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Crops could not be updated. Please retry.'**
+  String get cropServerError;
+
+  /// No description provided for @cropChangesPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop changes are waiting to sync.'**
+  String get cropChangesPending;
+
+  /// No description provided for @todaysSmartFarming.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Smart Farming'**
+  String get todaysSmartFarming;
+
+  /// No description provided for @smartTodaysWeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Weather'**
+  String get smartTodaysWeather;
+
+  /// No description provided for @smartIrrigationRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Irrigation Recommendation'**
+  String get smartIrrigationRecommendation;
+
+  /// No description provided for @smartFertilizerRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertilizer Recommendation'**
+  String get smartFertilizerRecommendation;
+
+  /// No description provided for @smartTodaysCropTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Crop Tasks'**
+  String get smartTodaysCropTasks;
+
+  /// No description provided for @smartDiseaseRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Disease Risk'**
+  String get smartDiseaseRisk;
+
+  /// No description provided for @smartDataUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Data unavailable'**
+  String get smartDataUnavailable;
+
+  /// No description provided for @smartOfflineData.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline — showing saved recommendations'**
+  String get smartOfflineData;
+
+  /// No description provided for @smartNoIrrigation.
+  ///
+  /// In en, this message translates to:
+  /// **'No irrigation needed today'**
+  String get smartNoIrrigation;
+
+  /// No description provided for @smartIrrigationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Irrigate with {liters} L/acre'**
+  String smartIrrigationRequired(int liters);
+
+  /// No description provided for @smartTaskCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} tasks remaining'**
+  String smartTaskCount(int count);
+
+  /// No description provided for @smartRiskLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low risk'**
+  String get smartRiskLow;
+
+  /// No description provided for @smartRiskMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate risk'**
+  String get smartRiskMedium;
+
+  /// No description provided for @smartRiskHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High risk'**
+  String get smartRiskHigh;
+
+  /// No description provided for @smartReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get smartReady;
+
+  /// No description provided for @smartCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get smartCached;
+
+  /// No description provided for @smartUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date'**
+  String get smartUpToDate;
+
+  /// No description provided for @smartNeedsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Check now'**
+  String get smartNeedsAttention;
 }
 
 class _AppLocalizationsDelegate

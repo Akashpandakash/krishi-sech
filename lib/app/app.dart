@@ -9,8 +9,13 @@ import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_ch
 import 'package:krishi_sech/core/localization/locale_controller.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/features/location/presentation/controllers/location_controller.dart';
+import 'package:krishi_sech/features/login/data/repositories/in_memory_auth_repository.dart';
+import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
+import 'package:krishi_sech/features/login/presentation/controllers/auth_controller.dart';
 import 'package:krishi_sech/features/location/presentation/location_scope.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
+import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_health_record_controller.dart';
+import 'package:krishi_sech/features/my_crop/presentation/crop_health_record_scope.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_task_controller.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_scope.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
@@ -29,6 +34,8 @@ class KrishiSechApp extends StatefulWidget {
     this.aiChatController,
     this.cropController,
     this.cropTaskController,
+    this.cropHealthRecordController,
+    this.authController,
     super.key,
   });
 
@@ -39,6 +46,8 @@ class KrishiSechApp extends StatefulWidget {
   final AiChatController? aiChatController;
   final CropController? cropController;
   final CropTaskController? cropTaskController;
+  final CropHealthRecordController? cropHealthRecordController;
+  final AuthController? authController;
 
   @override
   State<KrishiSechApp> createState() => _KrishiSechAppState();
@@ -59,6 +68,10 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
   late final bool _ownsCropController;
   late final CropTaskController _cropTaskController;
   late final bool _ownsCropTaskController;
+  late final CropHealthRecordController _cropHealthRecordController;
+  late final bool _ownsCropHealthRecordController;
+  late final AuthController _authController;
+  late final bool _ownsAuthController;
 
   @override
   void initState() {
@@ -88,6 +101,13 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
     _cropTaskController =
         widget.cropTaskController ??
         CropTaskController.inMemory(cropController: _cropController);
+    _ownsCropHealthRecordController = widget.cropHealthRecordController == null;
+    _cropHealthRecordController =
+        widget.cropHealthRecordController ??
+        CropHealthRecordController.inMemory();
+    _ownsAuthController = widget.authController == null;
+    _authController =
+        widget.authController ?? AuthController(InMemoryAuthRepository());
   }
 
   @override
@@ -113,48 +133,63 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
     if (_ownsCropController) {
       _cropController.dispose();
     }
+    if (_ownsCropHealthRecordController) {
+      _cropHealthRecordController.dispose();
+    }
+    if (_ownsAuthController) {
+      _authController.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return LocationScope(
-      controller: _locationController,
-      child: WeatherScope(
-        controller: _weatherController,
-        child: SeasonalAdviceScope(
-          controller: _seasonalAdviceController,
-          child: AiChatScope(
-            controller: _aiChatController,
-            child: CropScope(
-              controller: _cropController,
-              child: CropTaskScope(
-                controller: _cropTaskController,
-                child: LocaleScope(
-                  controller: _localeController,
-                  child: AnimatedBuilder(
-                    animation: _localeController,
-                    builder: (context, _) {
-                      return MaterialApp(
-                        navigatorKey: AppRouter.navigatorKey,
-                        onGenerateTitle: (context) =>
-                            AppLocalizations.of(context).appTitle,
-                        debugShowCheckedModeBanner: false,
-                        theme: AppTheme.light,
-                        darkTheme: AppTheme.dark,
-                        themeMode: ThemeMode.system,
-                        locale: _localeController.locale,
-                        supportedLocales: AppLocalizations.supportedLocales,
-                        localizationsDelegates: const [
-                          AppLocalizations.delegate,
-                          GlobalMaterialLocalizations.delegate,
-                          GlobalWidgetsLocalizations.delegate,
-                          GlobalCupertinoLocalizations.delegate,
-                        ],
-                        initialRoute: AppRoutes.splash,
-                        onGenerateRoute: AppRouter.onGenerateRoute,
-                      );
-                    },
+    return AuthScope(
+      controller: _authController,
+      child: LocationScope(
+        controller: _locationController,
+        child: WeatherScope(
+          controller: _weatherController,
+          child: SeasonalAdviceScope(
+            controller: _seasonalAdviceController,
+            child: AiChatScope(
+              controller: _aiChatController,
+              child: CropScope(
+                controller: _cropController,
+                child: CropTaskScope(
+                  controller: _cropTaskController,
+                  child: CropHealthRecordScope(
+                    controller: _cropHealthRecordController,
+                    child: LocaleScope(
+                      controller: _localeController,
+                      child: AnimatedBuilder(
+                        animation: _localeController,
+                        builder: (context, _) {
+                          return MaterialApp(
+                            navigatorKey: AppRouter.navigatorKey,
+                            onGenerateTitle: (context) =>
+                                AppLocalizations.of(context).appTitle,
+                            debugShowCheckedModeBanner: false,
+                            theme: AppTheme.light,
+                            darkTheme: AppTheme.dark,
+                            // RC1 uses the fully audited green-and-white theme.
+                            // Re-enable system mode when every legacy surface has
+                            // migrated away from hard-coded light colors.
+                            themeMode: ThemeMode.light,
+                            locale: _localeController.locale,
+                            supportedLocales: AppLocalizations.supportedLocales,
+                            localizationsDelegates: const [
+                              AppLocalizations.delegate,
+                              GlobalMaterialLocalizations.delegate,
+                              GlobalWidgetsLocalizations.delegate,
+                              GlobalCupertinoLocalizations.delegate,
+                            ],
+                            initialRoute: AppRoutes.splash,
+                            onGenerateRoute: AppRouter.onGenerateRoute,
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:krishi_sech/features/location/domain/entities/farm_location.dart';
+import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/features/location/domain/services/address_sanitizer.dart';
 
 enum LocationFailureType {
@@ -133,7 +134,7 @@ class LocationService {
           (position) {
             final age = DateTime.now().difference(position.timestamp);
             if (age.isNegative || age > _maximumPositionAge) {
-              if (kDebugMode) {
+              if (kDebugMode && AppEnvironment.loggingEnabled) {
                 debugPrint(
                   'Location: rejected stale fix (${age.inSeconds}s old)',
                 );
@@ -197,7 +198,7 @@ class LocationService {
   }
 
   void _logPosition(Position position) {
-    if (!kDebugMode) return;
+    if (!kDebugMode || !AppEnvironment.loggingEnabled) return;
     debugPrint(
       'Location fix: latitude=${position.latitude}, '
       'longitude=${position.longitude}, accuracy=${position.accuracy}m, '
@@ -206,7 +207,7 @@ class LocationService {
   }
 
   void _logPlacemark(Placemark placemark) {
-    if (!kDebugMode) return;
+    if (!kDebugMode || !AppEnvironment.loggingEnabled) return;
     debugPrint(
       'Location placemark: locality=${placemark.locality}, '
       'subLocality=${placemark.subLocality}, '

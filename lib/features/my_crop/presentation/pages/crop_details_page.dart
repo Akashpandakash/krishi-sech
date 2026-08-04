@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/features/disease_scan/data/repositories/image_picker_repository.dart';
+import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_scan_page.dart';
+import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_health_photo_store.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_task.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
@@ -14,6 +18,85 @@ class CropDetailsPage extends StatelessWidget {
   const CropDetailsPage({required this.cropId, super.key});
 
   final String cropId;
+
+  Future<void> _scanDisease(BuildContext context, Crop crop) async {
+    final source = await showModalBottomSheet<_DiseaseImageSource>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                context.l10n.scanCrop,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text(context.l10n.takePhoto),
+                onTap: () =>
+                    Navigator.pop(sheetContext, _DiseaseImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text(context.l10n.chooseFromGallery),
+                onTap: () =>
+                    Navigator.pop(sheetContext, _DiseaseImageSource.gallery),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(sheetContext),
+                child: Text(context.l10n.cancel),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (source == null || !context.mounted) return;
+    try {
+      final picker = ImagePickerRepository();
+      final selected = source == _DiseaseImageSource.camera
+          ? await picker.takePhoto()
+          : await picker.chooseFromGallery();
+      if (selected == null) return;
+      final savedPath = await const LocalCropHealthPhotoStore().savePhoto(
+        selected,
+      );
+      if (!context.mounted) return;
+      await Navigator.of(context).pushNamed(
+        AppRoutes.diseasePreview,
+        arguments: DiseaseScanImageArguments(
+          imagePath: savedPath,
+          cropId: crop.id,
+          cropName: cropKindLabel(context, crop),
+        ),
+      );
+    } on PlatformException catch (error) {
+      if (!context.mounted) return;
+      final denied =
+          error.code.toLowerCase().contains('denied') ||
+          error.code.toLowerCase().contains('permission');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            denied
+                ? context.l10n.imagePermissionDenied
+                : context.l10n.imageCouldNotBeOpened,
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.imageCouldNotBeOpened)),
+      );
+    }
+  }
 
   Future<void> _delete(BuildContext context, Crop crop) async {
     final confirmed = await showDialog<bool>(
@@ -35,8 +118,8 @@ class CropDetailsPage extends StatelessWidget {
       ),
     );
     if (confirmed != true || !context.mounted) return;
-    await CropScope.of(context).deleteCrop(crop.id);
-    if (context.mounted) Navigator.of(context).pop();
+    final deleted = await CropScope.of(context).deleteCrop(crop.id);
+    if (context.mounted && deleted) Navigator.of(context).pop();
   }
 
   Future<void> _updateHealth(BuildContext context, Crop crop) async {
@@ -173,12 +256,24 @@ class CropDetailsPage extends StatelessWidget {
                       date.formatMediumDate(crop.sowingDate),
                     ),
                     _Detail(
-                      context.l10n.cropAge,
-                      context.l10n.daysOld(crop.ageInDays),
+                      context.l10n.plantAge,
+                      context.l10n.daysOld(crop.plantAgeInDays),
                     ),
                     _Detail(
                       context.l10n.currentGrowthStage,
                       growthStageLabel(context, crop.growthStage),
+                    ),
+                    _Detail(
+                      context.l10n.soilType,
+                      soilTypeLabel(context, crop.soilType),
+                    ),
+                    _Detail(
+                      context.l10n.irrigationMethod,
+                      irrigationLabel(context, crop.irrigationType),
+                    ),
+                    _Detail(
+                      context.l10n.plantingMethod,
+                      plantingMethodLabel(context, crop.plantingMethod),
                     ),
                     _Detail(
                       context.l10n.landArea,
@@ -197,6 +292,18 @@ class CropDetailsPage extends StatelessWidget {
                       cropTaskLabel(context, crop.nextTask),
                     ),
                     _Detail(
+                      context.l10n.seedBrand,
+                      crop.seedBrand ?? context.l10n.notAvailable,
+                    ),
+                    _Detail(
+                      context.l10n.lastFertilizerUsed,
+                      crop.lastFertilizerUsed ?? context.l10n.notAvailable,
+                    ),
+                    _Detail(
+                      context.l10n.lastPesticideUsed,
+                      crop.lastPesticideUsed ?? context.l10n.notAvailable,
+                    ),
+                    _Detail(
                       context.l10n.expectedHarvestDate,
                       crop.expectedHarvestDate == null
                           ? context.l10n.notAvailable
@@ -207,6 +314,23 @@ class CropDetailsPage extends StatelessWidget {
                       crop.notes ?? context.l10n.notAvailable,
                     ),
                     const SizedBox(height: 18),
+                    FilledButton.icon(
+                      key: const Key('scan_crop_disease'),
+                      onPressed: () => _scanDisease(context, crop),
+                      icon: const Icon(Icons.document_scanner_outlined),
+                      label: Text(context.l10n.scanCrop),
+                    ),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      key: const Key('crop_health_records'),
+                      onPressed: () => Navigator.of(context).pushNamed(
+                        AppRoutes.cropHealthRecords,
+                        arguments: crop.id,
+                      ),
+                      icon: const Icon(Icons.history),
+                      label: Text(context.l10n.cropHealthRecord),
+                    ),
+                    const SizedBox(height: 8),
                     Text(
                       context.l10n.cropTimeline,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -261,6 +385,8 @@ class CropDetailsPage extends StatelessWidget {
     );
   }
 }
+
+enum _DiseaseImageSource { camera, gallery }
 
 class _TimelineTask extends StatelessWidget {
   const _TimelineTask({

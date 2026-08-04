@@ -8,6 +8,7 @@ import 'package:krishi_sech/features/my_crop/presentation/crop_task_labels.dart'
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class CropCalendarPage extends StatefulWidget {
   const CropCalendarPage({super.key});
@@ -81,13 +82,15 @@ class _CropCalendarPageState extends State<CropCalendarPage> {
       appBar: AppBar(title: Text(context.l10n.cropCalendar)),
       floatingActionButton: savedCrops.isEmpty || loading || error != null
           ? null
-          : FloatingActionButton.extended(
-              key: const Key('add_crop_task_button'),
-              onPressed: () => Navigator.of(
-                context,
-              ).pushNamed(AppRoutes.addCropTask, arguments: _selectedDate),
-              icon: const Icon(Icons.add),
-              label: Text(context.l10n.addTask),
+          : AppPressable(
+              child: FloatingActionButton.extended(
+                key: const Key('add_crop_task_button'),
+                onPressed: () => Navigator.of(
+                  context,
+                ).pushNamed(AppRoutes.addCropTask, arguments: _selectedDate),
+                icon: const Icon(Icons.add),
+                label: Text(context.l10n.addTask),
+              ),
             ),
       body: SafeArea(
         child: AnimatedBuilder(
@@ -297,12 +300,12 @@ class _TaskCalendarState extends State<_TaskCalendar> {
                     widget.selectedDate,
                   );
                   final hasTasks = _hasTasks(date);
-                  return InkWell(
+                  return AppPressable(
                     key: ValueKey(
                       'calendar_day_${date.year}_${date.month}_${date.day}',
                     ),
+                    haptic: AppPressableHaptic.selection,
                     onTap: () => widget.onDateSelected(date),
-                    customBorder: const CircleBorder(),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -426,7 +429,7 @@ class _CropTaskTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
+      child: AppPressable(
         key: widgetKey ?? ValueKey('crop_task_${task.id}'),
         onTap: onEdit,
         child: Padding(
@@ -538,10 +541,12 @@ class _CalendarMessage extends StatelessWidget {
           const SizedBox(height: 14),
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 18),
-          FilledButton.icon(
-            onPressed: onPressed,
-            icon: const Icon(Icons.add),
-            label: Text(buttonLabel),
+          AppPressable(
+            child: FilledButton.icon(
+              onPressed: onPressed,
+              icon: const Icon(Icons.add),
+              label: Text(buttonLabel),
+            ),
           ),
         ],
       ),

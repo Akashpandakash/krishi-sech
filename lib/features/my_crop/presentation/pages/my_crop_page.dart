@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
+import 'package:krishi_sech/features/my_crop/domain/repositories/crop_repository.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_scope.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
+import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class MyCropPage extends StatelessWidget {
   const MyCropPage({super.key});
@@ -18,97 +21,155 @@ class MyCropPage extends StatelessWidget {
     return SafeArea(
       child: AnimatedBuilder(
         animation: controller,
-        builder: (context, _) => CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: ResponsiveContent(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            context.l10n.myCrops,
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.w800),
+        builder: (context, _) => RefreshIndicator(
+          onRefresh: controller.refresh,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: ResponsiveContent(
+                  child: Column(
+                    children: [
+                      if (controller.isLoading) ...[
+                        const LinearProgressIndicator(),
+                        const SizedBox(height: 10),
+                      ],
+                      if (controller.error != null ||
+                          controller.syncIssue != null ||
+                          controller.hasPendingChanges) ...[
+                        _SyncStatus(controller: controller),
+                        const SizedBox(height: 10),
+                      ],
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              context.l10n.myCrops,
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(fontWeight: FontWeight.w800),
+                            ),
                           ),
-                        ),
-                        FilledButton.icon(
-                          key: const Key('add_crop_button'),
+                          AppPressable(
+                            child: FilledButton.icon(
+                              key: const Key('add_crop_button'),
+                              onPressed: () => Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.addCrop),
+                              icon: const Icon(Icons.add),
+                              label: Text(context.l10n.addCrop),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      AppPressable(
+                        child: OutlinedButton.icon(
+                          key: const Key('crop_calendar_button'),
                           onPressed: () => Navigator.of(
                             context,
-                          ).pushNamed(AppRoutes.addCrop),
-                          icon: const Icon(Icons.add),
-                          label: Text(context.l10n.addCrop),
+                          ).pushNamed(AppRoutes.cropCalendar),
+                          icon: const Icon(Icons.calendar_month_outlined),
+                          label: Text(context.l10n.cropCalendar),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 18),
-                    OutlinedButton.icon(
-                      key: const Key('crop_calendar_button'),
-                      onPressed: () => Navigator.of(
-                        context,
-                      ).pushNamed(AppRoutes.cropCalendar),
-                      icon: const Icon(Icons.calendar_month_outlined),
-                      label: Text(context.l10n.cropCalendar),
-                    ),
-                    const SizedBox(height: 12),
-                    GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: MediaQuery.sizeOf(context).width >= 600
-                          ? 4
-                          : 2,
-                      childAspectRatio: 1.75,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      children: [
-                        _SummaryCard(
-                          label: context.l10n.totalCrops,
-                          value: controller.totalCount,
-                          color: AppColors.primary,
-                        ),
-                        _SummaryCard(
-                          label: context.l10n.healthyCrops,
-                          value: controller.healthyCount,
-                          color: AppColors.primary,
-                        ),
-                        _SummaryCard(
-                          label: context.l10n.cropsNeedingAttention,
-                          value: controller.attentionCount,
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        _SummaryCard(
-                          label: context.l10n.upcomingTasks,
-                          value: taskController.upcomingCount,
-                          color: AppColors.warning,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (controller.crops.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(child: Text(context.l10n.noCropsYet)),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-                sliver: SliverList.separated(
-                  itemCount: controller.crops.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 14),
-                  itemBuilder: (context, index) => _CropCard(
-                    crop: controller.crops[index],
-                    onTap: () => Navigator.of(context).pushNamed(
-                      AppRoutes.cropDetails,
-                      arguments: controller.crops[index].id,
-                    ),
+                      ),
+                      const SizedBox(height: 12),
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: MediaQuery.sizeOf(context).width >= 600
+                            ? 4
+                            : 2,
+                        childAspectRatio: 1.75,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        children: [
+                          _SummaryCard(
+                            label: context.l10n.totalCrops,
+                            value: controller.totalCount,
+                            color: AppColors.primary,
+                          ),
+                          _SummaryCard(
+                            label: context.l10n.healthyCrops,
+                            value: controller.healthyCount,
+                            color: AppColors.primary,
+                          ),
+                          _SummaryCard(
+                            label: context.l10n.cropsNeedingAttention,
+                            value: controller.attentionCount,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                          _SummaryCard(
+                            label: context.l10n.upcomingTasks,
+                            value: taskController.upcomingCount,
+                            color: AppColors.warning,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
+              if (controller.crops.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: Text(context.l10n.noCropsYet)),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+                  sliver: SliverList.separated(
+                    itemCount: controller.crops.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 14),
+                    itemBuilder: (context, index) => _CropCard(
+                      crop: controller.crops[index],
+                      onTap: () => Navigator.of(context).pushNamed(
+                        AppRoutes.cropDetails,
+                        arguments: controller.crops[index].id,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SyncStatus extends StatelessWidget {
+  const _SyncStatus({required this.controller});
+
+  final CropController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final isError =
+        controller.error != null ||
+        controller.syncIssue == CropSyncIssue.server ||
+        controller.syncIssue == CropSyncIssue.unauthorized;
+    final message = isError
+        ? context.l10n.cropServerError
+        : controller.hasPendingChanges
+        ? context.l10n.cropChangesPending
+        : context.l10n.cropOfflineCache;
+    return Material(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          children: [
+            Icon(
+              isError ? Icons.cloud_off_outlined : Icons.cloud_sync_outlined,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+            TextButton(
+              onPressed: controller.isLoading ? null : controller.refresh,
+              child: Text(context.l10n.retry),
+            ),
           ],
         ),
       ),
@@ -173,7 +234,7 @@ class _CropCard extends StatelessWidget {
             ),
           ),
           clipBehavior: Clip.antiAlias,
-          child: InkWell(
+          child: AppPressable(
             key: ValueKey('crop_card_${crop.id}'),
             onTap: onTap,
             child: Padding(

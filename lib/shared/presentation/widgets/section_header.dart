@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
 class SectionHeader extends StatelessWidget {
   const SectionHeader({
@@ -25,7 +26,11 @@ class SectionHeader extends StatelessWidget {
           ),
         ),
         if (action != null)
-          TextButton(onPressed: onAction, child: Text(action!)),
+          AppPressable(
+            enabled: onAction != null,
+            haptic: AppPressableHaptic.selection,
+            child: TextButton(onPressed: onAction, child: Text(action!)),
+          ),
       ],
     );
   }

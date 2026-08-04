@@ -12,23 +12,31 @@ import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_ch
 import 'package:krishi_sech/core/localization/locale_controller.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/features/location/data/repositories/location_repository_impl.dart';
+import 'package:krishi_sech/features/login/data/repositories/in_memory_auth_repository.dart';
+import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
+import 'package:krishi_sech/features/login/presentation/controllers/auth_controller.dart';
 import 'package:krishi_sech/features/location/data/services/location_service.dart';
 import 'package:krishi_sech/features/location/domain/entities/farm_location.dart';
 import 'package:krishi_sech/features/location/presentation/controllers/location_controller.dart';
 import 'package:krishi_sech/features/location/presentation/location_scope.dart';
+import 'package:krishi_sech/features/home/presentation/pages/home_page.dart';
 import 'package:krishi_sech/features/weather/presentation/controllers/weather_controller.dart';
 import 'package:krishi_sech/features/weather/presentation/weather_scope.dart';
 import 'package:krishi_sech/features/weather/domain/entities/current_weather.dart';
 import 'package:krishi_sech/features/weather/domain/repositories/weather_repository.dart';
 import 'package:krishi_sech/features/location/domain/services/address_sanitizer.dart';
 import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_data_source.dart';
+import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_health_record_data_source.dart';
 import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_task_data_source.dart';
 import 'package:krishi_sech/features/my_crop/data/repositories/crop_repository_impl.dart';
+import 'package:krishi_sech/features/my_crop/data/repositories/crop_health_record_repository_impl.dart';
 import 'package:krishi_sech/features/my_crop/data/repositories/crop_task_repository_impl.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
+import 'package:krishi_sech/features/my_crop/domain/entities/crop_health_record.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_task.dart';
 import 'package:krishi_sech/features/my_crop/domain/services/crop_task_rule_service.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
+import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_health_record_controller.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_task_controller.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_scope.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
@@ -76,45 +84,48 @@ class _LocalizedRouteApp extends StatelessWidget {
     final resolvedTaskController =
         cropTaskController ??
         CropTaskController.inMemory(cropController: resolvedCropController);
-    return LocationScope(
-      controller: locationController ?? LocationController.inMemory(),
-      child: WeatherScope(
-        controller: weatherController ?? WeatherController.inMemory(),
-        child: SeasonalAdviceScope(
-          controller:
-              seasonalAdviceController ?? SeasonalAdviceController.inMemory(),
-          child: AiChatScope(
+    return AuthScope(
+      controller: AuthController(InMemoryAuthRepository()),
+      child: LocationScope(
+        controller: locationController ?? LocationController.inMemory(),
+        child: WeatherScope(
+          controller: weatherController ?? WeatherController.inMemory(),
+          child: SeasonalAdviceScope(
             controller:
-                aiChatController ??
-                AiChatController(
-                  repository: const LocalAiResponseRepository(),
-                  locationController:
-                      locationController ?? LocationController.inMemory(),
-                  weatherController:
-                      weatherController ?? WeatherController.inMemory(),
-                ),
-            child: CropScope(
-              controller: resolvedCropController,
-              child: CropTaskScope(
-                controller: resolvedTaskController,
-                child: LocaleScope(
-                  controller: controller,
-                  child: AnimatedBuilder(
-                    animation: controller,
-                    builder: (context, _) {
-                      return MaterialApp(
-                        locale: controller.locale,
-                        supportedLocales: AppLocalizations.supportedLocales,
-                        localizationsDelegates: const [
-                          AppLocalizations.delegate,
-                          GlobalMaterialLocalizations.delegate,
-                          GlobalWidgetsLocalizations.delegate,
-                          GlobalCupertinoLocalizations.delegate,
-                        ],
-                        initialRoute: initialRoute,
-                        onGenerateRoute: AppRouter.onGenerateRoute,
-                      );
-                    },
+                seasonalAdviceController ?? SeasonalAdviceController.inMemory(),
+            child: AiChatScope(
+              controller:
+                  aiChatController ??
+                  AiChatController(
+                    repository: const LocalAiResponseRepository(),
+                    locationController:
+                        locationController ?? LocationController.inMemory(),
+                    weatherController:
+                        weatherController ?? WeatherController.inMemory(),
+                  ),
+              child: CropScope(
+                controller: resolvedCropController,
+                child: CropTaskScope(
+                  controller: resolvedTaskController,
+                  child: LocaleScope(
+                    controller: controller,
+                    child: AnimatedBuilder(
+                      animation: controller,
+                      builder: (context, _) {
+                        return MaterialApp(
+                          locale: controller.locale,
+                          supportedLocales: AppLocalizations.supportedLocales,
+                          localizationsDelegates: const [
+                            AppLocalizations.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                          ],
+                          initialRoute: initialRoute,
+                          onGenerateRoute: AppRouter.onGenerateRoute,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -139,6 +150,22 @@ class _FakeWeatherRepository implements WeatherRepository {
       windSpeedKmh: 9,
     );
   }
+}
+
+class _CachedWeatherRepository implements WeatherSyncAwareRepository {
+  @override
+  bool get isUsingCachedData => true;
+
+  @override
+  Future<CurrentWeather> fetchCurrentWeather(FarmLocation location) async =>
+      CurrentWeather(
+        temperatureCelsius: 29,
+        weatherCode: 2,
+        humidityPercent: 88,
+        windSpeedKmh: 11,
+        rainProbabilityPercent: 70,
+        updatedAt: DateTime(2026, 8, 4, 10, 30),
+      );
 }
 
 class _FakeNotificationService implements NotificationService {
@@ -173,6 +200,48 @@ class _FakeNotificationService implements NotificationService {
 }
 
 void main() {
+  group('Crop Health Record', () {
+    CropHealthRecord record({String title = 'Leaf spots'}) {
+      final now = DateTime(2026, 8, 3);
+      return CropHealthRecord(
+        id: 'record-1',
+        cropId: 'crop-1',
+        type: CropHealthRecordType.disease,
+        title: title,
+        details: 'Observed on lower leaves',
+        occurredAt: now,
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+
+    test('adds, edits, deletes and restores records', () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      final repository = CropHealthRecordRepositoryImpl(
+        LocalCropHealthRecordDataSource(preferences),
+      );
+      final controller = await CropHealthRecordController.load(repository);
+
+      await controller.addRecord(record());
+      expect(controller.recordsForCrop('crop-1').single.title, 'Leaf spots');
+
+      final restored = await CropHealthRecordController.load(repository);
+      expect(restored.recordsForCrop('crop-1'), hasLength(1));
+
+      await restored.updateRecord(record(title: 'Updated leaf spots'));
+      expect(
+        restored.recordsForCrop('crop-1').single.title,
+        'Updated leaf spots',
+      );
+
+      await restored.deleteRecord('record-1');
+      expect(restored.recordsForCrop('crop-1'), isEmpty);
+      final afterRestart = await CropHealthRecordController.load(repository);
+      expect(afterRestart.recordsForCrop('crop-1'), isEmpty);
+    });
+  });
+
   group('My Crops local feature', () {
     Crop testCrop({
       String id = 'crop-1',
@@ -189,6 +258,11 @@ void main() {
       landAreaUnit: LandAreaUnit.acre,
       growthStage: stage,
       irrigationType: IrrigationType.sprinkler,
+      soilType: SoilType.loamy,
+      plantingMethod: PlantingMethod.directSowing,
+      seedBrand: 'Krishi Seeds',
+      lastFertilizerUsed: 'Compost',
+      lastPesticideUsed: 'Neem oil',
       health: health,
     );
 
@@ -246,6 +320,11 @@ void main() {
       expect(restored.crops.single.kind, CropKind.maize);
       expect(restored.crops.single.variety, 'HQPM-1');
       expect(restored.crops.single.landArea, 2);
+      expect(restored.crops.single.soilType, SoilType.loamy);
+      expect(restored.crops.single.plantingMethod, PlantingMethod.directSowing);
+      expect(restored.crops.single.seedBrand, 'Krishi Seeds');
+      expect(restored.crops.single.lastFertilizerUsed, 'Compost');
+      expect(restored.crops.single.lastPesticideUsed, 'Neem oil');
     });
 
     testWidgets('add, restart, edit, Home update, delete and count lifecycle', (
@@ -1193,6 +1272,56 @@ void main() {
     expect(find.text('Weather Details'), findsOneWidget);
   });
 
+  testWidgets('cached Bangla weather fits a small screen with large text', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 720);
+    tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    final locationController = LocationController.inMemory(
+      location: const FarmLocation(
+        city: 'কলকাতা',
+        district: 'কলকাতা জেলা',
+        state: 'পশ্চিমবঙ্গ',
+      ),
+    );
+    final weatherController = WeatherController(
+      repository: _CachedWeatherRepository(),
+      locationController: locationController,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('bn'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: WeatherScope(
+          controller: weatherController,
+          child: const Scaffold(
+            body: Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(width: 280, child: HomeWeatherCard()),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('weather_card')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    weatherController.dispose();
+  });
+
   test('weather refreshes automatically when saved location changes', () async {
     final locationController = LocationController.inMemory(
       location: const FarmLocation(
@@ -1282,7 +1411,12 @@ void main() {
     await tester.tap(find.byKey(const Key('language_continue')));
     await tester.pumpAndSettle();
 
+    await tester.enterText(find.byType(TextField), '9876543210');
     await tester.tap(find.widgetWithText(FilledButton, 'Continue'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('otp_field')), '123456');
+    await tester.tap(find.byKey(const Key('verify_otp_button')));
     await tester.pumpAndSettle();
 
     expect(find.text('Good morning,'), findsOneWidget);
@@ -1559,5 +1693,18 @@ void main() {
     );
     expect(find.text('Chomu, Jaipur, Rajasthan'), findsOneWidget);
     expect(find.text('Your Location'), findsNothing);
+  });
+
+  testWidgets('routes with missing arguments fail safely', (tester) async {
+    await tester.pumpWidget(
+      _LocalizedRouteApp(
+        initialRoute: AppRoutes.otp,
+        controller: LocaleController.inMemory(locale: const Locale('en')),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Page not found'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

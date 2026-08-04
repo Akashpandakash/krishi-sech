@@ -8,3 +8,10 @@ abstract interface class CropRepository {
 
   Future<bool> hasUserCrops();
 }
+
+enum CropSyncIssue { offline, unauthorized, server }
+
+abstract interface class CropSyncAwareRepository implements CropRepository {
+  CropSyncIssue? get lastSyncIssue;
+  bool get hasPendingChanges;
+}

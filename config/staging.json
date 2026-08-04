@@ -1,0 +1,9 @@
+{
+  "APP_ENV": "staging",
+  "API_BASE_URL": "https://staging-api.krishisech.com",
+  "REQUEST_TIMEOUT_MS": "25000",
+  "LOGGING_ENABLED": "true",
+  "DEMO_LOGIN_ENABLED": "false",
+  "DEBUG_OTP_ENABLED": "false",
+  "OPENAI_ENABLED": "true"
+}

@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String         @id @default(uuid())
+  phone             String         @unique
+  name              String?
+  preferredLanguage String         @default("bn")
+  isActive          Boolean        @default(true)
+  refreshTokens     RefreshToken[]
+  crops             Crop[]
+  calendarTasks     CalendarTask[]
+  fertilizerRecommendations FertilizerRecommendation[]
+  irrigationRecommendations IrrigationRecommendation[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@map("users")
+}
+
+enum GrowthStage {
+  sowing
+  germination
+  seedling
+  vegetative
+  flowering
+  fruiting
+  maturity
+  harvested
+}
+
+enum LandUnit {
+  acre
+  hectare
+  bigha
+  katha
+}
+
+enum SoilType {
+  alluvial
+  black
+  red
+  laterite
+  sandy
+  clay
+  loamy
+  other
+}
+
+enum IrrigationMethod {
+  drip
+  sprinkler
+  flood
+  rainFed
+  manual
+}
+
+enum CropHealthStatus {
+  healthy
+  moderate
+  needsAttention
+}
+
+model Crop {
+  id                  String           @id @default(uuid())
+  userId              String
+  cropName            String
+  variety             String
+  sowingDate          DateTime
+  growthStage         GrowthStage
+  landArea            Float
+  landUnit            LandUnit
+  soilType            SoilType
+  irrigationMethod    IrrigationMethod
+  expectedHarvestDate DateTime?
+  healthStatus        CropHealthStatus @default(healthy)
+  notes               String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendarTasks       CalendarTask[]
+  fertilizerRecommendations FertilizerRecommendation[]
+  irrigationRecommendations IrrigationRecommendation[]
+
+  @@index([userId, createdAt])
+  @@map("crops")
+}
+
+model CalendarTask {
+  id              String   @id
+  userId          String
+  cropId          String
+  taskType        String
+  dueDate         DateTime
+  status          String
+  notes           String?
+  reminderEnabled Boolean
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop            Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  @@index([userId, dueDate])
+  @@index([cropId])
+  @@map("calendar_tasks")
+}
+
+model FertilizerRecommendation {
+  id                     String   @id
+  userId                 String
+  cropId                 String
+  language               String
+  engineVersion          String
+  recommendedFertilizer  String
+  quantity               Json
+  applicationMethod      String
+  bestApplicationTime    String
+  safetyPrecautions      Json
+  organicAlternative     String
+  nextRecommendationDate DateTime
+  confidence             Float
+  createdAt              DateTime @default(now())
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop                    Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  @@index([userId, cropId, createdAt])
+  @@map("fertilizer_recommendations")
+}
+
+model IrrigationRecommendation {
+  id                     String   @id
+  userId                 String
+  cropId                 String
+  language               String
+  landType               String
+  engineVersion          String
+  irrigationRequired     Boolean
+  waterQuantity          Json
+  bestIrrigationTime     String
+  irrigationMethod       String
+  nextIrrigationDate     DateTime
+  confidence             Float
+  reasoning              String
+  createdAt              DateTime @default(now())
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crop                    Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
+
+  @@index([userId, cropId, createdAt])
+  @@map("irrigation_recommendations")
+}
+
+model OtpCode {
+  id         String    @id @default(uuid())
+  phone      String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone, createdAt])
+  @@map("otp_codes")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@map("refresh_tokens")
+}
