@@ -20,7 +20,10 @@ import { CalendarTaskService } from './calendar/services/calendar-task-service.j
 import { PrismaCropRepository } from './crops/repositories/prisma-crop-repository.js';
 import { createCropRouter } from './crops/routes/crop-routes.js';
 import { CropService } from './crops/services/crop-service.js';
-import { createErrorHandler, notFoundHandler } from './middleware/error-handler.js';
+import {
+  createErrorHandler,
+  notFoundHandler,
+} from './middleware/error-handler.js';
 import { requestIdMiddleware } from './middleware/request-id.js';
 import { createCorsMiddleware } from './middleware/cors.js';
 import { createRateLimiter } from './middleware/rate-limit.js';
@@ -35,6 +38,10 @@ import { PrismaIrrigationRecommendationRepository } from './irrigation/repositor
 import { createWeatherRouter } from './weather/routes/weather-routes.js';
 import { WeatherService } from './weather/services/weather-service.js';
 import { OpenMeteoWeatherProvider } from './weather/providers/open-meteo-weather-provider.js';
+import { createProfileRouter } from './profile/routes/profile-routes.js';
+import { ProfileService } from './profile/services/profile-service.js';
+import { PrismaProfileRepository } from './profile/repositories/prisma-profile-repository.js';
+import { InMemoryProfileRepository } from './profile/repositories/in-memory-profile-repository.js';
 
 interface CreateAppOptions {
   config?: ReturnType<typeof loadAppConfig>;
@@ -52,6 +59,7 @@ export function createApp(
   irrigationRecommendationService?: IrrigationRecommendationService,
   weatherService?: WeatherService,
   options: CreateAppOptions = {},
+  profileService?: ProfileService,
 ) {
   const runtimeConfig = options.config ?? loadAppConfig();
   const application = express();
@@ -83,14 +91,16 @@ export function createApp(
     application.use((request, response, next) => {
       const startedAt = performance.now();
       response.on('finish', () => {
-        console.log(JSON.stringify({
-          event: 'http_request',
-          requestId: response.locals.requestId,
-          method: request.method,
-          path: request.path,
-          statusCode: response.statusCode,
-          responseTimeMs: Math.round(performance.now() - startedAt),
-        }));
+        console.log(
+          JSON.stringify({
+            event: 'http_request',
+            requestId: response.locals.requestId,
+            method: request.method,
+            path: request.path,
+            statusCode: response.statusCode,
+            responseTimeMs: Math.round(performance.now() - startedAt),
+          }),
+        );
       });
       next();
     });
@@ -105,14 +115,16 @@ export function createApp(
   application.get('/api/ready', async (_request, response) => {
     let timeout: NodeJS.Timeout | undefined;
     try {
-      if (!options.readinessProbe) throw new Error('Database probe unavailable');
+      if (!options.readinessProbe)
+        throw new Error('Database probe unavailable');
       await Promise.race([
         options.readinessProbe(),
-        new Promise<never>((_resolve, reject) =>
-          timeout = setTimeout(
-            () => reject(new Error('Database probe timed out')),
-            3000,
-          ),
+        new Promise<never>(
+          (_resolve, reject) =>
+            (timeout = setTimeout(
+              () => reject(new Error('Database probe timed out')),
+              3000,
+            )),
         ),
       ]);
       response.status(200).json({
@@ -170,12 +182,30 @@ export function createApp(
     );
   }
   if (fertilizerRecommendationService) {
-    application.use('/api/fertilizer', createFertilizerRecommendationRouter(authService, fertilizerRecommendationService));
+    application.use(
+      '/api/fertilizer',
+      createFertilizerRecommendationRouter(
+        authService,
+        fertilizerRecommendationService,
+      ),
+    );
   }
   if (irrigationRecommendationService) {
-    application.use('/api/irrigation', createIrrigationRecommendationRouter(authService, irrigationRecommendationService));
+    application.use(
+      '/api/irrigation',
+      createIrrigationRecommendationRouter(
+        authService,
+        irrigationRecommendationService,
+      ),
+    );
   }
-  if (weatherService) application.use('/api/weather', createWeatherRouter(weatherService));
+  if (weatherService)
+    application.use('/api/weather', createWeatherRouter(weatherService));
+  if (profileService)
+    application.use(
+      '/api/profile',
+      createProfileRouter(authService, profileService),
+    );
   application.use(notFoundHandler);
   application.use(
     createErrorHandler({
@@ -192,9 +222,15 @@ export const appConfig = loadAppConfig();
 export const authRepository = process.env.DATABASE_URL
   ? new PrismaAuthRepository(prisma)
   : appConfig.appEnv === 'production'
-    ? (() => { throw new Error('DATABASE_URL is required in production'); })()
+    ? (() => {
+        throw new Error('DATABASE_URL is required in production');
+      })()
     : new InMemoryAuthRepository();
 export const cropRepository = new PrismaCropRepository(prisma);
+export const profileRepository = process.env.DATABASE_URL
+  ? new PrismaProfileRepository(prisma)
+  : new InMemoryProfileRepository(authRepository);
+export const profileService = new ProfileService(profileRepository);
 export const calendarTaskRepository = new PrismaCalendarTaskRepository(prisma);
 export const smsProvider = createSmsProvider(appConfig);
 export const authService = new AuthService(
@@ -219,23 +255,28 @@ export const openAiProvider = new OpenAiCompletionProvider(
   appConfig.requestTimeoutMs,
   appConfig.loggingEnabled,
 );
-export const aiChatService = new AiChatService(aiContextService, openAiProvider);
+export const aiChatService = new AiChatService(
+  aiContextService,
+  openAiProvider,
+);
 export const aiDiseaseScanService = new AiDiseaseScanService(
   aiContextService,
   openAiProvider,
 );
-export const fertilizerRecommendationService = new FertilizerRecommendationService(
-  cropRepository,
-  aiContextService,
-  new RuleBasedFertilizerRecommendationProvider(),
-  new PrismaFertilizerRecommendationRepository(prisma),
-);
-export const irrigationRecommendationService = new IrrigationRecommendationService(
-  cropRepository,
-  aiContextService,
-  new RuleBasedIrrigationRecommendationProvider(),
-  new PrismaIrrigationRecommendationRepository(prisma),
-);
+export const fertilizerRecommendationService =
+  new FertilizerRecommendationService(
+    cropRepository,
+    aiContextService,
+    new RuleBasedFertilizerRecommendationProvider(),
+    new PrismaFertilizerRecommendationRepository(prisma),
+  );
+export const irrigationRecommendationService =
+  new IrrigationRecommendationService(
+    cropRepository,
+    aiContextService,
+    new RuleBasedIrrigationRecommendationProvider(),
+    new PrismaIrrigationRecommendationRepository(prisma),
+  );
 export const weatherService = new WeatherService(
   new OpenMeteoWeatherProvider(
     fetch,
@@ -259,4 +300,5 @@ export const app = createApp(
       await prisma.$queryRaw`SELECT 1`;
     },
   },
+  profileService,
 );

@@ -372,5 +372,19 @@
   "smartReady": "Ready",
   "smartCached": "Saved",
   "smartUpToDate": "Up to date",
-  "smartNeedsAttention": "Check now"
+  "smartNeedsAttention": "Check now",
+  "save": "Save",
+  "requiredField": "This field is required.",
+  "landAreaGreaterThanZero": "Land area must be greater than zero.",
+  "fullName": "Full name",
+  "farmName": "Farm name",
+  "farmerType": "Farmer type",
+  "totalLandArea": "Total land area",
+  "irrigationSource": "Irrigation source",
+  "mainCrops": "Main crops (comma separated)",
+  "coarseLocationOptional": "Coarse location (optional)",
+  "profileUnavailable": "Profile is unavailable",
+  "profileLoadError": "Profile could not be loaded. Pull down or tap refresh to retry.",
+  "featureComingSoon": "This option is coming soon.",
+  "farmer": "Farmer"
 }

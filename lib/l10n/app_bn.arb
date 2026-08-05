@@ -367,5 +367,19 @@
   "smartReady": "প্রস্তুত",
   "smartCached": "সংরক্ষিত",
   "smartUpToDate": "হালনাগাদ",
-  "smartNeedsAttention": "এখনই দেখুন"
+  "smartNeedsAttention": "এখনই দেখুন",
+  "save": "সংরক্ষণ করুন",
+  "requiredField": "এই তথ্যটি আবশ্যক।",
+  "landAreaGreaterThanZero": "জমির পরিমাণ শূন্যের বেশি হতে হবে।",
+  "fullName": "পুরো নাম",
+  "farmName": "খামারের নাম",
+  "farmerType": "কৃষকের ধরন",
+  "totalLandArea": "মোট জমির পরিমাণ",
+  "irrigationSource": "সেচের উৎস",
+  "mainCrops": "প্রধান ফসল (কমা দিয়ে আলাদা করুন)",
+  "coarseLocationOptional": "আনুমানিক অবস্থান (ঐচ্ছিক)",
+  "profileUnavailable": "প্রোফাইল পাওয়া যাচ্ছে না",
+  "profileLoadError": "প্রোফাইল লোড করা যায়নি। আবার চেষ্টা করতে নিচে টানুন বা রিফ্রেশ চাপুন।",
+  "featureComingSoon": "এই সুবিধাটি শীঘ্রই আসছে।",
+  "farmer": "কৃষক"
 }

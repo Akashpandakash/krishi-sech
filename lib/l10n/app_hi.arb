@@ -367,5 +367,19 @@
   "smartReady": "तैयार",
   "smartCached": "सहेजा हुआ",
   "smartUpToDate": "अप-टू-डेट",
-  "smartNeedsAttention": "अभी जाँचें"
+  "smartNeedsAttention": "अभी जाँचें",
+  "save": "सहेजें",
+  "requiredField": "यह जानकारी आवश्यक है।",
+  "landAreaGreaterThanZero": "भूमि क्षेत्र शून्य से अधिक होना चाहिए।",
+  "fullName": "पूरा नाम",
+  "farmName": "खेत का नाम",
+  "farmerType": "किसान का प्रकार",
+  "totalLandArea": "कुल भूमि क्षेत्र",
+  "irrigationSource": "सिंचाई का स्रोत",
+  "mainCrops": "मुख्य फसलें (अल्पविराम से अलग करें)",
+  "coarseLocationOptional": "सामान्य स्थान (वैकल्पिक)",
+  "profileUnavailable": "प्रोफ़ाइल उपलब्ध नहीं है",
+  "profileLoadError": "प्रोफ़ाइल लोड नहीं हुई। दोबारा प्रयास के लिए नीचे खींचें या रीफ़्रेश दबाएँ।",
+  "featureComingSoon": "यह सुविधा जल्द उपलब्ध होगी।",
+  "farmer": "किसान"
 }

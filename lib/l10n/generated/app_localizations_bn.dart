@@ -1555,4 +1555,47 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get smartNeedsAttention => 'এখনই দেখুন';
+
+  @override
+  String get save => 'সংরক্ষণ করুন';
+
+  @override
+  String get requiredField => 'এই তথ্যটি আবশ্যক।';
+
+  @override
+  String get landAreaGreaterThanZero => 'জমির পরিমাণ শূন্যের বেশি হতে হবে।';
+
+  @override
+  String get fullName => 'পুরো নাম';
+
+  @override
+  String get farmName => 'খামারের নাম';
+
+  @override
+  String get farmerType => 'কৃষকের ধরন';
+
+  @override
+  String get totalLandArea => 'মোট জমির পরিমাণ';
+
+  @override
+  String get irrigationSource => 'সেচের উৎস';
+
+  @override
+  String get mainCrops => 'প্রধান ফসল (কমা দিয়ে আলাদা করুন)';
+
+  @override
+  String get coarseLocationOptional => 'আনুমানিক অবস্থান (ঐচ্ছিক)';
+
+  @override
+  String get profileUnavailable => 'প্রোফাইল পাওয়া যাচ্ছে না';
+
+  @override
+  String get profileLoadError =>
+      'প্রোফাইল লোড করা যায়নি। আবার চেষ্টা করতে নিচে টানুন বা রিফ্রেশ চাপুন।';
+
+  @override
+  String get featureComingSoon => 'এই সুবিধাটি শীঘ্রই আসছে।';
+
+  @override
+  String get farmer => 'কৃষক';
 }

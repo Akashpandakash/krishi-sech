@@ -2989,6 +2989,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check now'**
   String get smartNeedsAttention;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get requiredField;
+
+  /// No description provided for @landAreaGreaterThanZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Land area must be greater than zero.'**
+  String get landAreaGreaterThanZero;
+
+  /// No description provided for @fullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get fullName;
+
+  /// No description provided for @farmName.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm name'**
+  String get farmName;
+
+  /// No description provided for @farmerType.
+  ///
+  /// In en, this message translates to:
+  /// **'Farmer type'**
+  String get farmerType;
+
+  /// No description provided for @totalLandArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Total land area'**
+  String get totalLandArea;
+
+  /// No description provided for @irrigationSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Irrigation source'**
+  String get irrigationSource;
+
+  /// No description provided for @mainCrops.
+  ///
+  /// In en, this message translates to:
+  /// **'Main crops (comma separated)'**
+  String get mainCrops;
+
+  /// No description provided for @coarseLocationOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Coarse location (optional)'**
+  String get coarseLocationOptional;
+
+  /// No description provided for @profileUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile is unavailable'**
+  String get profileUnavailable;
+
+  /// No description provided for @profileLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile could not be loaded. Pull down or tap refresh to retry.'**
+  String get profileLoadError;
+
+  /// No description provided for @featureComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This option is coming soon.'**
+  String get featureComingSoon;
+
+  /// No description provided for @farmer.
+  ///
+  /// In en, this message translates to:
+  /// **'Farmer'**
+  String get farmer;
 }
 
 class _AppLocalizationsDelegate

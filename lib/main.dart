@@ -38,6 +38,11 @@ import 'package:krishi_sech/features/weather/data/datasources/local_weather_data
 import 'package:krishi_sech/features/weather/data/services/weather_service.dart';
 import 'package:krishi_sech/features/weather/presentation/controllers/weather_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:krishi_sech/features/profile/data/datasources/local_profile_data_source.dart';
+import 'package:krishi_sech/features/profile/data/datasources/remote_profile_data_source.dart';
+import 'package:krishi_sech/features/profile/data/repositories/in_memory_profile_repository.dart';
+import 'package:krishi_sech/features/profile/data/repositories/synced_profile_repository.dart';
+import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,6 +70,8 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
   CropTaskController? _cropTaskController;
   CropHealthRecordController? _cropHealthRecordController;
   AuthController? _authController;
+  ProfileController? _profileController;
+  String? _loadedProfileUserId;
   int _revision = 0;
 
   @override
@@ -88,7 +95,9 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       controller.dispose();
       return;
     }
+    controller.addListener(_handleAuthChange);
     setState(() {
+      _authController?.removeListener(_handleAuthChange);
       _authController?.dispose();
       _authController = controller;
       _revision++;
@@ -114,6 +123,33 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       SharedPreferences.getInstance,
       const Duration(seconds: 4),
     );
+
+    final profileController = ProfileController(
+      preferences == null
+          ? InMemoryProfileRepository()
+          : SyncedProfileRepository(
+              LocalProfileDataSource(preferences),
+              RemoteProfileDataSource(
+                baseUrl: ApiConfig.baseUrl,
+                accessTokenProvider: ({bool forceRefresh = false}) =>
+                    _authController?.getAccessToken(
+                      forceRefresh: forceRefresh,
+                    ) ??
+                    Future<String?>.value(),
+              ),
+            ),
+      demoMode:
+          AppEnvironment.demoModeEnabled &&
+          _authController?.session?.user.phone == '+919999999999',
+    );
+    if (_authController?.isAuthenticated == true) {
+      await _safeLoad(
+        'profile',
+        profileController.load,
+        const Duration(seconds: 6),
+      );
+      _loadedProfileUserId = _authController?.session?.user.id;
+    }
 
     NotificationService notificationService = const NoopNotificationService();
     final localNotifications = LocalNotificationService();
@@ -249,6 +285,7 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       _cropController = cropController;
       _cropTaskController = cropTaskController;
       _cropHealthRecordController = cropHealthRecordController;
+      _profileController = profileController;
       _revision++;
     });
   }
@@ -258,6 +295,23 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AppRouter.navigatorKey.currentState?.pushNamed(AppRoutes.cropCalendar);
     });
+  }
+
+  void _handleAuthChange() {
+    final userId = _authController?.session?.user.id;
+    if (userId == null ||
+        userId == _loadedProfileUserId ||
+        _profileController == null) {
+      return;
+    }
+    _loadedProfileUserId = userId;
+    unawaited(
+      _safeLoad(
+        'profile after login',
+        _profileController!.load,
+        const Duration(seconds: 6),
+      ),
+    );
   }
 
   Future<T?> _safeLoad<T>(
@@ -286,7 +340,9 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     _weatherController?.dispose();
     _locationController?.dispose();
     _localeController?.dispose();
+    _authController?.removeListener(_handleAuthChange);
     _authController?.dispose();
+    _profileController?.dispose();
     super.dispose();
   }
 
@@ -302,5 +358,6 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     cropTaskController: _cropTaskController,
     cropHealthRecordController: _cropHealthRecordController,
     authController: _authController,
+    profileController: _profileController,
   );
 }

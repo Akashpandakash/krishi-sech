@@ -38,6 +38,8 @@ import { loadAppConfig } from './config/app-config.js';
 import { AppError } from './common/app-error.js';
 import { requestIdMiddleware } from './middleware/request-id.js';
 import { createErrorHandler } from './middleware/error-handler.js';
+import { InMemoryProfileRepository } from './profile/repositories/in-memory-profile-repository.js';
+import { ProfileService } from './profile/services/profile-service.js';
 
 describe('GET /api/health', () => {
   it('preserves the backend health endpoint', async () => {
@@ -78,9 +80,11 @@ class MemoryAuthRepository implements AuthRepository {
   }
 
   async findLatestOtp(phone: string) {
-    return [...this.otps]
-      .reverse()
-      .find((otp) => otp.phone === phone && !otp.consumedAt) ?? null;
+    return (
+      [...this.otps]
+        .reverse()
+        .find((otp) => otp.phone === phone && !otp.consumedAt) ?? null
+    );
   }
 
   async incrementOtpAttempts(id: string) {
@@ -130,11 +134,7 @@ class MemoryAuthRepository implements AuthRepository {
     return user;
   }
 
-  async createRefreshToken(
-    userId: string,
-    tokenHash: string,
-    expiresAt: Date,
-  ) {
+  async createRefreshToken(userId: string, tokenHash: string, expiresAt: Date) {
     this.refreshTokens.push({
       id: `refresh-${this.refreshTokens.length + 1}`,
       userId,
@@ -145,7 +145,9 @@ class MemoryAuthRepository implements AuthRepository {
   }
 
   async findRefreshToken(tokenHash: string) {
-    return this.refreshTokens.find((token) => token.tokenHash === tokenHash) ?? null;
+    return (
+      this.refreshTokens.find((token) => token.tokenHash === tokenHash) ?? null
+    );
   }
 
   async rotateRefreshToken(
@@ -341,10 +343,116 @@ describe('production infrastructure middleware', () => {
       createErrorHandler({ production: true, loggingEnabled: false }),
     );
     const response = await request(errorApp).get('/failure').expect(502);
-    assert.equal(response.body.error.message, 'Service temporarily unavailable');
+    assert.equal(
+      response.body.error.message,
+      'Service temporarily unavailable',
+    );
     assert.equal(response.body.error.code, 'UPSTREAM_FAILED');
     assert.ok(response.body.requestId);
-    assert.doesNotMatch(JSON.stringify(response.body), /private upstream detail/);
+    assert.doesNotMatch(
+      JSON.stringify(response.body),
+      /private upstream detail/,
+    );
+  });
+});
+
+describe('authenticated user and farm profiles', () => {
+  async function fixture() {
+    const repository = new MemoryAuthRepository();
+    const auth = new AuthService(
+      repository,
+      new DummySmsProvider(),
+      testConfig,
+    );
+    const profiles = new ProfileService(
+      new InMemoryProfileRepository(repository),
+    );
+    const profileApp = createApp(
+      auth,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      {},
+      profiles,
+    );
+    const sent = await request(profileApp)
+      .post('/api/auth/send-otp')
+      .send({ phone: '+919812345678' })
+      .expect(200);
+    const verified = await request(profileApp)
+      .post('/api/auth/verify-otp')
+      .send({ phone: '+919812345678', otp: sent.body.data.debugOtp })
+      .expect(200);
+    return {
+      app: profileApp,
+      authorization: `Bearer ${verified.body.data.accessToken}`,
+    };
+  }
+
+  it('reads and updates only the authenticated user profile', async () => {
+    const value = await fixture();
+    await request(value.app).get('/api/profile').expect(401);
+    const updated = await request(value.app)
+      .put('/api/profile')
+      .set('Authorization', value.authorization)
+      .send({
+        name: 'Akash Farmer',
+        preferredLanguage: 'bn',
+        state: 'West Bengal',
+        district: 'Kolkata',
+        village: 'New Town',
+      })
+      .expect(200);
+    assert.equal(updated.body.data.name, 'Akash Farmer');
+    assert.equal(updated.body.data.phone, '+919812345678');
+    const fetched = await request(value.app)
+      .get('/api/profile')
+      .set('Authorization', value.authorization)
+      .expect(200);
+    assert.equal(fetched.body.data.name, 'Akash Farmer');
+  });
+
+  it('validates and persists the authenticated farm profile', async () => {
+    const value = await fixture();
+    await request(value.app)
+      .put('/api/profile/farm')
+      .set('Authorization', value.authorization)
+      .send({
+        farmName: '',
+        farmerType: 'small',
+        totalLandArea: 0,
+        landUnit: 'acre',
+        soilType: 'loamy',
+        irrigationSource: 'canal',
+        mainCrops: [],
+      })
+      .expect(400);
+    const body = {
+      farmName: 'Green Farm',
+      farmerType: 'small',
+      totalLandArea: 2.5,
+      landUnit: 'acre',
+      soilType: 'loamy',
+      irrigationSource: 'canal',
+      mainCrops: ['Paddy', 'Wheat'],
+      coarseLocation: 'Kolkata district',
+    };
+    await request(value.app)
+      .put('/api/profile/farm')
+      .set('Authorization', value.authorization)
+      .send(body)
+      .expect(200);
+    const fetched = await request(value.app)
+      .get('/api/profile/farm')
+      .set('Authorization', value.authorization)
+      .expect(200);
+    assert.equal(fetched.body.data.farmName, 'Green Farm');
+    assert.deepEqual(fetched.body.data.mainCrops, ['Paddy', 'Wheat']);
   });
 });
 
@@ -369,9 +477,10 @@ class MemoryCropRepository implements CropRepository {
   }
 
   async findByIdAndUser(id: string, userId: string) {
-    return this.crops.find(
-      (crop) => crop.id === id && crop.userId === userId,
-    ) ?? null;
+    return (
+      this.crops.find((crop) => crop.id === id && crop.userId === userId) ??
+      null
+    );
   }
 
   async update(id: string, userId: string, input: CropInput) {
@@ -410,7 +519,10 @@ class MemoryCalendarTaskRepository implements CalendarTaskRepository {
   }
 
   async findByIdAndUser(id: string, userId: string) {
-    return this.tasks.find((task) => task.id === id && task.userId === userId) ?? null;
+    return (
+      this.tasks.find((task) => task.id === id && task.userId === userId) ??
+      null
+    );
   }
 
   async update(
@@ -528,19 +640,31 @@ describe('authentication', () => {
   it('throttles repeated OTP requests', async () => {
     const fixture = authenticationFixture();
     const body = { phone: '+919876543210' };
-    await request(fixture.app).post('/api/auth/send-otp').send(body).expect(200);
-    await request(fixture.app).post('/api/auth/send-otp').send(body).expect(200);
-    await request(fixture.app).post('/api/auth/send-otp').send(body).expect(200);
-    await request(fixture.app).post('/api/auth/send-otp').send(body).expect(429);
+    await request(fixture.app)
+      .post('/api/auth/send-otp')
+      .send(body)
+      .expect(200);
+    await request(fixture.app)
+      .post('/api/auth/send-otp')
+      .send(body)
+      .expect(200);
+    await request(fixture.app)
+      .post('/api/auth/send-otp')
+      .send(body)
+      .expect(200);
+    await request(fixture.app)
+      .post('/api/auth/send-otp')
+      .send(body)
+      .expect(429);
   });
 
   it('uses the demo OTP and stable demo user only for a development client', async () => {
     const repository = new MemoryAuthRepository();
-    const service = new AuthService(
-      repository,
-      new DummySmsProvider(),
-      { ...testConfig, demoLoginEnabled: true, exposeDebugOtp: false },
-    );
+    const service = new AuthService(repository, new DummySmsProvider(), {
+      ...testConfig,
+      demoLoginEnabled: true,
+      exposeDebugOtp: false,
+    });
     const demoApp = createApp(service);
     const headers = { 'X-Krishi-Development-Client': 'true' };
     const body = { phone: '+919999999999' };
@@ -573,11 +697,11 @@ describe('authentication', () => {
 
   it('rejects the demo credentials when production demo mode is disabled', async () => {
     const repository = new MemoryAuthRepository();
-    const service = new AuthService(
-      repository,
-      new DummySmsProvider(),
-      { ...testConfig, demoLoginEnabled: false, exposeDebugOtp: false },
-    );
+    const service = new AuthService(repository, new DummySmsProvider(), {
+      ...testConfig,
+      demoLoginEnabled: false,
+      exposeDebugOtp: false,
+    });
     const productionApp = createApp(service);
 
     await request(productionApp)
@@ -857,7 +981,10 @@ describe('POST /api/ai/chat', () => {
       .send({ message: 'Should I irrigate?', language: 'en', history: [] })
       .expect(200);
 
-    assert.equal(response.body.data.reply, 'Check soil moisture before irrigating.');
+    assert.equal(
+      response.body.data.reply,
+      'Check soil moisture before irrigating.',
+    );
     assert.equal(response.body.data.model, 'test-model');
     assert.equal(response.body.data.usage.totalTokens, 26);
     assert.match(provider.messages[0].content, /English/);

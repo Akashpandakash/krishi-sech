@@ -1555,4 +1555,48 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get smartNeedsAttention => 'अभी जाँचें';
+
+  @override
+  String get save => 'सहेजें';
+
+  @override
+  String get requiredField => 'यह जानकारी आवश्यक है।';
+
+  @override
+  String get landAreaGreaterThanZero =>
+      'भूमि क्षेत्र शून्य से अधिक होना चाहिए।';
+
+  @override
+  String get fullName => 'पूरा नाम';
+
+  @override
+  String get farmName => 'खेत का नाम';
+
+  @override
+  String get farmerType => 'किसान का प्रकार';
+
+  @override
+  String get totalLandArea => 'कुल भूमि क्षेत्र';
+
+  @override
+  String get irrigationSource => 'सिंचाई का स्रोत';
+
+  @override
+  String get mainCrops => 'मुख्य फसलें (अल्पविराम से अलग करें)';
+
+  @override
+  String get coarseLocationOptional => 'सामान्य स्थान (वैकल्पिक)';
+
+  @override
+  String get profileUnavailable => 'प्रोफ़ाइल उपलब्ध नहीं है';
+
+  @override
+  String get profileLoadError =>
+      'प्रोफ़ाइल लोड नहीं हुई। दोबारा प्रयास के लिए नीचे खींचें या रीफ़्रेश दबाएँ।';
+
+  @override
+  String get featureComingSoon => 'यह सुविधा जल्द उपलब्ध होगी।';
+
+  @override
+  String get farmer => 'किसान';
 }

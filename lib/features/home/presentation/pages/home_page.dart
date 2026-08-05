@@ -31,6 +31,7 @@ import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
 import 'package:krishi_sech/shared/presentation/widgets/section_header.dart';
 import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
+import 'package:krishi_sech/features/profile/presentation/profile_scope.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -671,7 +672,7 @@ class _GreetingSection extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               Text(
-                'Ramesh Kumar 👋',
+                '${ProfileScope.maybeOf(context)?.greetingName ?? context.l10n.farmer} 👋',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(

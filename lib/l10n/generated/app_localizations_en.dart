@@ -1564,4 +1564,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get smartNeedsAttention => 'Check now';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get requiredField => 'This field is required.';
+
+  @override
+  String get landAreaGreaterThanZero => 'Land area must be greater than zero.';
+
+  @override
+  String get fullName => 'Full name';
+
+  @override
+  String get farmName => 'Farm name';
+
+  @override
+  String get farmerType => 'Farmer type';
+
+  @override
+  String get totalLandArea => 'Total land area';
+
+  @override
+  String get irrigationSource => 'Irrigation source';
+
+  @override
+  String get mainCrops => 'Main crops (comma separated)';
+
+  @override
+  String get coarseLocationOptional => 'Coarse location (optional)';
+
+  @override
+  String get profileUnavailable => 'Profile is unavailable';
+
+  @override
+  String get profileLoadError =>
+      'Profile could not be loaded. Pull down or tap refresh to retry.';
+
+  @override
+  String get featureComingSoon => 'This option is coming soon.';
+
+  @override
+  String get farmer => 'Farmer';
 }

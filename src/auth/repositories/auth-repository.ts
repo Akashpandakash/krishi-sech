@@ -3,6 +3,10 @@ export interface AuthUser {
   phone: string;
   name: string | null;
   preferredLanguage: string;
+  profilePhotoUrl?: string | null;
+  state?: string | null;
+  district?: string | null;
+  village?: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

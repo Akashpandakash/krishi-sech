@@ -11,6 +11,7 @@ import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_sca
 import 'package:krishi_sech/features/location/presentation/location_scope.dart';
 import 'package:krishi_sech/features/weather/presentation/weather_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
+import 'package:krishi_sech/features/profile/presentation/profile_scope.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
 import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 
@@ -212,7 +213,10 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        context.l10n.aiGreetingUser('Ramesh Kumar'),
+                        context.l10n.aiGreetingUser(
+                          ProfileScope.maybeOf(context)?.greetingName ??
+                              context.l10n.farmer,
+                        ),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),
