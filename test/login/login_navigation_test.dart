@@ -169,6 +169,20 @@ void main() {
     );
   });
 
+  test('demo mode is disabled outside development', () {
+    for (final environment in ['staging', 'production']) {
+      expect(
+        AppEnvironment.demoModeFor(
+          debug: true,
+          profile: false,
+          release: false,
+          environment: environment,
+        ),
+        isFalse,
+      );
+    }
+  });
+
   testWidgets('HTTP 200 dispatch opens OTP screen with phone and debug OTP', (
     tester,
   ) async {

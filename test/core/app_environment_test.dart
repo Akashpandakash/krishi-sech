@@ -37,6 +37,24 @@ void main() {
       expect(() => validate(debugOtpEnabled: true), throwsStateError);
     });
 
+    test('rejects staging demo login and debug OTP', () {
+      for (final values in [
+        (demo: true, debugOtp: false),
+        (demo: false, debugOtp: true),
+      ]) {
+        expect(
+          () => AppEnvironment.validateValues(
+            environment: 'staging',
+            apiUrl: 'https://staging.krishisech.example',
+            requestTimeoutMs: 25000,
+            demoLoginEnabled: values.demo,
+            debugOtpEnabled: values.debugOtp,
+          ),
+          throwsStateError,
+        );
+      }
+    });
+
     test('allows local HTTP only in development', () {
       expect(
         () => AppEnvironment.validateValues(

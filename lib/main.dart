@@ -298,13 +298,22 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
   }
 
   void _handleAuthChange() {
-    final userId = _authController?.session?.user.id;
-    if (userId == null ||
-        userId == _loadedProfileUserId ||
-        _profileController == null) {
+    final session = _authController?.session;
+    final userId = session?.user.id;
+    if (_profileController == null) {
       return;
     }
+    if (userId == null) {
+      _loadedProfileUserId = null;
+      _profileController!.clearSession();
+      return;
+    }
+    if (userId == _loadedProfileUserId) return;
     _loadedProfileUserId = userId;
+    if (AppEnvironment.demoModeEnabled && userId == 'demo-farmer') {
+      _profileController!.enterDemoMode();
+      return;
+    }
     unawaited(
       _safeLoad(
         'profile after login',

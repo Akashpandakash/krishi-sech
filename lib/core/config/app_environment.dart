@@ -36,9 +36,7 @@ abstract final class AppEnvironment {
   static const loggingEnabled = !isProduction && _loggingRequested;
 
   static const demoModeEnabled =
-      !isProduction &&
-      _demoLoginRequested &&
-      (isStaging || (!kProfileMode && !kReleaseMode));
+      isDevelopment && _demoLoginRequested && !kProfileMode && !kReleaseMode;
 
   static Duration get requestTimeout =>
       Duration(milliseconds: requestTimeoutMs > 0 ? requestTimeoutMs : 25000);
@@ -70,6 +68,12 @@ abstract final class AppEnvironment {
       throw StateError('API_BASE_URL must be an absolute URL');
     }
     if (environment == 'development') return;
+    if (demoLoginEnabled) {
+      throw StateError('Demo login must be disabled outside development');
+    }
+    if (debugOtpEnabled) {
+      throw StateError('Debug OTP must be disabled outside development');
+    }
     if (uri.scheme != 'https') {
       throw StateError('$environment API_BASE_URL must use HTTPS');
     }
@@ -77,12 +81,6 @@ abstract final class AppEnvironment {
       final host = uri.host.toLowerCase();
       if (_isLocalOrPrivateHost(host)) {
         throw StateError('Production API_BASE_URL cannot use a local host');
-      }
-      if (demoLoginEnabled) {
-        throw StateError('Demo login must be disabled in production');
-      }
-      if (debugOtpEnabled) {
-        throw StateError('Debug OTP must be disabled in production');
       }
     }
   }
@@ -106,5 +104,5 @@ abstract final class AppEnvironment {
     required bool profile,
     required bool release,
     required String environment,
-  }) => !profile && !release && (debug || environment == 'development');
+  }) => environment == 'development' && debug && !profile && !release;
 }

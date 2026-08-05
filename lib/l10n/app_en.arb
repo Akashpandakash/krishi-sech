@@ -63,6 +63,7 @@
   "english": "English",
   "loginWelcome": "Welcome to Krishi Sech",
   "loginSubtitle": "Your simple companion for smarter farming",
+  "demoMode": "Demo Mode",
   "authVerifyOtp": "Verify OTP",
   "authOtpLabel": "6-digit OTP",
   "authOtpSent": "Enter the OTP sent to {phone}",

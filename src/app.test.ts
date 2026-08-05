@@ -693,6 +693,14 @@ describe('authentication', () => {
     assert.equal(first.body.data.user.isActive, true);
     assert.ok(first.body.data.accessToken);
     assert.ok(first.body.data.refreshToken);
+
+    const realUser = await repository.createUser('+919812345678');
+    assert.notEqual(realUser.id, first.body.data.user.id);
+    assert.equal(realUser.name, null);
+    assert.equal(
+      (await repository.findUserByPhone('+919999999999'))?.name,
+      'Demo Farmer',
+    );
   });
 
   it('rejects the demo credentials when production demo mode is disabled', async () => {
@@ -705,6 +713,30 @@ describe('authentication', () => {
     const productionApp = createApp(service);
 
     await request(productionApp)
+      .post('/api/auth/verify-otp')
+      .set('X-Krishi-Development-Client', 'true')
+      .send({ phone: '+919999999999', otp: '123456' })
+      .expect(400);
+    assert.equal(await repository.findUserByPhone('+919999999999'), null);
+  });
+
+  it('rejects the demo credentials in staging', async () => {
+    const staging = loadAppConfig({
+      APP_ENV: 'staging',
+      LOGGING_ENABLED: 'false',
+      DEMO_LOGIN_ENABLED: 'false',
+      DEBUG_OTP_ENABLED: 'false',
+      OPENAI_ENABLED: 'false',
+    });
+    const repository = new MemoryAuthRepository();
+    const service = new AuthService(repository, new DummySmsProvider(), {
+      ...testConfig,
+      demoLoginEnabled: staging.demoLoginEnabled,
+      exposeDebugOtp: staging.debugOtpEnabled,
+    });
+    const stagingApp = createApp(service);
+
+    await request(stagingApp)
       .post('/api/auth/verify-otp')
       .set('X-Krishi-Development-Client', 'true')
       .send({ phone: '+919999999999', otp: '123456' })

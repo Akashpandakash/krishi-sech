@@ -204,6 +204,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Your simple companion for smarter farming';
 
   @override
+  String get demoMode => 'Demo Mode';
+
+  @override
   String get authVerifyOtp => 'Verify OTP';
 
   @override

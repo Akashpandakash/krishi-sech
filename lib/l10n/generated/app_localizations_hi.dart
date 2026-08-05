@@ -202,6 +202,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get loginSubtitle => 'स्मार्ट खेती का आपका सरल साथी';
 
   @override
+  String get demoMode => 'डेमो मोड';
+
+  @override
   String get authVerifyOtp => 'ओटीपी सत्यापित करें';
 
   @override

@@ -63,6 +63,7 @@
   "english": "ইংরেজি",
   "loginWelcome": "কৃষি সেচে স্বাগতম",
   "loginSubtitle": "স্মার্ট কৃষির সহজ সঙ্গী",
+  "demoMode": "ডেমো মোড",
   "authVerifyOtp": "ওটিপি যাচাই করুন",
   "authOtpLabel": "৬ সংখ্যার ওটিপি",
   "authOtpSent": "{phone} নম্বরে পাঠানো ওটিপি লিখুন",

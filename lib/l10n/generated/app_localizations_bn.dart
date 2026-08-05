@@ -202,6 +202,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get loginSubtitle => 'স্মার্ট কৃষির সহজ সঙ্গী';
 
   @override
+  String get demoMode => 'ডেমো মোড';
+
+  @override
   String get authVerifyOtp => 'ওটিপি যাচাই করুন';
 
   @override

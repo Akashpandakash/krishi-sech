@@ -36,6 +36,19 @@ describe('application environment configuration', () => {
     }
   });
 
+  it('rejects demo login and debug OTP in staging', () => {
+    for (const flag of ['DEMO_LOGIN_ENABLED', 'DEBUG_OTP_ENABLED']) {
+      assert.throws(() =>
+        loadAppConfig({
+          ...productionValues,
+          APP_ENV: 'staging',
+          OPENAI_API_KEY: undefined,
+          [flag]: 'true',
+        }),
+      );
+    }
+  });
+
   it('requires HTTPS weather configuration outside development', () => {
     assert.throws(() =>
       loadAppConfig({

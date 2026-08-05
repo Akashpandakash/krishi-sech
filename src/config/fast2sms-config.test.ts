@@ -40,5 +40,20 @@ describe('Fast2SMS configuration', () => {
       FAST2SMS_ROUTE: 'otp',
     });
     assert.ok(provider instanceof Fast2SmsProvider);
+
+    const staging = loadAppConfig({
+      APP_ENV: 'staging',
+      LOGGING_ENABLED: 'false',
+      DEMO_LOGIN_ENABLED: 'false',
+      DEBUG_OTP_ENABLED: 'false',
+      OPENAI_ENABLED: 'false',
+    });
+    const stagingProvider = createSmsProvider(staging, {
+      FAST2SMS_API_KEY: 'test-api-key',
+      FAST2SMS_SENDER_ID: 'KRISHI',
+      FAST2SMS_ROUTE: 'otp',
+    });
+    assert.ok(stagingProvider instanceof Fast2SmsProvider);
+    assert.ok(!(stagingProvider instanceof DummySmsProvider));
   });
 });

@@ -478,6 +478,12 @@ abstract class AppLocalizations {
   /// **'Your simple companion for smarter farming'**
   String get loginSubtitle;
 
+  /// No description provided for @demoMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo Mode'**
+  String get demoMode;
+
   /// No description provided for @authVerifyOtp.
   ///
   /// In en, this message translates to:

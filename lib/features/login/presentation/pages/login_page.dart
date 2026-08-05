@@ -132,11 +132,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 if (AppEnvironment.demoModeEnabled) ...[
                   const SizedBox(height: 10),
-                  const Center(
+                  Center(
                     child: Text(
-                      'Demo Mode',
-                      key: Key('demo_mode_label'),
-                      style: TextStyle(
+                      context.l10n.demoMode,
+                      key: const Key('demo_mode_label'),
+                      style: const TextStyle(
                         color: AppColors.primary,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,

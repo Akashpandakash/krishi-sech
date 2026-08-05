@@ -98,11 +98,11 @@ export function loadAppConfig(
   if (production && loggingEnabled) {
     throw new Error('LOGGING_ENABLED must be false in production');
   }
-  if (production && demoLoginEnabled) {
-    throw new Error('DEMO_LOGIN_ENABLED must be false in production');
+  if ((staging || production) && demoLoginEnabled) {
+    throw new Error('DEMO_LOGIN_ENABLED must be false outside development');
   }
-  if (production && debugOtpEnabled) {
-    throw new Error('DEBUG_OTP_ENABLED must be false in production');
+  if ((staging || production) && debugOtpEnabled) {
+    throw new Error('DEBUG_OTP_ENABLED must be false outside development');
   }
   if (production && openAiEnabled && !values.OPENAI_API_KEY?.trim()) {
     throw new Error('OPENAI_API_KEY is required when OpenAI is enabled');

@@ -63,6 +63,7 @@
   "english": "अंग्रेज़ी",
   "loginWelcome": "कृषि सेच में आपका स्वागत है",
   "loginSubtitle": "स्मार्ट खेती का आपका सरल साथी",
+  "demoMode": "डेमो मोड",
   "authVerifyOtp": "ओटीपी सत्यापित करें",
   "authOtpLabel": "6 अंकों का ओटीपी",
   "authOtpSent": "{phone} पर भेजा गया ओटीपी दर्ज करें",

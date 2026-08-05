@@ -101,11 +101,11 @@ class _OtpPageState extends State<OtpPage> {
                 ),
                 if (AppEnvironment.demoModeEnabled) ...[
                   const SizedBox(height: 8),
-                  const Center(
+                  Center(
                     child: Text(
-                      'Demo Mode',
-                      key: Key('otp_demo_mode_label'),
-                      style: TextStyle(
+                      context.l10n.demoMode,
+                      key: const Key('otp_demo_mode_label'),
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),

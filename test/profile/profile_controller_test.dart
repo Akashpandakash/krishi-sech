@@ -8,6 +8,7 @@ import 'package:krishi_sech/features/profile/data/repositories/in_memory_profile
 import 'package:krishi_sech/features/profile/data/repositories/synced_profile_repository.dart';
 import 'package:krishi_sech/features/profile/domain/entities/farm_profile.dart';
 import 'package:krishi_sech/features/profile/domain/entities/user_profile.dart';
+import 'package:krishi_sech/features/profile/domain/repositories/profile_repository.dart';
 import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,11 +30,37 @@ void main() {
   });
 
   test('demo identity is available only with explicit demo mode', () async {
-    final controller = ProfileController(
-      InMemoryProfileRepository(),
-      demoMode: true,
-    );
+    final repository = _CountingProfileRepository(realUser);
+    final controller = ProfileController(repository, demoMode: true);
     expect(controller.greetingName, 'Ramesh Kumar');
+    expect(controller.user?.id, 'demo-farmer');
+
+    await controller.saveUser(
+      const UserProfile(
+        id: 'demo-farmer',
+        phone: '+919999999999',
+        fullName: 'Demo Edited',
+        preferredLanguage: 'en',
+      ),
+    );
+    await controller.saveFarm(
+      const FarmProfile(
+        farmName: 'Demo Farm',
+        farmerType: 'Demo',
+        totalLandArea: 1,
+        landUnit: 'acre',
+        soilType: 'loamy',
+        irrigationSource: 'demo',
+        mainCrops: ['Demo crop'],
+      ),
+    );
+    expect(repository.readCalls, 0);
+    expect(repository.writeCalls, 0);
+
+    controller.clearSession();
+    await controller.load();
+    expect(controller.greetingName, 'Akash Farmer');
+    expect(repository.readCalls, 2);
   });
 
   test('user and farm updates are exposed immediately', () async {
@@ -94,4 +121,35 @@ void main() {
     expect(cached?.phone, '+919812345678');
     expect(cached?.state, 'West Bengal');
   });
+}
+
+class _CountingProfileRepository implements ProfileRepository {
+  _CountingProfileRepository(this.realUser);
+  final UserProfile realUser;
+  int readCalls = 0;
+  int writeCalls = 0;
+
+  @override
+  Future<UserProfile?> loadUser() async {
+    readCalls += 1;
+    return realUser;
+  }
+
+  @override
+  Future<FarmProfile?> loadFarm() async {
+    readCalls += 1;
+    return null;
+  }
+
+  @override
+  Future<UserProfile> saveUser(UserProfile profile) async {
+    writeCalls += 1;
+    return profile;
+  }
+
+  @override
+  Future<FarmProfile> saveFarm(FarmProfile profile) async {
+    writeCalls += 1;
+    return profile;
+  }
 }
