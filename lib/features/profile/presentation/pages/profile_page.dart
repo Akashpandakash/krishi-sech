@@ -365,115 +365,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _editFarm(BuildContext context, FarmProfile? farm) async {
-    final farmName = TextEditingController(text: farm?.farmName);
-    final farmerType = TextEditingController(text: farm?.farmerType);
-    final area = TextEditingController(text: farm?.totalLandArea.toString());
-    final unit = TextEditingController(text: farm?.landUnit);
-    final soil = TextEditingController(text: farm?.soilType);
-    final irrigation = TextEditingController(text: farm?.irrigationSource);
-    final crops = TextEditingController(text: farm?.mainCrops.join(', '));
-    final location = TextEditingController(text: farm?.coarseLocation);
-    final formKey = GlobalKey<FormState>();
     await showDialog<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(context.l10n.farmDetails),
-        content: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _requiredField(farmName, context.l10n.farmName, context),
-                _requiredField(farmerType, context.l10n.farmerType, context),
-                TextFormField(
-                  controller: area,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: context.l10n.totalLandArea,
-                  ),
-                  validator: (v) => (double.tryParse(v ?? '') ?? 0) <= 0
-                      ? context.l10n.landAreaGreaterThanZero
-                      : null,
-                ),
-                _requiredField(unit, context.l10n.landAreaUnit, context),
-                _requiredField(soil, context.l10n.soilType, context),
-                _requiredField(
-                  irrigation,
-                  context.l10n.irrigationSource,
-                  context,
-                ),
-                _requiredField(crops, context.l10n.mainCrops, context),
-                TextFormField(
-                  controller: location,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.coarseLocationOptional,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              if (!formKey.currentState!.validate()) return;
-              final ok = await _controller.saveFarm(
-                FarmProfile(
-                  farmName: farmName.text.trim(),
-                  farmerType: farmerType.text.trim(),
-                  totalLandArea: double.parse(area.text),
-                  landUnit: unit.text.trim(),
-                  soilType: soil.text.trim(),
-                  irrigationSource: irrigation.text.trim(),
-                  mainCrops: crops.text
-                      .split(',')
-                      .map((e) => e.trim())
-                      .where((e) => e.isNotEmpty)
-                      .toList(),
-                  coarseLocation: location.text.trim().isEmpty
-                      ? null
-                      : location.text.trim(),
-                  updatedAt: farm?.updatedAt,
-                ),
-              );
-              if (ok && dialogContext.mounted) Navigator.pop(dialogContext);
-            },
-            child: Text(context.l10n.save),
-          ),
-        ],
-      ),
+      builder: (_) =>
+          _FarmDetailsDialog(farm: farm, profileController: _controller),
     );
-    for (final controller in [
-      farmName,
-      farmerType,
-      area,
-      unit,
-      soil,
-      irrigation,
-      crops,
-      location,
-    ]) {
-      controller.dispose();
-    }
   }
-
-  TextFormField _requiredField(
-    TextEditingController controller,
-    String label,
-    BuildContext context,
-  ) => TextFormField(
-    controller: controller,
-    decoration: InputDecoration(labelText: label),
-    validator: (v) =>
-        (v?.trim().isEmpty ?? true) ? context.l10n.requiredField : null,
-  );
 
   Future<void> _showLanguagePicker(BuildContext context) async {
     final locale = LocaleScope.of(context);
@@ -530,6 +427,153 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+}
+
+class _FarmDetailsDialog extends StatefulWidget {
+  const _FarmDetailsDialog({
+    required this.farm,
+    required this.profileController,
+  });
+
+  final FarmProfile? farm;
+  final ProfileController profileController;
+
+  @override
+  State<_FarmDetailsDialog> createState() => _FarmDetailsDialogState();
+}
+
+class _FarmDetailsDialogState extends State<_FarmDetailsDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _farmName;
+  late final TextEditingController _farmerType;
+  late final TextEditingController _area;
+  late final TextEditingController _unit;
+  late final TextEditingController _soil;
+  late final TextEditingController _irrigation;
+  late final TextEditingController _crops;
+  late final TextEditingController _location;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final farm = widget.farm;
+    _farmName = TextEditingController(text: farm?.farmName);
+    _farmerType = TextEditingController(text: farm?.farmerType);
+    _area = TextEditingController(text: farm?.totalLandArea.toString());
+    _unit = TextEditingController(text: farm?.landUnit);
+    _soil = TextEditingController(text: farm?.soilType);
+    _irrigation = TextEditingController(text: farm?.irrigationSource);
+    _crops = TextEditingController(text: farm?.mainCrops.join(', '));
+    _location = TextEditingController(text: farm?.coarseLocation);
+  }
+
+  @override
+  void dispose() {
+    _farmName.dispose();
+    _farmerType.dispose();
+    _area.dispose();
+    _unit.dispose();
+    _soil.dispose();
+    _irrigation.dispose();
+    _crops.dispose();
+    _location.dispose();
+    super.dispose();
+  }
+
+  TextFormField _requiredField(
+    TextEditingController controller,
+    String label,
+  ) => TextFormField(
+    controller: controller,
+    decoration: InputDecoration(labelText: label),
+    validator: (value) =>
+        (value?.trim().isEmpty ?? true) ? context.l10n.requiredField : null,
+  );
+
+  Future<void> _save() async {
+    if (_saving || !(_formKey.currentState?.validate() ?? false)) return;
+    setState(() => _saving = true);
+    final ok = await widget.profileController.saveFarm(
+      FarmProfile(
+        farmName: _farmName.text.trim(),
+        farmerType: _farmerType.text.trim(),
+        totalLandArea: double.parse(_area.text),
+        landUnit: _unit.text.trim(),
+        soilType: _soil.text.trim(),
+        irrigationSource: _irrigation.text.trim(),
+        mainCrops: _crops.text
+            .split(',')
+            .map((value) => value.trim())
+            .where((value) => value.isNotEmpty)
+            .toList(),
+        coarseLocation: _location.text.trim().isEmpty
+            ? null
+            : _location.text.trim(),
+        updatedAt: widget.farm?.updatedAt,
+      ),
+    );
+    if (!mounted) return;
+    if (ok) {
+      Navigator.of(context).pop();
+      return;
+    }
+    setState(() => _saving = false);
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(context.l10n.farmDetails),
+    content: Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _requiredField(_farmName, context.l10n.farmName),
+            _requiredField(_farmerType, context.l10n.farmerType),
+            TextFormField(
+              controller: _area,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: InputDecoration(
+                labelText: context.l10n.totalLandArea,
+              ),
+              validator: (value) => (double.tryParse(value ?? '') ?? 0) <= 0
+                  ? context.l10n.landAreaGreaterThanZero
+                  : null,
+            ),
+            _requiredField(_unit, context.l10n.landAreaUnit),
+            _requiredField(_soil, context.l10n.soilType),
+            _requiredField(_irrigation, context.l10n.irrigationSource),
+            _requiredField(_crops, context.l10n.mainCrops),
+            TextFormField(
+              controller: _location,
+              decoration: InputDecoration(
+                labelText: context.l10n.coarseLocationOptional,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: _saving ? null : () => Navigator.of(context).pop(),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+      FilledButton(
+        onPressed: _saving ? null : _save,
+        child: _saving
+            ? const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Text(context.l10n.save),
+      ),
+    ],
+  );
 }
 
 class _ProfileAvatar extends StatelessWidget {
