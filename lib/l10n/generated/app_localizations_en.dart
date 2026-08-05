@@ -904,6 +904,67 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get productDetails => 'Product Details';
+
+  @override
+  String get marketDescription => 'Description';
+
+  @override
+  String get marketAvailability => 'Availability';
+
+  @override
+  String get marketSeller => 'Seller / Vendor';
+
+  @override
+  String marketInStock(int quantity) {
+    return 'In stock ($quantity available)';
+  }
+
+  @override
+  String get marketOutOfStock => 'Currently out of stock';
+
+  @override
+  String get marketBag => 'bag';
+
+  @override
+  String get marketPack => 'pack';
+
+  @override
+  String get marketPiece => 'piece';
+
+  @override
+  String marketPrice(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String get marketLoadError =>
+      'Market products could not be loaded. Please retry.';
+
+  @override
+  String get noMarketProducts => 'No products match your search.';
+
+  @override
+  String get marketCheckoutComingSoon =>
+      'Checkout and payment are not available yet.';
+
+  @override
+  String get premiumWheatSeedsDescription =>
+      'Clean, high-quality wheat seed suitable for timely sowing and dependable field establishment.';
+
+  @override
+  String get organicFertilizerDescription =>
+      'Organic soil conditioner that supports soil structure and gradual nutrient availability.';
+
+  @override
+  String get gardenSprayerDescription =>
+      'Durable hand-operated sprayer for careful application of water and approved crop treatments.';
+
+  @override
+  String get tomatoSeedsDescription =>
+      'Selected tomato seeds suitable for kitchen gardens and small vegetable plots.';
+
+  @override
   String get profile => 'Profile';
 
   @override

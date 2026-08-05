@@ -1720,6 +1720,108 @@ abstract class AppLocalizations {
   /// **'{price} / pack'**
   String pricePerPack(String price);
 
+  /// No description provided for @productDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Details'**
+  String get productDetails;
+
+  /// No description provided for @marketDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get marketDescription;
+
+  /// No description provided for @marketAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get marketAvailability;
+
+  /// No description provided for @marketSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Seller / Vendor'**
+  String get marketSeller;
+
+  /// No description provided for @marketInStock.
+  ///
+  /// In en, this message translates to:
+  /// **'In stock ({quantity} available)'**
+  String marketInStock(int quantity);
+
+  /// No description provided for @marketOutOfStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently out of stock'**
+  String get marketOutOfStock;
+
+  /// No description provided for @marketBag.
+  ///
+  /// In en, this message translates to:
+  /// **'bag'**
+  String get marketBag;
+
+  /// No description provided for @marketPack.
+  ///
+  /// In en, this message translates to:
+  /// **'pack'**
+  String get marketPack;
+
+  /// No description provided for @marketPiece.
+  ///
+  /// In en, this message translates to:
+  /// **'piece'**
+  String get marketPiece;
+
+  /// No description provided for @marketPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} / {unit}'**
+  String marketPrice(String price, String unit);
+
+  /// No description provided for @marketLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Market products could not be loaded. Please retry.'**
+  String get marketLoadError;
+
+  /// No description provided for @noMarketProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'No products match your search.'**
+  String get noMarketProducts;
+
+  /// No description provided for @marketCheckoutComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout and payment are not available yet.'**
+  String get marketCheckoutComingSoon;
+
+  /// No description provided for @premiumWheatSeedsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean, high-quality wheat seed suitable for timely sowing and dependable field establishment.'**
+  String get premiumWheatSeedsDescription;
+
+  /// No description provided for @organicFertilizerDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Organic soil conditioner that supports soil structure and gradual nutrient availability.'**
+  String get organicFertilizerDescription;
+
+  /// No description provided for @gardenSprayerDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Durable hand-operated sprayer for careful application of water and approved crop treatments.'**
+  String get gardenSprayerDescription;
+
+  /// No description provided for @tomatoSeedsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected tomato seeds suitable for kitchen gardens and small vegetable plots.'**
+  String get tomatoSeedsDescription;
+
   /// No description provided for @profile.
   ///
   /// In en, this message translates to:

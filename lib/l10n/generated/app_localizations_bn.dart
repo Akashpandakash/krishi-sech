@@ -896,6 +896,66 @@ class AppLocalizationsBn extends AppLocalizations {
   }
 
   @override
+  String get productDetails => 'পণ্যের বিস্তারিত';
+
+  @override
+  String get marketDescription => 'বিবরণ';
+
+  @override
+  String get marketAvailability => 'প্রাপ্যতা';
+
+  @override
+  String get marketSeller => 'বিক্রেতা / সরবরাহকারী';
+
+  @override
+  String marketInStock(int quantity) {
+    return 'মজুত আছে ($quantityটি উপলভ্য)';
+  }
+
+  @override
+  String get marketOutOfStock => 'বর্তমানে মজুত নেই';
+
+  @override
+  String get marketBag => 'বস্তা';
+
+  @override
+  String get marketPack => 'প্যাক';
+
+  @override
+  String get marketPiece => 'টি';
+
+  @override
+  String marketPrice(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String get marketLoadError =>
+      'বাজারের পণ্য লোড করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get noMarketProducts => 'আপনার অনুসন্ধানের সঙ্গে কোনো পণ্য মেলেনি।';
+
+  @override
+  String get marketCheckoutComingSoon => 'চেকআউট ও পেমেন্ট এখনও উপলভ্য নয়।';
+
+  @override
+  String get premiumWheatSeedsDescription =>
+      'সময়মতো বপন ও ভালোভাবে চারা প্রতিষ্ঠার উপযোগী পরিষ্কার, উন্নত মানের গম বীজ।';
+
+  @override
+  String get organicFertilizerDescription =>
+      'মাটির গঠন ও ধীরে ধীরে পুষ্টি সরবরাহে সহায়ক জৈব মাটি উন্নয়ন উপাদান।';
+
+  @override
+  String get gardenSprayerDescription =>
+      'পানি ও অনুমোদিত ফসল পরিচর্যা উপকরণ সতর্কভাবে প্রয়োগের জন্য টেকসই হাতে চালিত স্প্রেয়ার।';
+
+  @override
+  String get tomatoSeedsDescription =>
+      'বাড়ির বাগান ও ছোট সবজি জমির উপযোগী নির্বাচিত টমেটোর বীজ।';
+
+  @override
   String get profile => 'প্রোফাইল';
 
   @override

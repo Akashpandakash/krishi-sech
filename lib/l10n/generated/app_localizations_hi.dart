@@ -896,6 +896,67 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get productDetails => 'उत्पाद विवरण';
+
+  @override
+  String get marketDescription => 'विवरण';
+
+  @override
+  String get marketAvailability => 'उपलब्धता';
+
+  @override
+  String get marketSeller => 'विक्रेता / आपूर्तिकर्ता';
+
+  @override
+  String marketInStock(int quantity) {
+    return 'स्टॉक में है ($quantity उपलब्ध)';
+  }
+
+  @override
+  String get marketOutOfStock => 'फिलहाल स्टॉक में नहीं';
+
+  @override
+  String get marketBag => 'बोरी';
+
+  @override
+  String get marketPack => 'पैक';
+
+  @override
+  String get marketPiece => 'पीस';
+
+  @override
+  String marketPrice(String price, String unit) {
+    return '$price / $unit';
+  }
+
+  @override
+  String get marketLoadError =>
+      'बाज़ार के उत्पाद लोड नहीं हो सके। फिर प्रयास करें।';
+
+  @override
+  String get noMarketProducts => 'आपकी खोज से कोई उत्पाद नहीं मिला।';
+
+  @override
+  String get marketCheckoutComingSoon =>
+      'चेकआउट और भुगतान अभी उपलब्ध नहीं हैं।';
+
+  @override
+  String get premiumWheatSeedsDescription =>
+      'समय पर बुवाई और अच्छी फसल स्थापना के लिए उपयुक्त स्वच्छ, उच्च गुणवत्ता वाला गेहूँ बीज।';
+
+  @override
+  String get organicFertilizerDescription =>
+      'मिट्टी की संरचना और धीरे-धीरे पोषक तत्व उपलब्ध कराने वाला जैविक मृदा सुधारक।';
+
+  @override
+  String get gardenSprayerDescription =>
+      'पानी और अनुमोदित फसल उपचारों के सावधानीपूर्वक उपयोग के लिए टिकाऊ हाथ से चलने वाला स्प्रेयर।';
+
+  @override
+  String get tomatoSeedsDescription =>
+      'घरेलू बगीचे और छोटे सब्ज़ी खेतों के लिए उपयुक्त चुने हुए टमाटर बीज।';
+
+  @override
   String get profile => 'प्रोफ़ाइल';
 
   @override

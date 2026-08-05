@@ -25,6 +25,7 @@ abstract final class AppRoutes {
   static const diseaseProcessing = '/ai-assistant/disease-processing';
   static const diseaseResult = '/ai-assistant/disease-result';
   static const market = '/market';
+  static const marketProductDetails = '/market/product-details';
   static const shorts = '/shorts';
   static const profile = '/profile';
 }

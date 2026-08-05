@@ -1,31 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/features/market/data/datasources/local_market_data_source.dart';
+import 'package:krishi_sech/features/market/data/repositories/market_repository_impl.dart';
+import 'package:krishi_sech/features/market/domain/entities/market_product.dart';
+import 'package:krishi_sech/features/market/domain/repositories/market_repository.dart';
+import 'package:krishi_sech/features/market/presentation/market_product_text.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
-import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
 import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
+import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
 
-class MarketPage extends StatelessWidget {
-  const MarketPage({super.key});
+class MarketPage extends StatefulWidget {
+  const MarketPage({super.key, this.repository});
+
+  final MarketRepository? repository;
+
+  @override
+  State<MarketPage> createState() => _MarketPageState();
+}
+
+class _MarketPageState extends State<MarketPage> {
+  late final MarketRepository _repository;
+  final _searchController = TextEditingController();
+  List<MarketProduct> _products = const [];
+  MarketCategory? _category;
+  Object? _error;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _repository =
+        widget.repository ??
+        const MarketRepositoryImpl(LocalMarketDataSource());
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final products = await _repository.getProducts();
+      if (!mounted) return;
+      setState(() => _products = products);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _error = error);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  List<MarketProduct> _filteredProducts(BuildContext context) {
+    final query = _searchController.text.trim().toLowerCase();
+    return _products
+        .where((product) {
+          final matchesCategory =
+              _category == null || product.category == _category;
+          final matchesQuery =
+              query.isEmpty ||
+              product.name(context).toLowerCase().contains(query) ||
+              product.categoryName(context).toLowerCase().contains(query);
+          return matchesCategory && matchesQuery;
+        })
+        .toList(growable: false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final products = [
-      (
-        context.l10n.premiumWheatSeeds,
-        context.l10n.pricePerBag('₹1,250'),
-        Icons.grass,
-      ),
-      (
-        context.l10n.organicFertilizer,
-        context.l10n.pricePerPack('₹680'),
-        Icons.compost,
-      ),
-      (context.l10n.gardenSprayer, '₹1,899', Icons.agriculture),
-      (context.l10n.tomatoSeeds, context.l10n.pricePerPack('₹320'), Icons.eco),
-    ];
-
+    final products = _filteredProducts(context);
     return SafeArea(
       child: CustomScrollView(
+        key: const Key('market_scroll_view'),
         slivers: [
           SliverToBoxAdapter(
             child: ResponsiveContent(
@@ -43,8 +97,10 @@ class MarketPage extends StatelessWidget {
                         ),
                       ),
                       AppPressable(
+                        enabled: false,
                         child: IconButton.filledTonal(
-                          onPressed: () {},
+                          onPressed: null,
+                          tooltip: context.l10n.marketCheckoutComingSoon,
                           icon: const Icon(Icons.shopping_cart_outlined),
                         ),
                       ),
@@ -52,6 +108,9 @@ class MarketPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                   TextField(
+                    key: const Key('market_search_field'),
+                    controller: _searchController,
+                    onChanged: (_) => setState(() {}),
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.search),
                       hintText: context.l10n.searchMarket,
@@ -63,10 +122,19 @@ class MarketPage extends StatelessWidget {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        _CategoryChip(label: context.l10n.all, selected: true),
-                        _CategoryChip(label: context.l10n.seeds),
-                        _CategoryChip(label: context.l10n.fertilizers),
-                        _CategoryChip(label: context.l10n.tools),
+                        _CategoryChip(
+                          label: context.l10n.all,
+                          selected: _category == null,
+                          onSelected: () => setState(() => _category = null),
+                        ),
+                        for (final category in MarketCategory.values)
+                          _CategoryChip(
+                            key: Key('market_category_${category.name}'),
+                            label: _categoryLabel(context, category),
+                            selected: _category == category,
+                            onSelected: () =>
+                                setState(() => _category = category),
+                          ),
                       ],
                     ),
                   ),
@@ -74,37 +142,76 @@ class MarketPage extends StatelessWidget {
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-            sliver: SliverGrid.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: MediaQuery.sizeOf(context).width >= 600 ? 3 : 2,
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 14,
-                childAspectRatio: 0.78,
+          if (_loading)
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (_error != null)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: _MarketMessage(
+                icon: Icons.cloud_off_outlined,
+                message: context.l10n.marketLoadError,
+                actionLabel: context.l10n.retry,
+                onAction: _load,
               ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return _ProductCard(
-                  name: product.$1,
-                  price: product.$2,
-                  icon: product.$3,
-                );
-              },
+            )
+          else if (products.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: _MarketMessage(
+                key: const Key('market_empty_state'),
+                icon: Icons.search_off,
+                message: context.l10n.noMarketProducts,
+              ),
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+              sliver: SliverGrid.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: MediaQuery.sizeOf(context).width >= 600
+                      ? 3
+                      : 2,
+                  mainAxisSpacing: 14,
+                  crossAxisSpacing: 14,
+                  childAspectRatio: 0.78,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) => _ProductCard(
+                  product: products[index],
+                  onTap: () => Navigator.of(context).pushNamed(
+                    AppRoutes.marketProductDetails,
+                    arguments: products[index],
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );
   }
+
+  String _categoryLabel(BuildContext context, MarketCategory category) =>
+      switch (category) {
+        MarketCategory.seeds => context.l10n.seeds,
+        MarketCategory.fertilizers => context.l10n.fertilizers,
+        MarketCategory.tools => context.l10n.tools,
+      };
 }
 
 class _CategoryChip extends StatelessWidget {
-  const _CategoryChip({required this.label, this.selected = false});
+  const _CategoryChip({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+  });
 
   final String label;
   final bool selected;
+  final VoidCallback onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +221,7 @@ class _CategoryChip extends StatelessWidget {
         haptic: AppPressableHaptic.selection,
         child: FilterChip(
           selected: selected,
-          onSelected: (_) {},
+          onSelected: (_) => onSelected(),
           label: Text(label),
         ),
       ),
@@ -123,15 +230,10 @@ class _CategoryChip extends StatelessWidget {
 }
 
 class _ProductCard extends StatelessWidget {
-  const _ProductCard({
-    required this.name,
-    required this.price,
-    required this.icon,
-  });
+  const _ProductCard({required this.product, required this.onTap});
 
-  final String name;
-  final String price;
-  final IconData icon;
+  final MarketProduct product;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +244,9 @@ class _ProductCard extends StatelessWidget {
         side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: AppPressable(
-        onTap: () {},
+        key: Key('market_product_${product.id}'),
+        onTap: onTap,
+        semanticLabel: product.name(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -150,7 +254,7 @@ class _ProductCard extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 color: AppColors.lightGreen,
-                child: Icon(icon, size: 58, color: AppColors.primary),
+                child: Icon(product.icon, size: 58, color: AppColors.primary),
               ),
             ),
             Padding(
@@ -159,14 +263,14 @@ class _ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    product.name(context),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    price,
+                    product.priceLabel(context),
                     style: const TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w700,
@@ -175,6 +279,45 @@ class _ProductCard extends StatelessWidget {
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MarketMessage extends StatelessWidget {
+  const _MarketMessage({
+    super.key,
+    required this.icon,
+    required this.message,
+    this.actionLabel,
+    this.onAction,
+  });
+
+  final IconData icon;
+  final String message;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 48, color: AppColors.primary),
+            const SizedBox(height: 12),
+            Text(message, textAlign: TextAlign.center),
+            if (onAction != null && actionLabel != null) ...[
+              const SizedBox(height: 16),
+              FilledButton.tonal(
+                onPressed: onAction,
+                child: Text(actionLabel!),
+              ),
+            ],
           ],
         ),
       ),

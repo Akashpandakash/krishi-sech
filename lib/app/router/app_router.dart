@@ -7,6 +7,8 @@ import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_sca
 import 'package:krishi_sech/features/login/presentation/pages/login_page.dart';
 import 'package:krishi_sech/features/login/presentation/pages/otp_page.dart';
 import 'package:krishi_sech/features/location/presentation/pages/manual_location_page.dart';
+import 'package:krishi_sech/features/market/domain/entities/market_product.dart';
+import 'package:krishi_sech/features/market/presentation/pages/product_details_page.dart';
 import 'package:krishi_sech/features/my_crop/presentation/pages/add_edit_crop_page.dart';
 import 'package:krishi_sech/features/my_crop/presentation/pages/crop_details_page.dart';
 import 'package:krishi_sech/features/my_crop/presentation/pages/add_edit_crop_health_record_page.dart';
@@ -90,6 +92,10 @@ abstract final class AppRouter {
         _ => const _UnknownRoutePage(),
       },
       AppRoutes.market => const MainNavigationPage(initialIndex: 3),
+      AppRoutes.marketProductDetails => switch (settings.arguments) {
+        final MarketProduct product => ProductDetailsPage(product: product),
+        _ => const _UnknownRoutePage(),
+      },
       AppRoutes.shorts => const ShortsPage(),
       AppRoutes.profile => const MainNavigationPage(initialIndex: 4),
       _ => const _UnknownRoutePage(),
