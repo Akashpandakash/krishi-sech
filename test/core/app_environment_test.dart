@@ -2,6 +2,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:krishi_sech/core/config/app_environment.dart';
 
 void main() {
+  group('location debug visibility', () {
+    test('is visible in development', () {
+      expect(AppEnvironment.locationDebugEnabledFor('development'), isTrue);
+    });
+
+    test('is hidden in staging', () {
+      expect(AppEnvironment.locationDebugEnabledFor('staging'), isFalse);
+    });
+
+    test('is hidden in production', () {
+      expect(AppEnvironment.locationDebugEnabledFor('production'), isFalse);
+    });
+  });
+
   group('production Flutter environment validation', () {
     void validate({
       String apiUrl = 'https://api.krishisech.example',

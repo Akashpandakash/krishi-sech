@@ -152,6 +152,34 @@ class _FakeWeatherRepository implements WeatherRepository {
   }
 }
 
+class _LocationSheetTestApp extends StatelessWidget {
+  const _LocationSheetTestApp({
+    required this.controller,
+    required this.environment,
+  });
+
+  final LocationController controller;
+  final String environment;
+
+  @override
+  Widget build(BuildContext context) {
+    return LocationScope(
+      controller: controller,
+      child: MaterialApp(
+        locale: const Locale('en'),
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: Scaffold(body: LocationBottomSheet(environment: environment)),
+      ),
+    );
+  }
+}
+
 class _CachedWeatherRepository implements WeatherSyncAwareRepository {
   @override
   bool get isUsingCachedData => true;
@@ -1743,6 +1771,48 @@ void main() {
     expect(find.text('Chomu, Jaipur, Rajasthan'), findsOneWidget);
     expect(find.text('Your Location'), findsNothing);
   });
+
+  for (final environment in const ['development', 'staging', 'production']) {
+    testWidgets(
+      'location debug section ${environment == 'development' ? 'is visible' : 'is hidden'} in $environment',
+      (tester) async {
+        tester.view.physicalSize = const Size(1200, 2400);
+        tester.view.devicePixelRatio = 2;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final locationController = LocationController.inMemory(
+          location: FarmLocation(
+            state: 'West Bengal',
+            district: 'Kolkata',
+            city: 'Kolkata',
+            latitude: 22.5726,
+            longitude: 88.3639,
+            accuracyMeters: 18,
+            gpsTimestamp: DateTime.utc(2026, 8, 6, 8),
+          ),
+        );
+        await tester.pumpWidget(
+          _LocationSheetTestApp(
+            controller: locationController,
+            environment: environment,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Your Location'), findsOneWidget);
+        expect(find.text('Kolkata'), findsWidgets);
+        expect(find.text('West Bengal'), findsOneWidget);
+        expect(
+          find.byKey(const Key('refresh_current_location')),
+          findsOneWidget,
+        );
+        expect(
+          find.text('Location debug'),
+          environment == 'development' ? findsOneWidget : findsNothing,
+        );
+      },
+    );
+  }
 
   testWidgets('routes with missing arguments fail safely', (tester) async {
     await tester.pumpWidget(

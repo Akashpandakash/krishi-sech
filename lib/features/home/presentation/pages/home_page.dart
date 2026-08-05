@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/core/network/api_config.dart';
 import 'package:krishi_sech/features/disease_scan/data/datasources/local_disease_diagnosis_store.dart';
 import 'package:krishi_sech/features/location/data/services/location_service.dart';
@@ -98,7 +99,7 @@ class _HomePageState extends State<HomePage> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.65,
       ),
-      builder: (_) => const _LocationBottomSheet(),
+      builder: (_) => const LocationBottomSheet(),
     );
   }
 
@@ -311,14 +312,20 @@ class _LocationBar extends StatelessWidget {
   }
 }
 
-class _LocationBottomSheet extends StatefulWidget {
-  const _LocationBottomSheet();
+@visibleForTesting
+class LocationBottomSheet extends StatefulWidget {
+  const LocationBottomSheet({
+    super.key,
+    this.environment = AppEnvironment.appEnv,
+  });
+
+  final String environment;
 
   @override
-  State<_LocationBottomSheet> createState() => _LocationBottomSheetState();
+  State<LocationBottomSheet> createState() => _LocationBottomSheetState();
 }
 
-class _LocationBottomSheetState extends State<_LocationBottomSheet> {
+class _LocationBottomSheetState extends State<LocationBottomSheet> {
   bool _refreshing = false;
   LocationFailureType? _locationFailure;
 
@@ -442,7 +449,9 @@ class _LocationBottomSheetState extends State<_LocationBottomSheet> {
                             ),
                           ],
                         ),
-                        if (kDebugMode &&
+                        if (AppEnvironment.locationDebugEnabledFor(
+                              widget.environment,
+                            ) &&
                             location.latitude != null &&
                             location.longitude != null) ...[
                           const SizedBox(height: 16),

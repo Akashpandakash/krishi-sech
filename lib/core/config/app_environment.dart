@@ -34,7 +34,6 @@ abstract final class AppEnvironment {
   static const isStaging = appEnv == 'staging';
   static const isProduction = appEnv == 'production';
   static const loggingEnabled = !isProduction && _loggingRequested;
-
   static const demoModeEnabled =
       isDevelopment && _demoLoginRequested && !kProfileMode && !kReleaseMode;
 
@@ -105,4 +104,7 @@ abstract final class AppEnvironment {
     required bool release,
     required String environment,
   }) => environment == 'development' && debug && !profile && !release;
+
+  static bool locationDebugEnabledFor(String environment) =>
+      environment == 'development';
 }
