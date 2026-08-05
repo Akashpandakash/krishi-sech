@@ -35,18 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
         'Demo mode is unavailable',
       );
     }
-    final now = DateTime.now();
-    final session = AuthSession(
-      user: const AuthUser(
-        id: 'demo-farmer',
-        phone: '+919999999999',
-        name: 'Demo Farmer',
-        preferredLanguage: 'en',
-        isActive: true,
-      ),
-      accessToken: _demoAccessToken(now),
-      refreshToken: 'demo-refresh-${now.microsecondsSinceEpoch}',
-    );
+    final session = await remote.verifyOtp('+919999999999', '123456');
     await storage.write(session);
     return session;
   }
@@ -122,12 +111,5 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (_) {
       return true;
     }
-  }
-
-  String _demoAccessToken(DateTime now) {
-    String encode(Map<String, Object> value) =>
-        base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=', '');
-    return '${encode({'alg': 'none', 'typ': 'JWT'})}.'
-        '${encode({'sub': 'demo-farmer', 'demo': true, 'iat': now.millisecondsSinceEpoch ~/ 1000, 'exp': now.add(const Duration(days: 1)).millisecondsSinceEpoch ~/ 1000})}.development-only';
   }
 }

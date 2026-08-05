@@ -185,7 +185,17 @@ class CropTaskController extends ChangeNotifier {
     if (repository == null) {
       _generateInMemory();
     } else {
-      _synchronizeGeneratedTasks();
+      unawaited(_synchronizeAfterCropChange());
+    }
+  }
+
+  Future<void> _synchronizeAfterCropChange() async {
+    try {
+      await _synchronizeGeneratedTasks();
+      _error = null;
+    } catch (error) {
+      _error = error;
+      notifyListeners();
     }
   }
 

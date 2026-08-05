@@ -173,215 +173,234 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
         ),
       ),
       body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: 28),
-            children: [
-              ResponsiveContent(
-                child: Column(
-                  children: [
-                    DropdownButtonFormField<CropKind>(
-                      key: const Key('crop_name_field'),
-                      initialValue: _kind,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.cropName,
-                      ),
-                      items: CropKind.values
-                          .map(
-                            (kind) => DropdownMenuItem(
-                              value: kind,
-                              child: Text(cropKindOptionLabel(context, kind)),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) => setState(() => _kind = value),
-                      validator: (value) =>
-                          value == null ? context.l10n.cropNameRequired : null,
-                    ),
-                    if (_kind == CropKind.other) ...[
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _customNameController,
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            key: const Key('add_crop_scroll_view'),
+            physics: const AlwaysScrollableScrollPhysics(),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: EdgeInsets.only(
+              bottom: 28 + MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Form(
+                key: _formKey,
+                child: ResponsiveContent(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  child: Column(
+                    children: [
+                      DropdownButtonFormField<CropKind>(
+                        key: const Key('crop_name_field'),
+                        isExpanded: true,
+                        initialValue: _kind,
                         decoration: InputDecoration(
-                          labelText: context.l10n.otherCropName,
+                          labelText: context.l10n.cropName,
                         ),
-                        validator: (value) => value?.trim().isEmpty ?? true
+                        items: CropKind.values
+                            .map(
+                              (kind) => DropdownMenuItem(
+                                value: kind,
+                                child: Text(cropKindOptionLabel(context, kind)),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) => setState(() => _kind = value),
+                        validator: (value) => value == null
                             ? context.l10n.cropNameRequired
                             : null,
                       ),
-                    ],
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      key: const Key('crop_variety_field'),
-                      controller: _varietyController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.variety,
-                      ),
-                      validator: (value) => value?.trim().isEmpty ?? true
-                          ? context.l10n.varietyRequired
-                          : null,
-                    ),
-                    const SizedBox(height: 12),
-                    _DateField(
-                      key: const Key('crop_sowing_date'),
-                      label: context.l10n.sowingDate,
-                      date: _sowingDate,
-                      errorText: _sowingDate == null
-                          ? context.l10n.sowingDateRequired
-                          : null,
-                      onTap: _pickSowingDate,
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            key: const Key('crop_land_area'),
-                            controller: _areaController,
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: context.l10n.landArea,
-                            ),
-                            validator: (value) {
-                              final area = double.tryParse(value?.trim() ?? '');
-                              return area == null || area <= 0
-                                  ? context.l10n.landAreaPositive
-                                  : null;
-                            },
+                      if (_kind == CropKind.other) ...[
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _customNameController,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.otherCropName,
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: DropdownButtonFormField<LandAreaUnit>(
-                            initialValue: _areaUnit,
-                            decoration: InputDecoration(
-                              labelText: context.l10n.landAreaUnit,
-                            ),
-                            items: LandAreaUnit.values
-                                .map(
-                                  (unit) => DropdownMenuItem(
-                                    value: unit,
-                                    child: Text(areaUnitLabel(context, unit)),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() => _areaUnit = value);
-                              }
-                            },
-                          ),
+                          validator: (value) => value?.trim().isEmpty ?? true
+                              ? context.l10n.cropNameRequired
+                              : null,
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 12),
-                    _EnumDropdown<GrowthStage>(
-                      label: context.l10n.currentGrowthStage,
-                      value: _stage,
-                      values: GrowthStage.values,
-                      labelBuilder: (value) => growthStageLabel(context, value),
-                      onChanged: (value) => setState(() => _stage = value),
-                    ),
-                    const SizedBox(height: 12),
-                    _EnumDropdown<IrrigationType>(
-                      label: context.l10n.irrigationMethod,
-                      value: _irrigation,
-                      values: IrrigationType.values,
-                      labelBuilder: (value) => irrigationLabel(context, value),
-                      onChanged: (value) => setState(() => _irrigation = value),
-                    ),
-                    const SizedBox(height: 12),
-                    _EnumDropdown<SoilType>(
-                      label: context.l10n.soilType,
-                      value: _soilType,
-                      values: SoilType.values,
-                      labelBuilder: (value) => soilTypeLabel(context, value),
-                      onChanged: (value) => setState(() => _soilType = value),
-                    ),
-                    const SizedBox(height: 12),
-                    _EnumDropdown<PlantingMethod>(
-                      label: context.l10n.plantingMethod,
-                      value: _plantingMethod,
-                      values: PlantingMethod.values,
-                      labelBuilder: (value) =>
-                          plantingMethodLabel(context, value),
-                      onChanged: (value) =>
-                          setState(() => _plantingMethod = value),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _seedBrandController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.seedBrand,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _fertilizerController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.lastFertilizerUsed,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _pesticideController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.lastPesticideUsed,
-                      ),
-                    ),
-                    if (widget.cropId != null) ...[
                       const SizedBox(height: 12),
-                      _EnumDropdown<CropHealth>(
-                        label: context.l10n.healthStatus,
-                        value: _health,
-                        values: CropHealth.values,
+                      TextFormField(
+                        key: const Key('crop_variety_field'),
+                        controller: _varietyController,
+                        decoration: InputDecoration(
+                          labelText: context.l10n.variety,
+                        ),
+                        validator: (value) => value?.trim().isEmpty ?? true
+                            ? context.l10n.varietyRequired
+                            : null,
+                      ),
+                      const SizedBox(height: 12),
+                      _DateField(
+                        key: const Key('crop_sowing_date'),
+                        label: context.l10n.sowingDate,
+                        date: _sowingDate,
+                        errorText: _sowingDate == null
+                            ? context.l10n.sowingDateRequired
+                            : null,
+                        onTap: _pickSowingDate,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              key: const Key('crop_land_area'),
+                              controller: _areaController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                              decoration: InputDecoration(
+                                labelText: context.l10n.landArea,
+                              ),
+                              validator: (value) {
+                                final area = double.tryParse(
+                                  value?.trim() ?? '',
+                                );
+                                return area == null || area <= 0
+                                    ? context.l10n.landAreaPositive
+                                    : null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: DropdownButtonFormField<LandAreaUnit>(
+                              isExpanded: true,
+                              initialValue: _areaUnit,
+                              decoration: InputDecoration(
+                                labelText: context.l10n.landAreaUnit,
+                              ),
+                              items: LandAreaUnit.values
+                                  .map(
+                                    (unit) => DropdownMenuItem(
+                                      value: unit,
+                                      child: Text(areaUnitLabel(context, unit)),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() => _areaUnit = value);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _EnumDropdown<GrowthStage>(
+                        label: context.l10n.currentGrowthStage,
+                        value: _stage,
+                        values: GrowthStage.values,
                         labelBuilder: (value) =>
-                            cropHealthLabel(context, value),
-                        onChanged: (value) => setState(() => _health = value),
+                            growthStageLabel(context, value),
+                        onChanged: (value) => setState(() => _stage = value),
                       ),
-                    ],
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _farmController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.villageFarmOptional,
+                      const SizedBox(height: 12),
+                      _EnumDropdown<IrrigationType>(
+                        label: context.l10n.irrigationMethod,
+                        value: _irrigation,
+                        values: IrrigationType.values,
+                        labelBuilder: (value) =>
+                            irrigationLabel(context, value),
+                        onChanged: (value) =>
+                            setState(() => _irrigation = value),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    _DateField(
-                      label: context.l10n.expectedHarvestOptional,
-                      date: _harvestDate,
-                      onTap: _pickHarvestDate,
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _notesController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.notesOptional,
+                      const SizedBox(height: 12),
+                      _EnumDropdown<SoilType>(
+                        label: context.l10n.soilType,
+                        value: _soilType,
+                        values: SoilType.values,
+                        labelBuilder: (value) => soilTypeLabel(context, value),
+                        onChanged: (value) => setState(() => _soilType = value),
                       ),
-                    ),
-                    const SizedBox(height: 22),
-                    SizedBox(
-                      width: double.infinity,
-                      child: AppPressable(
-                        enabled: !_saving,
-                        haptic: AppPressableHaptic.medium,
-                        child: FilledButton(
-                          key: const Key('save_crop_button'),
-                          onPressed: _saving ? null : _save,
-                          child: Text(context.l10n.saveCrop),
+                      const SizedBox(height: 12),
+                      _EnumDropdown<PlantingMethod>(
+                        label: context.l10n.plantingMethod,
+                        value: _plantingMethod,
+                        values: PlantingMethod.values,
+                        labelBuilder: (value) =>
+                            plantingMethodLabel(context, value),
+                        onChanged: (value) =>
+                            setState(() => _plantingMethod = value),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _seedBrandController,
+                        decoration: InputDecoration(
+                          labelText: context.l10n.seedBrand,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _fertilizerController,
+                        decoration: InputDecoration(
+                          labelText: context.l10n.lastFertilizerUsed,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _pesticideController,
+                        decoration: InputDecoration(
+                          labelText: context.l10n.lastPesticideUsed,
+                        ),
+                      ),
+                      if (widget.cropId != null) ...[
+                        const SizedBox(height: 12),
+                        _EnumDropdown<CropHealth>(
+                          label: context.l10n.healthStatus,
+                          value: _health,
+                          values: CropHealth.values,
+                          labelBuilder: (value) =>
+                              cropHealthLabel(context, value),
+                          onChanged: (value) => setState(() => _health = value),
+                        ),
+                      ],
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _farmController,
+                        decoration: InputDecoration(
+                          labelText: context.l10n.villageFarmOptional,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _DateField(
+                        label: context.l10n.expectedHarvestOptional,
+                        date: _harvestDate,
+                        onTap: _pickHarvestDate,
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        key: const Key('crop_notes_field'),
+                        controller: _notesController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          labelText: context.l10n.notesOptional,
+                        ),
+                      ),
+                      const SizedBox(height: 22),
+                      SizedBox(
+                        width: double.infinity,
+                        child: AppPressable(
+                          enabled: !_saving,
+                          haptic: AppPressableHaptic.medium,
+                          child: FilledButton(
+                            key: const Key('save_crop_button'),
+                            onPressed: _saving ? null : _save,
+                            child: Text(context.l10n.saveCrop),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -405,6 +424,7 @@ class _EnumDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DropdownButtonFormField<T>(
+    isExpanded: true,
     initialValue: value,
     decoration: InputDecoration(labelText: label),
     items: values

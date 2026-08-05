@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/features/my_crop/data/models/crop_model.dart';
@@ -32,10 +33,20 @@ class RemoteCropDataSource {
     if (data is! List<dynamic>) {
       throw const CropRemoteFailure(CropRemoteFailureType.server);
     }
-    return data
-        .whereType<Map<String, dynamic>>()
-        .map(CropModel.fromJson)
-        .toList(growable: false);
+    try {
+      return data
+          .map((value) {
+            if (value is! Map<String, dynamic>) {
+              throw const FormatException('Invalid crop item');
+            }
+            return CropModel.fromJson(value);
+          })
+          .toList(growable: false);
+    } on CropRemoteFailure {
+      rethrow;
+    } catch (_) {
+      throw const CropRemoteFailure(CropRemoteFailureType.server);
+    }
   }
 
   Future<CropModel> getCrop(String id) async =>
@@ -93,6 +104,13 @@ class RemoteCropDataSource {
       }
       final decoded = response.body.isEmpty ? null : jsonDecode(response.body);
       if (response.statusCode < 200 || response.statusCode >= 300) {
+        if (kDebugMode) {
+          debugPrint(
+            'Crop API $method $path failed with HTTP '
+            '${response.statusCode}: ${_errorMessage(decoded) ?? 'Unknown error'} '
+            '${_errorDetails(decoded)}',
+          );
+        }
         throw CropRemoteFailure(
           response.statusCode == 401
               ? CropRemoteFailureType.unauthorized
@@ -121,5 +139,11 @@ class RemoteCropDataSource {
     if (decoded is! Map<String, dynamic>) return null;
     final error = decoded['error'];
     return error is Map<String, dynamic> ? error['message'] as String? : null;
+  }
+
+  Object? _errorDetails(Object? decoded) {
+    if (decoded is! Map<String, dynamic>) return null;
+    final error = decoded['error'];
+    return error is Map<String, dynamic> ? error['details'] : null;
   }
 }

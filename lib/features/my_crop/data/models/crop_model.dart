@@ -142,13 +142,13 @@ class CropModel {
         ? customName!.trim()
         : _displayCropName(cropType),
     'variety': variety,
-    'sowingDate': sowingDate.toIso8601String(),
+    'sowingDate': sowingDate.toUtc().toIso8601String(),
     'growthStage': growthStage,
     'landArea': landArea,
     'landUnit': landAreaUnit,
     'soilType': soilType,
     'irrigationMethod': irrigationType,
-    'expectedHarvestDate': expectedHarvestDate?.toIso8601String(),
+    'expectedHarvestDate': expectedHarvestDate?.toUtc().toIso8601String(),
     'healthStatus': healthStatus,
     'notes': notes,
   };

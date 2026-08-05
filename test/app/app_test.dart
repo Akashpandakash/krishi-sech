@@ -388,6 +388,55 @@ void main() {
       expect(find.text('Land area must be greater than zero.'), findsOneWidget);
     });
 
+    testWidgets('Add Crop scrolls to final field and save above keyboard', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(tester.view.resetViewInsets);
+
+      await tester.pumpWidget(
+        _LocalizedRouteApp(
+          initialRoute: AppRoutes.addCrop,
+          controller: LocaleController.inMemory(locale: const Locale('en')),
+          cropController: CropController.inMemory(samples: false),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final scrollView = find.byKey(const Key('add_crop_scroll_view'));
+      final notes = find.byKey(const Key('crop_notes_field'));
+      final save = find.byKey(const Key('save_crop_button'));
+      expect(scrollView, findsOneWidget);
+      expect(save.hitTestable(), findsNothing);
+
+      await tester.drag(scrollView, const Offset(0, -500));
+      await tester.pumpAndSettle();
+      final scrollable = tester.state<ScrollableState>(
+        find
+            .descendant(of: scrollView, matching: find.byType(Scrollable))
+            .first,
+      );
+      expect(scrollable.position.pixels, greaterThan(0));
+
+      await tester.ensureVisible(notes);
+      await tester.pumpAndSettle();
+      expect(notes.hitTestable(), findsOneWidget);
+      await tester.ensureVisible(save);
+      await tester.pumpAndSettle();
+      expect(save.hitTestable(), findsOneWidget);
+
+      await tester.tap(notes);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 260);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(save);
+      await tester.pumpAndSettle();
+      expect(save.hitTestable(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('Home My Crops updates from the shared controller', (
       tester,
     ) async {
