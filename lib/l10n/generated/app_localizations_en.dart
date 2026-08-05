@@ -867,6 +867,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get krishiMarket => 'Krishi Market';
 
   @override
+  String get mandiPrices => 'Mandi Prices';
+
+  @override
+  String get marketShop => 'Shop';
+
+  @override
+  String get mandiCropFilter => 'Crop';
+
+  @override
+  String get mandiDistrictFilter => 'District';
+
+  @override
+  String get mandiMarketFilter => 'Market';
+
+  @override
+  String get mandiLoadError =>
+      'Mandi prices could not be loaded. Please retry.';
+
+  @override
+  String get noMandiPrices => 'No mandi prices match these filters.';
+
+  @override
+  String get minimumPrice => 'Minimum';
+
+  @override
+  String get maximumPrice => 'Maximum';
+
+  @override
+  String get modalPrice => 'Modal price';
+
+  @override
+  String mandiPriceUnit(String unit) {
+    return 'Price unit: ₹ per $unit';
+  }
+
+  @override
+  String mandiUpdatedAt(String time) {
+    return 'Last updated: $time';
+  }
+
+  @override
+  String get trendUp => 'Price trend up';
+
+  @override
+  String get trendDown => 'Price trend down';
+
+  @override
+  String get trendStable => 'Price trend stable';
+
+  @override
+  String get paddy => 'Paddy';
+
+  @override
+  String get maize => 'Maize';
+
+  @override
+  String get potato => 'Potato';
+
+  @override
+  String get onion => 'Onion';
+
+  @override
   String get searchMarket => 'Search seeds, tools and fertilizers';
 
   @override

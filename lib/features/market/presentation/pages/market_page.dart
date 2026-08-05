@@ -1,25 +1,106 @@
 import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/features/market/data/datasources/local_mandi_price_data_source.dart';
 import 'package:krishi_sech/features/market/data/datasources/local_market_data_source.dart';
+import 'package:krishi_sech/features/market/data/repositories/mandi_price_repository_impl.dart';
 import 'package:krishi_sech/features/market/data/repositories/market_repository_impl.dart';
 import 'package:krishi_sech/features/market/domain/entities/market_product.dart';
+import 'package:krishi_sech/features/market/domain/repositories/mandi_price_repository.dart';
 import 'package:krishi_sech/features/market/domain/repositories/market_repository.dart';
 import 'package:krishi_sech/features/market/presentation/market_product_text.dart';
+import 'package:krishi_sech/features/market/presentation/widgets/mandi_prices_view.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
 
 class MarketPage extends StatefulWidget {
-  const MarketPage({super.key, this.repository});
+  const MarketPage({super.key, this.repository, this.mandiRepository});
 
   final MarketRepository? repository;
+  final MandiPriceRepository? mandiRepository;
 
   @override
   State<MarketPage> createState() => _MarketPageState();
 }
 
-class _MarketPageState extends State<MarketPage> {
+class _MarketPageState extends State<MarketPage>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        children: [
+          ResponsiveContent(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                context.l10n.krishiMarket,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ),
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(
+                key: const Key('market_mandi_tab'),
+                text: context.l10n.mandiPrices,
+              ),
+              Tab(
+                key: const Key('market_shop_tab'),
+                text: context.l10n.marketShop,
+              ),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                MandiPricesView(
+                  repository:
+                      widget.mandiRepository ??
+                      const MandiPriceRepositoryImpl(
+                        LocalMandiPriceDataSource(),
+                      ),
+                ),
+                ShopCatalogView(repository: widget.repository),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ShopCatalogView extends StatefulWidget {
+  const ShopCatalogView({super.key, this.repository});
+
+  final MarketRepository? repository;
+
+  @override
+  State<ShopCatalogView> createState() => _ShopCatalogViewState();
+}
+
+class _ShopCatalogViewState extends State<ShopCatalogView> {
   late final MarketRepository _repository;
   final _searchController = TextEditingController();
   List<MarketProduct> _products = const [];
@@ -87,26 +168,6 @@ class _MarketPageState extends State<MarketPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          context.l10n.krishiMarket,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.w800),
-                        ),
-                      ),
-                      AppPressable(
-                        enabled: false,
-                        child: IconButton.filledTonal(
-                          onPressed: null,
-                          tooltip: context.l10n.marketCheckoutComingSoon,
-                          icon: const Icon(Icons.shopping_cart_outlined),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
                   TextField(
                     key: const Key('market_search_field'),
                     controller: _searchController,

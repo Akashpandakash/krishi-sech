@@ -859,6 +859,67 @@ class AppLocalizationsBn extends AppLocalizations {
   String get krishiMarket => 'কৃষি বাজার';
 
   @override
+  String get mandiPrices => 'মন্ডির দাম';
+
+  @override
+  String get marketShop => 'দোকান';
+
+  @override
+  String get mandiCropFilter => 'ফসল';
+
+  @override
+  String get mandiDistrictFilter => 'জেলা';
+
+  @override
+  String get mandiMarketFilter => 'বাজার';
+
+  @override
+  String get mandiLoadError => 'মন্ডির দাম লোড করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get noMandiPrices => 'এই ফিল্টারে কোনো মন্ডির দাম পাওয়া যায়নি।';
+
+  @override
+  String get minimumPrice => 'সর্বনিম্ন';
+
+  @override
+  String get maximumPrice => 'সর্বোচ্চ';
+
+  @override
+  String get modalPrice => 'প্রধান দাম';
+
+  @override
+  String mandiPriceUnit(String unit) {
+    return 'দামের একক: প্রতি $unit-এ ₹';
+  }
+
+  @override
+  String mandiUpdatedAt(String time) {
+    return 'সর্বশেষ আপডেট: $time';
+  }
+
+  @override
+  String get trendUp => 'দাম ঊর্ধ্বমুখী';
+
+  @override
+  String get trendDown => 'দাম নিম্নমুখী';
+
+  @override
+  String get trendStable => 'দাম স্থিতিশীল';
+
+  @override
+  String get paddy => 'ধান';
+
+  @override
+  String get maize => 'ভুট্টা';
+
+  @override
+  String get potato => 'আলু';
+
+  @override
+  String get onion => 'পেঁয়াজ';
+
+  @override
   String get searchMarket => 'বীজ, যন্ত্র ও সার খুঁজুন';
 
   @override

@@ -859,6 +859,67 @@ class AppLocalizationsHi extends AppLocalizations {
   String get krishiMarket => 'कृषि बाज़ार';
 
   @override
+  String get mandiPrices => 'मंडी भाव';
+
+  @override
+  String get marketShop => 'दुकान';
+
+  @override
+  String get mandiCropFilter => 'फसल';
+
+  @override
+  String get mandiDistrictFilter => 'ज़िला';
+
+  @override
+  String get mandiMarketFilter => 'बाज़ार';
+
+  @override
+  String get mandiLoadError => 'मंडी भाव लोड नहीं हो सके। फिर प्रयास करें।';
+
+  @override
+  String get noMandiPrices => 'इन फ़िल्टरों के लिए कोई मंडी भाव नहीं मिला।';
+
+  @override
+  String get minimumPrice => 'न्यूनतम';
+
+  @override
+  String get maximumPrice => 'अधिकतम';
+
+  @override
+  String get modalPrice => 'मॉडल भाव';
+
+  @override
+  String mandiPriceUnit(String unit) {
+    return 'भाव इकाई: ₹ प्रति $unit';
+  }
+
+  @override
+  String mandiUpdatedAt(String time) {
+    return 'अंतिम अपडेट: $time';
+  }
+
+  @override
+  String get trendUp => 'भाव बढ़ रहा है';
+
+  @override
+  String get trendDown => 'भाव घट रहा है';
+
+  @override
+  String get trendStable => 'भाव स्थिर है';
+
+  @override
+  String get paddy => 'धान';
+
+  @override
+  String get maize => 'मक्का';
+
+  @override
+  String get potato => 'आलू';
+
+  @override
+  String get onion => 'प्याज़';
+
+  @override
   String get searchMarket => 'बीज, औज़ार और खाद खोजें';
 
   @override

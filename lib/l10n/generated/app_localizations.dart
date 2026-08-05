@@ -1654,6 +1654,120 @@ abstract class AppLocalizations {
   /// **'Krishi Market'**
   String get krishiMarket;
 
+  /// No description provided for @mandiPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandi Prices'**
+  String get mandiPrices;
+
+  /// No description provided for @marketShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get marketShop;
+
+  /// No description provided for @mandiCropFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop'**
+  String get mandiCropFilter;
+
+  /// No description provided for @mandiDistrictFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'District'**
+  String get mandiDistrictFilter;
+
+  /// No description provided for @mandiMarketFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Market'**
+  String get mandiMarketFilter;
+
+  /// No description provided for @mandiLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandi prices could not be loaded. Please retry.'**
+  String get mandiLoadError;
+
+  /// No description provided for @noMandiPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'No mandi prices match these filters.'**
+  String get noMandiPrices;
+
+  /// No description provided for @minimumPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum'**
+  String get minimumPrice;
+
+  /// No description provided for @maximumPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum'**
+  String get maximumPrice;
+
+  /// No description provided for @modalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Modal price'**
+  String get modalPrice;
+
+  /// No description provided for @mandiPriceUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Price unit: ₹ per {unit}'**
+  String mandiPriceUnit(String unit);
+
+  /// No description provided for @mandiUpdatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {time}'**
+  String mandiUpdatedAt(String time);
+
+  /// No description provided for @trendUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Price trend up'**
+  String get trendUp;
+
+  /// No description provided for @trendDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Price trend down'**
+  String get trendDown;
+
+  /// No description provided for @trendStable.
+  ///
+  /// In en, this message translates to:
+  /// **'Price trend stable'**
+  String get trendStable;
+
+  /// No description provided for @paddy.
+  ///
+  /// In en, this message translates to:
+  /// **'Paddy'**
+  String get paddy;
+
+  /// No description provided for @maize.
+  ///
+  /// In en, this message translates to:
+  /// **'Maize'**
+  String get maize;
+
+  /// No description provided for @potato.
+  ///
+  /// In en, this message translates to:
+  /// **'Potato'**
+  String get potato;
+
+  /// No description provided for @onion.
+  ///
+  /// In en, this message translates to:
+  /// **'Onion'**
+  String get onion;
+
   /// No description provided for @searchMarket.
   ///
   /// In en, this message translates to:
