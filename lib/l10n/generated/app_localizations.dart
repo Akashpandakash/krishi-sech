@@ -592,6 +592,60 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get notifications;
 
+  /// No description provided for @noNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get noNotifications;
+
+  /// No description provided for @noNotificationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Important farming updates will appear here.'**
+  String get noNotificationsDescription;
+
+  /// No description provided for @notificationsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications could not be loaded.'**
+  String get notificationsLoadError;
+
+  /// No description provided for @notificationWeatherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain expected today'**
+  String get notificationWeatherTitle;
+
+  /// No description provided for @notificationWeatherMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain is likely this afternoon. Consider delaying irrigation.'**
+  String get notificationWeatherMessage;
+
+  /// No description provided for @notificationCropTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop task reminder'**
+  String get notificationCropTaskTitle;
+
+  /// No description provided for @notificationCropTaskMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect your paddy crop for pests today.'**
+  String get notificationCropTaskMessage;
+
+  /// No description provided for @notificationMarketTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Market price update'**
+  String get notificationMarketTitle;
+
+  /// No description provided for @notificationMarketMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Wheat prices have increased in the local mandi.'**
+  String get notificationMarketMessage;
+
   /// No description provided for @goodMorning.
   ///
   /// In en, this message translates to:

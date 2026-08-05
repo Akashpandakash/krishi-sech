@@ -18,6 +18,7 @@ import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_scope.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_labels.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
+import 'package:krishi_sech/features/notifications/presentation/widgets/home_notification_bell.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/controllers/seasonal_advice_controller.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/seasonal_advice_content.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/seasonal_advice_scope.dart';
@@ -300,13 +301,7 @@ class _LocationBar extends StatelessWidget {
             ),
           ),
         ),
-        AppPressable(
-          child: IconButton.filledTonal(
-            tooltip: context.l10n.notifications,
-            onPressed: () {},
-            icon: const Badge(child: Icon(Icons.notifications_none)),
-          ),
-        ),
+        const HomeNotificationBell(),
       ],
     );
   }

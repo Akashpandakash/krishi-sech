@@ -264,6 +264,37 @@ class AppLocalizationsHi extends AppLocalizations {
   String get notifications => 'सूचनाएँ';
 
   @override
+  String get noNotifications => 'अभी कोई सूचना नहीं है';
+
+  @override
+  String get noNotificationsDescription =>
+      'खेती से जुड़े महत्वपूर्ण अपडेट यहाँ दिखाई देंगे।';
+
+  @override
+  String get notificationsLoadError => 'सूचनाएँ लोड नहीं हो सकीं।';
+
+  @override
+  String get notificationWeatherTitle => 'आज बारिश की संभावना';
+
+  @override
+  String get notificationWeatherMessage =>
+      'आज दोपहर बारिश हो सकती है। सिंचाई कुछ समय के लिए टालें।';
+
+  @override
+  String get notificationCropTaskTitle => 'फसल कार्य अनुस्मारक';
+
+  @override
+  String get notificationCropTaskMessage =>
+      'आज धान की फसल में कीटों की जाँच करें।';
+
+  @override
+  String get notificationMarketTitle => 'बाज़ार भाव अपडेट';
+
+  @override
+  String get notificationMarketMessage =>
+      'स्थानीय मंडी में गेहूँ के भाव बढ़े हैं।';
+
+  @override
   String get goodMorning => 'सुप्रभात,';
 
   @override

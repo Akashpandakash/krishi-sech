@@ -265,6 +265,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifications => 'Notifications';
 
   @override
+  String get noNotifications => 'No notifications yet';
+
+  @override
+  String get noNotificationsDescription =>
+      'Important farming updates will appear here.';
+
+  @override
+  String get notificationsLoadError => 'Notifications could not be loaded.';
+
+  @override
+  String get notificationWeatherTitle => 'Rain expected today';
+
+  @override
+  String get notificationWeatherMessage =>
+      'Rain is likely this afternoon. Consider delaying irrigation.';
+
+  @override
+  String get notificationCropTaskTitle => 'Crop task reminder';
+
+  @override
+  String get notificationCropTaskMessage =>
+      'Inspect your paddy crop for pests today.';
+
+  @override
+  String get notificationMarketTitle => 'Market price update';
+
+  @override
+  String get notificationMarketMessage =>
+      'Wheat prices have increased in the local mandi.';
+
+  @override
   String get goodMorning => 'Good morning,';
 
   @override

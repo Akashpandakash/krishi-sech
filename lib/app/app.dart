@@ -27,6 +27,9 @@ import 'package:krishi_sech/l10n/generated/app_localizations.dart';
 import 'package:krishi_sech/features/profile/data/repositories/in_memory_profile_repository.dart';
 import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:krishi_sech/features/profile/presentation/profile_scope.dart';
+import 'package:krishi_sech/features/notifications/data/repositories/local_app_notification_repository.dart';
+import 'package:krishi_sech/features/notifications/presentation/app_notification_scope.dart';
+import 'package:krishi_sech/features/notifications/presentation/controllers/app_notification_controller.dart';
 
 class KrishiSechApp extends StatefulWidget {
   const KrishiSechApp({
@@ -40,6 +43,7 @@ class KrishiSechApp extends StatefulWidget {
     this.cropHealthRecordController,
     this.authController,
     this.profileController,
+    this.notificationController,
     super.key,
   });
 
@@ -53,6 +57,7 @@ class KrishiSechApp extends StatefulWidget {
   final CropHealthRecordController? cropHealthRecordController;
   final AuthController? authController;
   final ProfileController? profileController;
+  final AppNotificationController? notificationController;
 
   @override
   State<KrishiSechApp> createState() => _KrishiSechAppState();
@@ -79,6 +84,8 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
   late final bool _ownsAuthController;
   late final ProfileController _profileController;
   late final bool _ownsProfileController;
+  late final AppNotificationController _notificationController;
+  late final bool _ownsNotificationController;
 
   @override
   void initState() {
@@ -119,6 +126,13 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
     _profileController =
         widget.profileController ??
         ProfileController(InMemoryProfileRepository());
+    _ownsNotificationController = widget.notificationController == null;
+    _notificationController =
+        widget.notificationController ??
+        AppNotificationController(LocalAppNotificationRepository());
+    if (widget.notificationController == null) {
+      _notificationController.load();
+    }
   }
 
   @override
@@ -151,6 +165,7 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
       _authController.dispose();
     }
     if (_ownsProfileController) _profileController.dispose();
+    if (_ownsNotificationController) _notificationController.dispose();
     super.dispose();
   }
 
@@ -158,51 +173,54 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
   Widget build(BuildContext context) {
     return AuthScope(
       controller: _authController,
-      child: ProfileScope(
-        controller: _profileController,
-        child: LocationScope(
-          controller: _locationController,
-          child: WeatherScope(
-            controller: _weatherController,
-            child: SeasonalAdviceScope(
-              controller: _seasonalAdviceController,
-              child: AiChatScope(
-                controller: _aiChatController,
-                child: CropScope(
-                  controller: _cropController,
-                  child: CropTaskScope(
-                    controller: _cropTaskController,
-                    child: CropHealthRecordScope(
-                      controller: _cropHealthRecordController,
-                      child: LocaleScope(
-                        controller: _localeController,
-                        child: AnimatedBuilder(
-                          animation: _localeController,
-                          builder: (context, _) {
-                            return MaterialApp(
-                              navigatorKey: AppRouter.navigatorKey,
-                              onGenerateTitle: (context) =>
-                                  AppLocalizations.of(context).appTitle,
-                              debugShowCheckedModeBanner: false,
-                              theme: AppTheme.light,
-                              darkTheme: AppTheme.dark,
-                              // RC1 uses the fully audited green-and-white theme.
-                              // Re-enable system mode when every legacy surface has
-                              // migrated away from hard-coded light colors.
-                              themeMode: ThemeMode.light,
-                              locale: _localeController.locale,
-                              supportedLocales:
-                                  AppLocalizations.supportedLocales,
-                              localizationsDelegates: const [
-                                AppLocalizations.delegate,
-                                GlobalMaterialLocalizations.delegate,
-                                GlobalWidgetsLocalizations.delegate,
-                                GlobalCupertinoLocalizations.delegate,
-                              ],
-                              initialRoute: AppRoutes.splash,
-                              onGenerateRoute: AppRouter.onGenerateRoute,
-                            );
-                          },
+      child: AppNotificationScope(
+        controller: _notificationController,
+        child: ProfileScope(
+          controller: _profileController,
+          child: LocationScope(
+            controller: _locationController,
+            child: WeatherScope(
+              controller: _weatherController,
+              child: SeasonalAdviceScope(
+                controller: _seasonalAdviceController,
+                child: AiChatScope(
+                  controller: _aiChatController,
+                  child: CropScope(
+                    controller: _cropController,
+                    child: CropTaskScope(
+                      controller: _cropTaskController,
+                      child: CropHealthRecordScope(
+                        controller: _cropHealthRecordController,
+                        child: LocaleScope(
+                          controller: _localeController,
+                          child: AnimatedBuilder(
+                            animation: _localeController,
+                            builder: (context, _) {
+                              return MaterialApp(
+                                navigatorKey: AppRouter.navigatorKey,
+                                onGenerateTitle: (context) =>
+                                    AppLocalizations.of(context).appTitle,
+                                debugShowCheckedModeBanner: false,
+                                theme: AppTheme.light,
+                                darkTheme: AppTheme.dark,
+                                // RC1 uses the fully audited green-and-white theme.
+                                // Re-enable system mode when every legacy surface has
+                                // migrated away from hard-coded light colors.
+                                themeMode: ThemeMode.light,
+                                locale: _localeController.locale,
+                                supportedLocales:
+                                    AppLocalizations.supportedLocales,
+                                localizationsDelegates: const [
+                                  AppLocalizations.delegate,
+                                  GlobalMaterialLocalizations.delegate,
+                                  GlobalWidgetsLocalizations.delegate,
+                                  GlobalCupertinoLocalizations.delegate,
+                                ],
+                                initialRoute: AppRoutes.splash,
+                                onGenerateRoute: AppRouter.onGenerateRoute,
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),

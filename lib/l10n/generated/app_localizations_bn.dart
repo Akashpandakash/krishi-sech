@@ -264,6 +264,36 @@ class AppLocalizationsBn extends AppLocalizations {
   String get notifications => 'বিজ্ঞপ্তি';
 
   @override
+  String get noNotifications => 'এখনও কোনো বিজ্ঞপ্তি নেই';
+
+  @override
+  String get noNotificationsDescription =>
+      'গুরুত্বপূর্ণ কৃষি আপডেট এখানে দেখা যাবে।';
+
+  @override
+  String get notificationsLoadError => 'বিজ্ঞপ্তি লোড করা যায়নি।';
+
+  @override
+  String get notificationWeatherTitle => 'আজ বৃষ্টির সম্ভাবনা';
+
+  @override
+  String get notificationWeatherMessage =>
+      'আজ বিকেলে বৃষ্টি হতে পারে। সেচ কিছুটা পিছিয়ে দিন।';
+
+  @override
+  String get notificationCropTaskTitle => 'ফসলের কাজের স্মরণিকা';
+
+  @override
+  String get notificationCropTaskMessage =>
+      'আজ ধানক্ষেতে পোকামাকড় পরীক্ষা করুন।';
+
+  @override
+  String get notificationMarketTitle => 'বাজারদরের আপডেট';
+
+  @override
+  String get notificationMarketMessage => 'স্থানীয় মণ্ডিতে গমের দাম বেড়েছে।';
+
+  @override
   String get goodMorning => 'সুপ্রভাত,';
 
   @override

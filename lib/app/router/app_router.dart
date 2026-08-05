@@ -15,6 +15,7 @@ import 'package:krishi_sech/features/my_crop/presentation/pages/add_edit_crop_he
 import 'package:krishi_sech/features/my_crop/presentation/pages/crop_health_records_page.dart';
 import 'package:krishi_sech/features/my_crop/presentation/pages/crop_calendar_page.dart';
 import 'package:krishi_sech/features/my_crop/presentation/pages/add_edit_crop_task_page.dart';
+import 'package:krishi_sech/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:krishi_sech/features/weather/presentation/pages/weather_details_page.dart';
 import 'package:krishi_sech/features/seasonal_advice/presentation/pages/seasonal_advice_details_page.dart';
 import 'package:krishi_sech/features/onboarding/presentation/pages/onboarding_page.dart';
@@ -38,6 +39,7 @@ abstract final class AppRouter {
       AppRoutes.manualLocation => const ManualLocationPage(),
       AppRoutes.weatherDetails => const WeatherDetailsPage(),
       AppRoutes.seasonalAdviceDetails => const SeasonalAdviceDetailsPage(),
+      AppRoutes.notifications => const NotificationsPage(),
       AppRoutes.login => const LoginPage(),
       AppRoutes.otp => switch (settings.arguments) {
         final OtpPageArguments arguments => OtpPage(arguments: arguments),

@@ -7,6 +7,7 @@ abstract final class AppRoutes {
   static const manualLocation = '/location/manual';
   static const weatherDetails = '/weather/details';
   static const seasonalAdviceDetails = '/seasonal-advice/details';
+  static const notifications = '/notifications';
   static const login = '/login';
   static const otp = '/login/otp';
   static const home = '/home';
