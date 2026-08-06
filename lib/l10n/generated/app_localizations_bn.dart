@@ -1083,6 +1083,109 @@ class AppLocalizationsBn extends AppLocalizations {
   String get helpSupport => 'সহায়তা';
 
   @override
+  String get helpSupportLoadError => 'সহায়তা বিভাগ লোড করা যায়নি।';
+
+  @override
+  String get frequentlyAskedQuestions => 'সচরাচর জিজ্ঞাসিত প্রশ্ন';
+
+  @override
+  String get faqLanguageQuestion => 'অ্যাপের ভাষা কীভাবে পরিবর্তন করব?';
+
+  @override
+  String get faqLanguageAnswer =>
+      'প্রোফাইল খুলে ভাষা নির্বাচন করুন, তারপর আপনার পছন্দের ভাষা বেছে নিন। পছন্দটি স্বয়ংক্রিয়ভাবে সংরক্ষিত হবে।';
+
+  @override
+  String get faqCropQuestion => 'কীভাবে ফসল যোগ করব?';
+
+  @override
+  String get faqCropAnswer =>
+      'আমার ফসল থেকে ফসল যোগ করুন নির্বাচন করুন। প্রয়োজনীয় ফসল, বপনের তারিখ ও জমির তথ্য দিয়ে সংরক্ষণ করুন।';
+
+  @override
+  String get faqOfflineQuestion => 'কৃষি সেচ কি অফলাইনে ব্যবহার করা যায়?';
+
+  @override
+  String get faqOfflineAnswer =>
+      'সংরক্ষিত তথ্য অফলাইনে দেখা যাবে। সার্ভারের বর্তমান তথ্য দরকার এমন সুবিধা ইন্টারনেট ফিরলে হালনাগাদ হবে।';
+
+  @override
+  String get contactSupport => 'সহায়তা কেন্দ্রে যোগাযোগ';
+
+  @override
+  String get supportEmail => 'সহায়তার ইমেইল';
+
+  @override
+  String get supportPhone => 'সহায়তার ফোন';
+
+  @override
+  String get supportContactPlaceholderNotice =>
+      'আনুষ্ঠানিক সহায়তার মাধ্যম নির্ধারিত না হওয়া পর্যন্ত নমুনা যোগাযোগের তথ্য দেখানো হচ্ছে।';
+
+  @override
+  String get reportAProblem => 'সমস্যা জানান';
+
+  @override
+  String get reportSubject => 'বিষয়';
+
+  @override
+  String get reportDescription => 'বিবরণ';
+
+  @override
+  String get reportSubjectRequired => 'একটি বিষয় লিখুন।';
+
+  @override
+  String get reportDescriptionRequired => 'সমস্যাটি বর্ণনা করুন।';
+
+  @override
+  String get attachScreenshotOptional => 'স্ক্রিনশট যুক্ত করুন (ঐচ্ছিক)';
+
+  @override
+  String get screenshotAttached => 'স্ক্রিনশট যুক্ত হয়েছে';
+
+  @override
+  String get screenshotSelectionFailed => 'স্ক্রিনশট নির্বাচন করা যায়নি।';
+
+  @override
+  String get submitReport => 'রিপোর্ট জমা দিন';
+
+  @override
+  String get reportSubmittedSuccessfully =>
+      'আপনার রিপোর্ট এই ডিভাইসে সংরক্ষিত হয়েছে।';
+
+  @override
+  String get reportSubmitError =>
+      'রিপোর্ট সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get supportReportsLoadError => 'সংরক্ষিত রিপোর্ট লোড করা যায়নি।';
+
+  @override
+  String get noSupportReports => 'এখনও কোনো নমুনা রিপোর্ট জমা হয়নি।';
+
+  @override
+  String supportReportsSaved(int count) {
+    return 'এই ডিভাইসে সংরক্ষিত রিপোর্ট: $count';
+  }
+
+  @override
+  String get privacyPolicy => 'গোপনীয়তা নীতি';
+
+  @override
+  String get privacyPolicySummary =>
+      'কৃষি সেচ নমুনা সহায়তা রিপোর্ট এই ডিভাইসে স্থানীয়ভাবে সংরক্ষণ করে। পাসওয়ার্ড, ওটিপি বা সংবেদনশীল তথ্য দেবেন না।';
+
+  @override
+  String get termsAndConditions => 'শর্তাবলি';
+
+  @override
+  String get termsConditionsSummary =>
+      'এই ডেভেলপমেন্ট সংস্করণে কৃষি তথ্য ও নমুনা সেবা দেওয়া হয়। গুরুত্বপূর্ণ কৃষি সিদ্ধান্ত স্থানীয় যোগ্য বিশেষজ্ঞের সঙ্গে যাচাই করুন।';
+
+  @override
+  String get appVersion => 'অ্যাপের সংস্করণ';
+
+  @override
   String get logOut => 'লগ আউট';
 
   @override

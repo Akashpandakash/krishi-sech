@@ -29,4 +29,5 @@ abstract final class AppRoutes {
   static const marketProductDetails = '/market/product-details';
   static const shorts = '/shorts';
   static const profile = '/profile';
+  static const helpSupport = '/profile/help-support';
 }

@@ -164,11 +164,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       _ProfileTile(
                         icon: Icons.help_outline,
                         title: context.l10n.helpSupport,
-                        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(context.l10n.featureComingSoon),
-                          ),
-                        ),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).pushNamed(AppRoutes.helpSupport),
                       ),
                     ],
                   ),

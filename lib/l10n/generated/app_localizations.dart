@@ -2096,6 +2096,192 @@ abstract class AppLocalizations {
   /// **'Help & support'**
   String get helpSupport;
 
+  /// No description provided for @helpSupportLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Help and support could not be loaded.'**
+  String get helpSupportLoadError;
+
+  /// No description provided for @frequentlyAskedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently Asked Questions'**
+  String get frequentlyAskedQuestions;
+
+  /// No description provided for @faqLanguageQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I change the app language?'**
+  String get faqLanguageQuestion;
+
+  /// No description provided for @faqLanguageAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Profile, choose Language, then select your preferred language. Your choice is saved automatically.'**
+  String get faqLanguageAnswer;
+
+  /// No description provided for @faqCropQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I add a crop?'**
+  String get faqCropQuestion;
+
+  /// No description provided for @faqCropAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Open My Crops and select Add Crop. Complete the required crop, sowing date and land details, then save.'**
+  String get faqCropAnswer;
+
+  /// No description provided for @faqOfflineQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I use Krishi Sech offline?'**
+  String get faqOfflineQuestion;
+
+  /// No description provided for @faqOfflineAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved information remains available offline. Features requiring current server data will refresh when you reconnect.'**
+  String get faqOfflineAnswer;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupport;
+
+  /// No description provided for @supportEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Support email'**
+  String get supportEmail;
+
+  /// No description provided for @supportPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Support phone'**
+  String get supportPhone;
+
+  /// No description provided for @supportContactPlaceholderNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Placeholder contact details are shown until official support channels are configured.'**
+  String get supportContactPlaceholderNotice;
+
+  /// No description provided for @reportAProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a Problem'**
+  String get reportAProblem;
+
+  /// No description provided for @reportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get reportSubject;
+
+  /// No description provided for @reportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get reportDescription;
+
+  /// No description provided for @reportSubjectRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a subject.'**
+  String get reportSubjectRequired;
+
+  /// No description provided for @reportDescriptionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the problem.'**
+  String get reportDescriptionRequired;
+
+  /// No description provided for @attachScreenshotOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach screenshot (optional)'**
+  String get attachScreenshotOptional;
+
+  /// No description provided for @screenshotAttached.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshot attached'**
+  String get screenshotAttached;
+
+  /// No description provided for @screenshotSelectionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The screenshot could not be selected.'**
+  String get screenshotSelectionFailed;
+
+  /// No description provided for @submitReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit report'**
+  String get submitReport;
+
+  /// No description provided for @reportSubmittedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your report was saved on this device.'**
+  String get reportSubmittedSuccessfully;
+
+  /// No description provided for @reportSubmitError.
+  ///
+  /// In en, this message translates to:
+  /// **'The report could not be saved. Please try again.'**
+  String get reportSubmitError;
+
+  /// No description provided for @supportReportsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved reports could not be loaded.'**
+  String get supportReportsLoadError;
+
+  /// No description provided for @noSupportReports.
+  ///
+  /// In en, this message translates to:
+  /// **'No demo reports submitted yet.'**
+  String get noSupportReports;
+
+  /// No description provided for @supportReportsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved reports on this device: {count}'**
+  String supportReportsSaved(int count);
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @privacyPolicySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Krishi Sech stores demo support reports locally on this device. Do not include passwords, OTPs or other sensitive information.'**
+  String get privacyPolicySummary;
+
+  /// No description provided for @termsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get termsAndConditions;
+
+  /// No description provided for @termsConditionsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'This development build provides farming information and demo services. Verify critical farming decisions with a qualified local expert.'**
+  String get termsConditionsSummary;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version'**
+  String get appVersion;
+
   /// No description provided for @logOut.
   ///
   /// In en, this message translates to:

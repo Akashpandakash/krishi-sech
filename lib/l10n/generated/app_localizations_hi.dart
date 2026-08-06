@@ -1085,6 +1085,110 @@ class AppLocalizationsHi extends AppLocalizations {
   String get helpSupport => 'सहायता';
 
   @override
+  String get helpSupportLoadError => 'सहायता अनुभाग लोड नहीं हो सका।';
+
+  @override
+  String get frequentlyAskedQuestions => 'अक्सर पूछे जाने वाले प्रश्न';
+
+  @override
+  String get faqLanguageQuestion => 'ऐप की भाषा कैसे बदलें?';
+
+  @override
+  String get faqLanguageAnswer =>
+      'प्रोफ़ाइल खोलें, भाषा चुनें और अपनी पसंदीदा भाषा चुनें। आपका चयन अपने आप सुरक्षित हो जाएगा।';
+
+  @override
+  String get faqCropQuestion => 'फसल कैसे जोड़ें?';
+
+  @override
+  String get faqCropAnswer =>
+      'मेरी फसल में जाकर फसल जोड़ें चुनें। आवश्यक फसल, बुवाई की तारीख और भूमि की जानकारी भरकर सुरक्षित करें।';
+
+  @override
+  String get faqOfflineQuestion =>
+      'क्या कृषि सेच ऑफलाइन इस्तेमाल किया जा सकता है?';
+
+  @override
+  String get faqOfflineAnswer =>
+      'सुरक्षित जानकारी ऑफलाइन उपलब्ध रहती है। सर्वर के ताज़ा डेटा वाली सुविधाएँ इंटरनेट लौटने पर अपडेट होंगी।';
+
+  @override
+  String get contactSupport => 'सहायता से संपर्क करें';
+
+  @override
+  String get supportEmail => 'सहायता ईमेल';
+
+  @override
+  String get supportPhone => 'सहायता फ़ोन';
+
+  @override
+  String get supportContactPlaceholderNotice =>
+      'आधिकारिक सहायता माध्यम तय होने तक सुरक्षित नमूना संपर्क जानकारी दिखाई जा रही है।';
+
+  @override
+  String get reportAProblem => 'समस्या की रिपोर्ट करें';
+
+  @override
+  String get reportSubject => 'विषय';
+
+  @override
+  String get reportDescription => 'विवरण';
+
+  @override
+  String get reportSubjectRequired => 'विषय दर्ज करें।';
+
+  @override
+  String get reportDescriptionRequired => 'समस्या का विवरण दें।';
+
+  @override
+  String get attachScreenshotOptional => 'स्क्रीनशॉट जोड़ें (वैकल्पिक)';
+
+  @override
+  String get screenshotAttached => 'स्क्रीनशॉट जुड़ गया';
+
+  @override
+  String get screenshotSelectionFailed => 'स्क्रीनशॉट नहीं चुना जा सका।';
+
+  @override
+  String get submitReport => 'रिपोर्ट जमा करें';
+
+  @override
+  String get reportSubmittedSuccessfully =>
+      'आपकी रिपोर्ट इस डिवाइस पर सुरक्षित हो गई है।';
+
+  @override
+  String get reportSubmitError =>
+      'रिपोर्ट सुरक्षित नहीं हो सकी। फिर प्रयास करें।';
+
+  @override
+  String get supportReportsLoadError => 'सुरक्षित रिपोर्ट लोड नहीं हो सकीं।';
+
+  @override
+  String get noSupportReports => 'अभी कोई डेमो रिपोर्ट जमा नहीं हुई है।';
+
+  @override
+  String supportReportsSaved(int count) {
+    return 'इस डिवाइस पर सुरक्षित रिपोर्ट: $count';
+  }
+
+  @override
+  String get privacyPolicy => 'गोपनीयता नीति';
+
+  @override
+  String get privacyPolicySummary =>
+      'कृषि सेच डेमो सहायता रिपोर्ट इस डिवाइस पर स्थानीय रूप से सुरक्षित करता है। पासवर्ड, ओटीपी या संवेदनशील जानकारी शामिल न करें।';
+
+  @override
+  String get termsAndConditions => 'नियम और शर्तें';
+
+  @override
+  String get termsConditionsSummary =>
+      'यह डेवलपमेंट बिल्ड खेती की जानकारी और डेमो सेवाएँ देता है। महत्वपूर्ण खेती संबंधी निर्णय योग्य स्थानीय विशेषज्ञ से जाँचें।';
+
+  @override
+  String get appVersion => 'ऐप संस्करण';
+
+  @override
   String get logOut => 'लॉग आउट';
 
   @override

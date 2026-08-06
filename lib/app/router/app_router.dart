@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/features/language_selection/presentation/pages/language_selection_page.dart';
+import 'package:krishi_sech/features/help_support/presentation/pages/help_support_page.dart';
 import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_processing_page.dart';
 import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_result_page.dart';
 import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_scan_page.dart';
@@ -100,6 +101,7 @@ abstract final class AppRouter {
       },
       AppRoutes.shorts => const ShortsPage(),
       AppRoutes.profile => const MainNavigationPage(initialIndex: 4),
+      AppRoutes.helpSupport => const HelpSupportPage(),
       _ => const _UnknownRoutePage(),
     };
 

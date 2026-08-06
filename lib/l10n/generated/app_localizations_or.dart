@@ -1094,6 +1094,110 @@ class AppLocalizationsOr extends AppLocalizations {
   String get helpSupport => 'Help & support';
 
   @override
+  String get helpSupportLoadError => 'Help and support could not be loaded.';
+
+  @override
+  String get frequentlyAskedQuestions => 'Frequently Asked Questions';
+
+  @override
+  String get faqLanguageQuestion => 'How do I change the app language?';
+
+  @override
+  String get faqLanguageAnswer =>
+      'Open Profile, choose Language, then select your preferred language. Your choice is saved automatically.';
+
+  @override
+  String get faqCropQuestion => 'How do I add a crop?';
+
+  @override
+  String get faqCropAnswer =>
+      'Open My Crops and select Add Crop. Complete the required crop, sowing date and land details, then save.';
+
+  @override
+  String get faqOfflineQuestion => 'Can I use Krishi Sech offline?';
+
+  @override
+  String get faqOfflineAnswer =>
+      'Saved information remains available offline. Features requiring current server data will refresh when you reconnect.';
+
+  @override
+  String get contactSupport => 'Contact Support';
+
+  @override
+  String get supportEmail => 'Support email';
+
+  @override
+  String get supportPhone => 'Support phone';
+
+  @override
+  String get supportContactPlaceholderNotice =>
+      'Placeholder contact details are shown until official support channels are configured.';
+
+  @override
+  String get reportAProblem => 'Report a Problem';
+
+  @override
+  String get reportSubject => 'Subject';
+
+  @override
+  String get reportDescription => 'Description';
+
+  @override
+  String get reportSubjectRequired => 'Enter a subject.';
+
+  @override
+  String get reportDescriptionRequired => 'Describe the problem.';
+
+  @override
+  String get attachScreenshotOptional => 'Attach screenshot (optional)';
+
+  @override
+  String get screenshotAttached => 'Screenshot attached';
+
+  @override
+  String get screenshotSelectionFailed =>
+      'The screenshot could not be selected.';
+
+  @override
+  String get submitReport => 'Submit report';
+
+  @override
+  String get reportSubmittedSuccessfully =>
+      'Your report was saved on this device.';
+
+  @override
+  String get reportSubmitError =>
+      'The report could not be saved. Please try again.';
+
+  @override
+  String get supportReportsLoadError => 'Saved reports could not be loaded.';
+
+  @override
+  String get noSupportReports => 'No demo reports submitted yet.';
+
+  @override
+  String supportReportsSaved(int count) {
+    return 'Saved reports on this device: $count';
+  }
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get privacyPolicySummary =>
+      'Krishi Sech stores demo support reports locally on this device. Do not include passwords, OTPs or other sensitive information.';
+
+  @override
+  String get termsAndConditions => 'Terms and Conditions';
+
+  @override
+  String get termsConditionsSummary =>
+      'This development build provides farming information and demo services. Verify critical farming decisions with a qualified local expert.';
+
+  @override
+  String get appVersion => 'App version';
+
+  @override
   String get logOut => 'Log out';
 
   @override
