@@ -32,4 +32,11 @@ class LocalProfileDataSource {
       preferences.setString(_userKey, jsonEncode(value.toJson()));
   Future<void> writeFarm(FarmProfile value) =>
       preferences.setString(_farmKey, jsonEncode(value.toJson()));
+
+  Future<void> clear() async {
+    await Future.wait([
+      preferences.remove(_userKey),
+      preferences.remove(_farmKey),
+    ]);
+  }
 }

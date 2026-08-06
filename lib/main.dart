@@ -20,6 +20,7 @@ import 'package:krishi_sech/features/login/data/datasources/auth_remote_data_sou
 import 'package:krishi_sech/features/login/data/datasources/auth_token_storage.dart';
 import 'package:krishi_sech/features/login/data/repositories/auth_repository_impl.dart';
 import 'package:krishi_sech/features/login/presentation/controllers/auth_controller.dart';
+import 'package:krishi_sech/features/login/domain/services/demo_session_policy.dart';
 import 'package:krishi_sech/features/location/data/services/location_service.dart';
 import 'package:krishi_sech/features/location/presentation/controllers/location_controller.dart';
 import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_data_source.dart';
@@ -44,6 +45,7 @@ import 'package:krishi_sech/features/profile/data/datasources/remote_profile_dat
 import 'package:krishi_sech/features/profile/data/repositories/in_memory_profile_repository.dart';
 import 'package:krishi_sech/features/profile/data/repositories/local_only_profile_repository.dart';
 import 'package:krishi_sech/features/profile/data/repositories/synced_profile_repository.dart';
+import 'package:krishi_sech/features/profile/data/services/profile_storage_migrator.dart';
 import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 
 void main() {
@@ -131,7 +133,16 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
         : LocalProfileDataSource(preferences);
     final demoProfileLocal = preferences == null
         ? null
-        : LocalProfileDataSource(preferences, storageNamespace: 'demo');
+        : LocalProfileDataSource(
+            preferences,
+            storageNamespace: DemoSessionPolicy.storageNamespace,
+          );
+    if (realProfileLocal != null && demoProfileLocal != null) {
+      await ProfileStorageMigrator(
+        legacy: realProfileLocal,
+        demo: demoProfileLocal,
+      ).migrateLegacyDemoProfile();
+    }
     final profileController = ProfileController(
       preferences == null
           ? InMemoryProfileRepository()
@@ -146,9 +157,10 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
                     Future<String?>.value(),
               ),
             ),
-      demoMode:
-          AppEnvironment.demoModeEnabled &&
-          _authController?.session?.user.phone == '+919999999999',
+      demoMode: DemoSessionPolicy.matches(
+        _authController?.session?.user,
+        demoModeEnabled: AppEnvironment.demoModeEnabled,
+      ),
       demoRepository: demoProfileLocal == null
           ? null
           : LocalOnlyProfileRepository(demoProfileLocal),
@@ -327,7 +339,10 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     }
     if (userId == _loadedProfileUserId) return;
     _loadedProfileUserId = userId;
-    if (AppEnvironment.demoModeEnabled && userId == 'demo-farmer') {
+    if (DemoSessionPolicy.matches(
+      session?.user,
+      demoModeEnabled: AppEnvironment.demoModeEnabled,
+    )) {
       unawaited(_profileController!.enterDemoMode());
       return;
     }

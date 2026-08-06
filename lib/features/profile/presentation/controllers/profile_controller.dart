@@ -35,10 +35,12 @@ class ProfileController extends ChangeNotifier {
   Future<void> enterDemoMode() async {
     _demoMode = true;
     failure = null;
-    _setDemoProfile();
-    notifyListeners();
     final demo = demoRepository;
-    if (demo == null) return;
+    if (demo == null) {
+      _setDemoProfile();
+      notifyListeners();
+      return;
+    }
     try {
       final savedUser = await demo.loadUser();
       final savedFarm = await demo.loadFarm();
@@ -46,7 +48,9 @@ class ProfileController extends ChangeNotifier {
       _setDemoProfile(user: savedUser, farm: savedFarm);
       notifyListeners();
     } catch (_) {
-      // Demo cache is optional; retain the safe seed profile if it is invalid.
+      if (!_demoMode) return;
+      _setDemoProfile();
+      notifyListeners();
     }
   }
 
