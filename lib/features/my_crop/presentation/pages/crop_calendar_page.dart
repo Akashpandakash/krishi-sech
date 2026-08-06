@@ -20,6 +20,7 @@ class CropCalendarPage extends StatefulWidget {
 class _CropCalendarPageState extends State<CropCalendarPage> {
   late DateTime _selectedDate;
   bool _loadStarted = false;
+  bool _initialRefreshFinished = false;
 
   @override
   void initState() {
@@ -37,9 +38,15 @@ class _CropCalendarPageState extends State<CropCalendarPage> {
   }
 
   Future<void> _refresh() async {
-    await CropScope.of(context).refresh();
-    if (!mounted) return;
-    await CropTaskScope.of(context).refresh();
+    final cropController = CropScope.of(context);
+    final taskController = CropTaskScope.of(context);
+    try {
+      await cropController.refresh();
+      if (!mounted || cropController.savedCrops.isEmpty) return;
+      await taskController.refresh();
+    } finally {
+      if (mounted) setState(() => _initialRefreshFinished = true);
+    }
   }
 
   Future<void> _openAddCrop() async {
@@ -74,32 +81,48 @@ class _CropCalendarPageState extends State<CropCalendarPage> {
   Widget build(BuildContext context) {
     final cropController = CropScope.of(context);
     final taskController = CropTaskScope.of(context);
-    final savedCrops = cropController.savedCrops;
-    final loading = cropController.isLoading || taskController.isLoading;
-    final error = cropController.error ?? taskController.error;
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.cropCalendar)),
-      floatingActionButton: savedCrops.isEmpty || loading || error != null
-          ? null
-          : AppPressable(
-              child: FloatingActionButton.extended(
-                key: const Key('add_crop_task_button'),
-                onPressed: () => Navigator.of(
-                  context,
-                ).pushNamed(AppRoutes.addCropTask, arguments: _selectedDate),
-                icon: const Icon(Icons.add),
-                label: Text(context.l10n.addTask),
-              ),
+      floatingActionButton: AnimatedBuilder(
+        animation: Listenable.merge([cropController, taskController]),
+        builder: (context, _) {
+          final loading = cropController.isLoading || taskController.isLoading;
+          final error = cropController.error ?? taskController.error;
+          if (cropController.savedCrops.isEmpty || loading || error != null) {
+            return const SizedBox.shrink();
+          }
+          return AppPressable(
+            child: FloatingActionButton.extended(
+              key: const Key('add_crop_task_button'),
+              onPressed: () => Navigator.of(
+                context,
+              ).pushNamed(AppRoutes.addCropTask, arguments: _selectedDate),
+              icon: const Icon(Icons.add),
+              label: Text(context.l10n.addTask),
             ),
+          );
+        },
+      ),
       body: SafeArea(
         child: AnimatedBuilder(
           animation: Listenable.merge([cropController, taskController]),
           builder: (context, _) {
-            if (loading) {
+            final savedCrops = cropController.savedCrops;
+            if (savedCrops.isEmpty &&
+                (!_initialRefreshFinished || cropController.isLoading)) {
+              return _CalendarMessage(
+                key: const Key('crop_calendar_empty_state'),
+                icon: Icons.eco_outlined,
+                message: context.l10n.noCropsYet,
+                buttonLabel: context.l10n.addCrop,
+                onPressed: _openAddCrop,
+              );
+            }
+            if (cropController.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (error != null) {
+            if (cropController.error != null) {
               return _CalendarMessage(
                 icon: Icons.error_outline,
                 message: context.l10n.cropCalendarLoadError,
@@ -116,6 +139,17 @@ class _CropCalendarPageState extends State<CropCalendarPage> {
                 onPressed: _openAddCrop,
               );
             }
+            if (taskController.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (taskController.error != null) {
+              return _CalendarMessage(
+                icon: Icons.error_outline,
+                message: context.l10n.cropCalendarLoadError,
+                buttonLabel: context.l10n.retry,
+                onPressed: _refresh,
+              );
+            }
 
             final selectedTasks = taskController.tasksForDate(_selectedDate);
             return RefreshIndicator(
@@ -125,6 +159,27 @@ class _CropCalendarPageState extends State<CropCalendarPage> {
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.only(top: 8, bottom: 100),
                   children: [
+                    if (taskController.tasks.isEmpty) ...[
+                      Card(
+                        key: const Key('crop_calendar_no_tasks_state'),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.event_available_outlined),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  context.l10n.noCropTasksScheduled,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     _TaskCalendar(
                       selectedDate: _selectedDate,
                       tasks: taskController.tasks,

@@ -979,6 +979,106 @@ void main() {
       expect(find.byKey(const Key('crop_task_calendar')), findsOneWidget);
     });
 
+    testWidgets(
+      'zero crops opens calendar empty state before a refresh can hang',
+      (tester) async {
+        final repository = _EmptyThenHangingCropRepository();
+        final cropController = await CropController.load(
+          repository,
+          operationTimeout: const Duration(milliseconds: 40),
+        );
+        final taskController = CropTaskController.inMemory(
+          cropController: cropController,
+          generateTasks: false,
+        );
+
+        await tester.pumpWidget(
+          _LocalizedRouteApp(
+            initialRoute: AppRoutes.cropCalendar,
+            controller: LocaleController.inMemory(locale: const Locale('en')),
+            cropController: cropController,
+            cropTaskController: taskController,
+          ),
+        );
+        await tester.pump();
+
+        expect(
+          find.byKey(const Key('crop_calendar_empty_state')),
+          findsOneWidget,
+        );
+        expect(find.text('No crops added yet.'), findsOneWidget);
+        expect(find.byType(CircularProgressIndicator), findsNothing);
+
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.pump();
+        expect(cropController.isLoading, isFalse);
+        expect(cropController.error, isA<TimeoutException>());
+        expect(find.text('Retry'), findsOneWidget);
+      },
+    );
+
+    testWidgets('calendar shows a valid empty task state', (tester) async {
+      final cropController = CropController.inMemory(
+        crops: [crop()],
+        samples: false,
+      );
+      await tester.pumpWidget(
+        _LocalizedRouteApp(
+          initialRoute: AppRoutes.cropCalendar,
+          controller: LocaleController.inMemory(locale: const Locale('en')),
+          cropController: cropController,
+          cropTaskController: CropTaskController.inMemory(
+            cropController: cropController,
+            generateTasks: false,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('No crop tasks scheduled'), findsOneWidget);
+      expect(find.byKey(const Key('crop_task_calendar')), findsOneWidget);
+      await tester.drag(find.byType(ListView).first, const Offset(0, -400));
+      await tester.pumpAndSettle();
+      expect(find.text('No tasks scheduled for this date.'), findsOneWidget);
+    });
+
+    testWidgets('calendar loading always resolves to a retryable error', (
+      tester,
+    ) async {
+      final cropController = CropController.inMemory(
+        crops: [crop()],
+        samples: false,
+      );
+      final repository = _HangingAfterFirstTaskRepository();
+      final taskController = await CropTaskController.load(
+        repository: repository,
+        cropController: cropController,
+        operationTimeout: const Duration(milliseconds: 30),
+      );
+      await tester.pumpWidget(
+        _LocalizedRouteApp(
+          initialRoute: AppRoutes.cropCalendar,
+          controller: LocaleController.inMemory(locale: const Locale('en')),
+          cropController: cropController,
+          cropTaskController: taskController,
+        ),
+      );
+      await tester.pump();
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 60));
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(
+        find.text('The crop calendar could not be loaded. Please try again.'),
+        findsOneWidget,
+      );
+      expect(find.text('Retry'), findsOneWidget);
+      expect(taskController.isLoading, isFalse);
+      expect(taskController.error, isA<TimeoutException>());
+    });
+
     testWidgets('task crop dropdown contains saved crops and enables save', (
       tester,
     ) async {

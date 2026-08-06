@@ -13,6 +13,7 @@ class CropTaskController extends ChangeNotifier {
     required this.cropController,
     required this.notificationService,
     required this.languageCodeProvider,
+    required this.operationTimeout,
     this.repository,
   });
 
@@ -20,6 +21,7 @@ class CropTaskController extends ChangeNotifier {
   final CropTaskRepository? repository;
   final NotificationService notificationService;
   final String Function() languageCodeProvider;
+  final Duration operationTimeout;
   final CropTaskRuleService _ruleService = const CropTaskRuleService();
   final List<CropTask> _tasks = [];
   bool _syncing = false;
@@ -65,12 +67,14 @@ class CropTaskController extends ChangeNotifier {
     required CropController cropController,
     NotificationService notificationService = const NoopNotificationService(),
     String Function()? languageCodeProvider,
+    Duration operationTimeout = const Duration(seconds: 8),
   }) async {
     final controller = CropTaskController._(
       cropController: cropController,
       repository: repository,
       notificationService: notificationService,
       languageCodeProvider: languageCodeProvider ?? () => 'en',
+      operationTimeout: operationTimeout,
     );
     controller._tasks.addAll(await repository.getTasks());
     cropController.addListener(controller._onCropsChanged);
@@ -85,11 +89,13 @@ class CropTaskController extends ChangeNotifier {
     bool generateTasks = true,
     NotificationService notificationService = const NoopNotificationService(),
     String Function()? languageCodeProvider,
+    Duration operationTimeout = const Duration(seconds: 8),
   }) {
     final controller = CropTaskController._(
       cropController: cropController,
       notificationService: notificationService,
       languageCodeProvider: languageCodeProvider ?? () => 'en',
+      operationTimeout: operationTimeout,
     ).._tasks.addAll(tasks);
     cropController.addListener(controller._onCropsChanged);
     if (generateTasks) controller._generateInMemory();
@@ -114,21 +120,27 @@ class CropTaskController extends ChangeNotifier {
     if (repository == null) return;
     _isLoading = true;
     _error = null;
+    _logRefresh('loading');
     notifyListeners();
     try {
-      while (_syncing) {
-        await Future<void>.delayed(Duration.zero);
-      }
+      await _waitForSynchronization();
       _tasks
         ..clear()
-        ..addAll(await repository!.getTasks());
-      await _synchronizeGeneratedTasks();
+        ..addAll(await repository!.getTasks().timeout(operationTimeout));
+      await _synchronizeGeneratedTasks().timeout(operationTimeout);
+      _logRefresh('success count=${tasks.length}');
     } catch (error) {
       _error = error;
+      _logRefresh('error type=${error.runtimeType}');
     } finally {
       _isLoading = false;
+      _logRefresh('complete loading=false');
       notifyListeners();
     }
+  }
+
+  void _logRefresh(String transition) {
+    if (kDebugMode) debugPrint('CropTaskController.refresh: $transition');
   }
 
   Future<void> addTask(CropTask task) async {
@@ -183,6 +195,17 @@ class CropTaskController extends ChangeNotifier {
     await repository?.deleteTasksForCrop(cropId);
     if (_syncing) _syncAgain = true;
     notifyListeners();
+  }
+
+  Future<void> _waitForSynchronization() async {
+    if (!_syncing) return;
+    final deadline = DateTime.now().add(operationTimeout);
+    while (_syncing) {
+      if (DateTime.now().isAfter(deadline)) {
+        throw TimeoutException('Crop task synchronization timed out');
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
   }
 
   Future<void> reschedulePendingNotifications() async {

@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/domain/repositories/crop_repository.dart';
 
 class CropController extends ChangeNotifier {
-  CropController._({required this.repository});
+  CropController._({required this.repository, required this.operationTimeout});
 
   final CropRepository? repository;
+  final Duration? operationTimeout;
+  Duration get _effectiveOperationTimeout =>
+      operationTimeout ?? AppEnvironment.requestTimeout;
   List<Crop> _crops = [];
   bool _hasUserCrops = false;
   bool _isLoading = false;
@@ -32,16 +38,28 @@ class CropController extends ChangeNotifier {
   int get upcomingTaskCount =>
       _crops.where((crop) => crop.nextTask != CropTaskType.completed).length;
 
-  static Future<CropController> load(CropRepository repository) async {
-    final controller = CropController._(repository: repository);
-    final crops = await repository.getCrops();
-    controller._hasUserCrops = await repository.hasUserCrops();
+  static Future<CropController> load(
+    CropRepository repository, {
+    Duration? operationTimeout,
+  }) async {
+    final resolvedTimeout = operationTimeout ?? AppEnvironment.requestTimeout;
+    final controller = CropController._(
+      repository: repository,
+      operationTimeout: resolvedTimeout,
+    );
+    final crops = await repository.getCrops().timeout(resolvedTimeout);
+    controller._hasUserCrops = await repository.hasUserCrops().timeout(
+      resolvedTimeout,
+    );
     controller._crops = controller._hasUserCrops ? crops : _samples();
     return controller;
   }
 
   factory CropController.inMemory({List<Crop>? crops, bool samples = true}) {
-    final controller = CropController._(repository: null);
+    final controller = CropController._(
+      repository: null,
+      operationTimeout: AppEnvironment.requestTimeout,
+    );
     controller._hasUserCrops = crops != null || !samples;
     controller._crops = crops ?? (samples ? _samples() : []);
     return controller;
@@ -58,17 +76,33 @@ class CropController extends ChangeNotifier {
     if (repository == null) return;
     _isLoading = true;
     _error = null;
+    _logRefresh('loading');
     notifyListeners();
     try {
-      final saved = await repository!.getCrops();
-      _hasUserCrops = await repository!.hasUserCrops();
+      final saved = await repository!.getCrops().timeout(
+        _effectiveOperationTimeout,
+      );
+      _hasUserCrops = await repository!.hasUserCrops().timeout(
+        _effectiveOperationTimeout,
+      );
       _crops = _hasUserCrops ? saved : _samples();
-    } catch (error) {
+      _logRefresh('success count=${saved.length}');
+    } catch (error, stackTrace) {
       _error = error;
+      _logRefresh('error type=${error.runtimeType}');
+      if (kDebugMode) {
+        debugPrint('CropController.refresh error: $error');
+        debugPrintStack(stackTrace: stackTrace);
+      }
     } finally {
       _isLoading = false;
+      _logRefresh('complete loading=false');
       notifyListeners();
     }
+  }
+
+  void _logRefresh(String transition) {
+    if (kDebugMode) debugPrint('CropController.refresh: $transition');
   }
 
   Future<bool> addCrop(Crop crop) async {
