@@ -179,6 +179,30 @@ class CropModel {
           updatedAt: updatedAt,
         );
 
+  CropModel acceptSuccessfulUpdate(CropModel submitted) => CropModel(
+    id: id,
+    userId: userId,
+    cropType: submitted.cropType,
+    customName: submitted.customName,
+    variety: submitted.variety,
+    sowingDate: submitted.sowingDate,
+    landArea: submitted.landArea,
+    landAreaUnit: submitted.landAreaUnit,
+    growthStage: submitted.growthStage,
+    healthStatus: submitted.healthStatus,
+    irrigationType: submitted.irrigationType,
+    soilType: submitted.soilType,
+    plantingMethod: submitted.plantingMethod,
+    seedBrand: submitted.seedBrand,
+    lastFertilizerUsed: submitted.lastFertilizerUsed,
+    lastPesticideUsed: submitted.lastPesticideUsed,
+    farmName: submitted.farmName,
+    expectedHarvestDate: submitted.expectedHarvestDate,
+    notes: submitted.notes,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
+
   Crop toEntity() => Crop(
     id: id,
     userId: userId,

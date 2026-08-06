@@ -8,6 +8,7 @@ import 'package:krishi_sech/features/my_crop/data/datasources/local_crop_health_
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_task.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
+import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_scope.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_labels.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_task_scope.dart';
@@ -18,6 +19,16 @@ class CropDetailsPage extends StatelessWidget {
   const CropDetailsPage({required this.cropId, super.key});
 
   final String cropId;
+
+  Future<void> _edit(BuildContext context, CropController controller) async {
+    final updated = await Navigator.of(
+      context,
+    ).pushNamed<bool>(AppRoutes.editCrop, arguments: cropId);
+    if (updated != true || !context.mounted) return;
+    // The shared controller is updated before the route returns. Reading it
+    // here also guards against a removed crop without issuing a duplicate GET.
+    controller.cropById(cropId);
+  }
 
   Future<void> _scanDisease(BuildContext context, Crop crop) async {
     final source = await showModalBottomSheet<_DiseaseImageSource>(
@@ -204,9 +215,7 @@ class CropDetailsPage extends StatelessWidget {
             actions: [
               IconButton(
                 key: const Key('edit_crop_action'),
-                onPressed: () => Navigator.of(
-                  context,
-                ).pushNamed(AppRoutes.editCrop, arguments: crop.id),
+                onPressed: () => _edit(context, controller),
                 icon: const Icon(Icons.edit_outlined),
               ),
               IconButton(
@@ -369,9 +378,7 @@ class CropDetailsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     FilledButton.icon(
-                      onPressed: () => Navigator.of(
-                        context,
-                      ).pushNamed(AppRoutes.editCrop, arguments: crop.id),
+                      onPressed: () => _edit(context, controller),
                       icon: const Icon(Icons.edit),
                       label: Text(context.l10n.editCrop),
                     ),

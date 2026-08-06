@@ -12,6 +12,7 @@ import 'package:krishi_sech/features/my_crop/data/datasources/remote_crop_data_s
 import 'package:krishi_sech/features/my_crop/data/models/crop_model.dart';
 import 'package:krishi_sech/features/my_crop/data/repositories/synced_crop_repository.dart';
 import 'package:krishi_sech/features/my_crop/domain/repositories/crop_repository.dart';
+import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -139,6 +140,75 @@ void main() {
       ),
     );
   });
+
+  test(
+    'crop update keeps submitted variety and health and persists after restart',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      late Map<String, dynamic> updateBody;
+      final remote = _cropRemote((request) async {
+        if (request.method == 'PUT') {
+          updateBody = jsonDecode(request.body) as Map<String, dynamic>;
+          return _response({
+            ...updateBody,
+            // A stale representation must not replace a successful edit.
+            'variety': 'Old variety',
+            'healthStatus': 'healthy',
+            'id': 'crop-1',
+            'userId': 'demo-farmer',
+            'createdAt': '2026-07-01T00:00:00.000Z',
+            'updatedAt': '2026-08-06T12:00:00.000Z',
+          });
+        }
+        return _response(const []);
+      });
+      final local = LocalCropDataSource(preferences);
+      await local.addCrop(
+        CropModel(
+          id: 'crop-1',
+          userId: 'demo-farmer',
+          cropType: 'tomato',
+          variety: 'Old variety',
+          sowingDate: DateTime(2026, 7),
+          landArea: 1,
+          landAreaUnit: 'acre',
+          growthStage: 'vegetative',
+          healthStatus: 'healthy',
+          irrigationType: 'manual',
+          soilType: 'loamy',
+          plantingMethod: 'directSowing',
+          createdAt: DateTime(2026, 7),
+          updatedAt: DateTime(2026, 7),
+        ),
+      );
+      final repository = SyncedCropRepository(local, remote);
+      final updated = await repository.updateCrop(
+        Crop(
+          id: 'crop-1',
+          userId: 'demo-farmer',
+          kind: CropKind.tomato,
+          variety: 'Arka Rakshak',
+          sowingDate: DateTime(2026, 7),
+          landArea: 1,
+          landAreaUnit: LandAreaUnit.acre,
+          growthStage: GrowthStage.vegetative,
+          irrigationType: IrrigationType.manual,
+          soilType: SoilType.loamy,
+          plantingMethod: PlantingMethod.directSowing,
+          health: CropHealth.needsAttention,
+        ),
+      );
+
+      expect(updateBody['variety'], 'Arka Rakshak');
+      expect(updateBody['healthStatus'], 'needsAttention');
+      expect(updated.variety, 'Arka Rakshak');
+      expect(updated.health, CropHealth.needsAttention);
+      final restarted = await local.getCrops();
+      expect(restarted.single.variety, 'Arka Rakshak');
+      expect(restarted.single.healthStatus, 'needsAttention');
+    },
+  );
 }
 
 RemoteCropDataSource _cropRemote(

@@ -122,6 +122,11 @@ class _LocalizedRouteApp extends StatelessWidget {
                             GlobalCupertinoLocalizations.delegate,
                           ],
                           initialRoute: initialRoute,
+                          onGenerateInitialRoutes: (route) => [
+                            AppRouter.onGenerateRoute(
+                              RouteSettings(name: route),
+                            ),
+                          ],
                           onGenerateRoute: AppRouter.onGenerateRoute,
                         );
                       },
@@ -322,6 +327,55 @@ void main() {
       expect(controller.healthyCount, 0);
       expect(controller.attentionCount, 1);
     });
+
+    testWidgets(
+      'Edit Crop refreshes details and crop list with variety and health',
+      (tester) async {
+        final controller = CropController.inMemory(
+          crops: [testCrop()],
+          samples: false,
+        );
+        await tester.pumpWidget(
+          _LocalizedRouteApp(
+            initialRoute: AppRoutes.myCrop,
+            controller: LocaleController.inMemory(locale: const Locale('en')),
+            cropController: controller,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(const ValueKey('crop_card_crop-1')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('edit_crop_action')));
+        await tester.pumpAndSettle();
+
+        await tester.enterText(
+          find.byKey(const Key('crop_variety_field')),
+          'HQPM-7',
+        );
+        final health = find.byType(DropdownButtonFormField<CropHealth>);
+        await tester.ensureVisible(health);
+        await tester.tap(health);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Needs Attention').last);
+        await tester.pumpAndSettle();
+        final save = find.byKey(const Key('save_crop_button'));
+        await tester.ensureVisible(save);
+        await tester.tap(save);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Crop Details'), findsOneWidget);
+        expect(find.text('HQPM-7'), findsOneWidget);
+        expect(find.text('Needs Attention'), findsOneWidget);
+        expect(controller.crops.single.variety, 'HQPM-7');
+        expect(controller.crops.single.health, CropHealth.needsAttention);
+
+        await tester.pageBack();
+        await tester.pumpAndSettle();
+        expect(find.textContaining('HQPM-7'), findsOneWidget);
+        expect(find.textContaining('Needs Attention'), findsOneWidget);
+      },
+    );
 
     test('deletes only the selected crop', () async {
       final controller = CropController.inMemory(

@@ -863,9 +863,23 @@ describe('crop management', () => {
     const updated = await request(fixture.app)
       .put(`/api/crops/${cropId}`)
       .set('Authorization', authorization)
-      .send({ ...cropBody, growthStage: 'flowering', healthStatus: 'moderate' })
+      .send({
+        ...cropBody,
+        variety: 'Swarna Sub-1',
+        growthStage: 'flowering',
+        healthStatus: 'moderate',
+      })
       .expect(200);
+    assert.equal(updated.body.data.variety, 'Swarna Sub-1');
     assert.equal(updated.body.data.growthStage, 'flowering');
+    assert.equal(updated.body.data.healthStatus, 'moderate');
+
+    const refreshed = await request(fixture.app)
+      .get(`/api/crops/${cropId}`)
+      .set('Authorization', authorization)
+      .expect(200);
+    assert.equal(refreshed.body.data.variety, 'Swarna Sub-1');
+    assert.equal(refreshed.body.data.healthStatus, 'moderate');
 
     await request(fixture.app)
       .delete(`/api/crops/${cropId}`)

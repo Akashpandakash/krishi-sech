@@ -102,6 +102,7 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     final valid = _formKey.currentState?.validate() ?? false;
     if (_kind == null || _sowingDate == null) {
       setState(() {});
@@ -151,7 +152,17 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
         : await controller.updateCrop(crop);
     if (!mounted) return;
     if (saved) {
-      Navigator.of(context).pop();
+      final current = controller.cropById(crop.id);
+      if (current != null &&
+          current.variety == crop.variety &&
+          current.health == crop.health) {
+        Navigator.of(context).pop(true);
+        return;
+      }
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.cropServerError)));
     } else {
       setState(() => _saving = false);
       ScaffoldMessenger.of(

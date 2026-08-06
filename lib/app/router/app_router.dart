@@ -30,7 +30,13 @@ import 'package:krishi_sech/shared/presentation/pages/main_navigation_page.dart'
 abstract final class AppRouter {
   static final navigatorKey = GlobalKey<NavigatorState>();
 
-  static Route<void> onGenerateRoute(RouteSettings settings) {
+  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    if (settings.name == AppRoutes.editCrop && settings.arguments is String) {
+      return MaterialPageRoute<bool>(
+        builder: (_) => AddEditCropPage(cropId: settings.arguments! as String),
+        settings: settings,
+      );
+    }
     final page = switch (settings.name) {
       AppRoutes.splash => const SplashPage(),
       AppRoutes.onboarding => const OnboardingPage(),
@@ -49,10 +55,7 @@ abstract final class AppRouter {
       AppRoutes.home => const MainNavigationPage(),
       AppRoutes.myCrop => const MainNavigationPage(initialIndex: 1),
       AppRoutes.addCrop => const AddEditCropPage(),
-      AppRoutes.editCrop => switch (settings.arguments) {
-        final String cropId => AddEditCropPage(cropId: cropId),
-        _ => const _UnknownRoutePage(),
-      },
+      AppRoutes.editCrop => const _UnknownRoutePage(),
       AppRoutes.cropDetails => switch (settings.arguments) {
         final String cropId => CropDetailsPage(cropId: cropId),
         _ => const _UnknownRoutePage(),
@@ -105,7 +108,7 @@ abstract final class AppRouter {
       _ => const _UnknownRoutePage(),
     };
 
-    return MaterialPageRoute<void>(builder: (_) => page, settings: settings);
+    return MaterialPageRoute<dynamic>(builder: (_) => page, settings: settings);
   }
 }
 

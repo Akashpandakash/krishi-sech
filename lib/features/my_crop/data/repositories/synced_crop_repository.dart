@@ -64,7 +64,8 @@ class SyncedCropRepository implements CropSyncAwareRepository {
     await _syncPending();
     final model = CropModel.fromEntity(crop);
     try {
-      final updated = (await remote.updateCrop(model)).mergeLocalProfile(model);
+      final response = await remote.updateCrop(model);
+      final updated = response.acceptSuccessfulUpdate(model);
       await local.updateCrop(updated);
       await _updatePendingState();
       lastSyncIssue = null;
@@ -115,9 +116,8 @@ class SyncedCropRepository implements CropSyncAwareRepository {
             break;
           case 'update':
             final localCrop = operation.crop!;
-            final updated = (await remote.updateCrop(
-              localCrop,
-            )).mergeLocalProfile(localCrop);
+            final response = await remote.updateCrop(localCrop);
+            final updated = response.acceptSuccessfulUpdate(localCrop);
             await local.updateCrop(updated);
             break;
           case 'delete':

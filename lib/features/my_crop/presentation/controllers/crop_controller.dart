@@ -9,6 +9,7 @@ class CropController extends ChangeNotifier {
   List<Crop> _crops = [];
   bool _hasUserCrops = false;
   bool _isLoading = false;
+  bool _isMutationInProgress = false;
   Object? _error;
 
   List<Crop> get crops => List.unmodifiable(_crops);
@@ -87,6 +88,7 @@ class CropController extends ChangeNotifier {
   }
 
   Future<bool> updateCrop(Crop crop) async {
+    if (_isMutationInProgress) return false;
     final index = _crops.indexWhere((item) => item.id == crop.id);
     if (index == -1) return false;
     final existing = _crops[index];
@@ -94,16 +96,20 @@ class CropController extends ChangeNotifier {
       createdAt: existing.createdAt,
       updatedAt: DateTime.now(),
     );
+    _isMutationInProgress = true;
     _startMutation();
     try {
       final result = await repository?.updateCrop(updated) ?? updated;
-      _crops[index] = result;
+      final currentIndex = _crops.indexWhere((item) => item.id == crop.id);
+      if (currentIndex == -1) return false;
+      _crops[currentIndex] = result;
       _hasUserCrops = true;
       return true;
     } catch (error) {
       _error = error;
       return false;
     } finally {
+      _isMutationInProgress = false;
       _finishMutation();
     }
   }
