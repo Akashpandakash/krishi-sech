@@ -1725,6 +1725,9 @@ class AppLocalizationsMai extends AppLocalizations {
   String get noTasksToday => 'No crop tasks due today.';
 
   @override
+  String get noCropTasksScheduled => 'No crop tasks scheduled';
+
+  @override
   String get completedTasks => 'Completed Tasks';
 
   @override

@@ -424,7 +424,7 @@
   "cropCalendar": "ফসল ক্যালেন্ডার", "viewCalendar": "ক্যালেন্ডার দেখুন", "addTask": "কাজ যোগ করুন", "editTask": "কাজ সম্পাদনা", "taskType": "কাজের ধরন", "dueDate": "নির্ধারিত তারিখ", "taskNotes": "নোট (ঐচ্ছিক)", "saveTask": "কাজ সংরক্ষণ করুন", "selectCropForTask": "একটি ফসল নির্বাচন করুন।",
   "irrigationTask": "সেচ", "fertilizerTask": "সার প্রয়োগ", "pestInspectionTask": "পোকা পরিদর্শন", "harvestTask": "ফসল কাটার প্রস্তুতি",
   "tasksForSelectedDate": "নির্বাচিত তারিখের কাজ", "upcomingCropTasks": "আসন্ন ফসলের কাজ", "noTasksForDate": "এই তারিখে কোনো কাজ নেই।", "noUpcomingCropTasks": "কোনো আসন্ন ফসলের কাজ নেই।", "deleteTask": "কাজ মুছুন", "deleteTaskConfirmation": "আপনি কি এই কাজটি মুছতে চান?",
-  "noTasksToday": "আজ ফসলের কোনো কাজ নেই।", "completedTasks": "সম্পন্ন কাজ", "noCompletedTasks": "এখনও কোনো কাজ সম্পন্ন হয়নি।", "cropTimeline": "ফসলের সময়রেখা", "noCropTimelineTasks": "সময়রেখায় কোনো কাজ নেই।",
+  "noTasksToday": "আজ ফসলের কোনো কাজ নেই।", "noCropTasksScheduled": "কোনো ফসলের কাজ নির্ধারিত নেই", "completedTasks": "সম্পন্ন কাজ", "noCompletedTasks": "এখনও কোনো কাজ সম্পন্ন হয়নি।", "cropTimeline": "ফসলের সময়রেখা", "noCropTimelineTasks": "সময়রেখায় কোনো কাজ নেই।",
   "today": "আজ", "selectTaskType": "কাজের ধরন নির্বাচন করুন।", "cropCalendarLoadError": "ফসল ক্যালেন্ডার লোড করা যায়নি। আবার চেষ্টা করুন।",
   "reminderTime": "স্মরণিকার সময়", "reminderAtDueTime": "নির্ধারিত সময়ে", "reminderThirtyMinutesBefore": "৩০ মিনিট আগে", "reminderOneHourBefore": "১ ঘণ্টা আগে", "reminderOneDayBefore": "১ দিন আগে", "reminderNone": "স্মরণিকা নয়", "dueTime": "কাজের সময়",
   "cropTaskNotificationTitle": "কৃষি সেচ ফসলের কাজ",

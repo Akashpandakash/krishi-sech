@@ -3302,6 +3302,12 @@ abstract class AppLocalizations {
   /// **'No crop tasks due today.'**
   String get noTasksToday;
 
+  /// No description provided for @noCropTasksScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'No crop tasks scheduled'**
+  String get noCropTasksScheduled;
+
   /// No description provided for @completedTasks.
   ///
   /// In en, this message translates to:

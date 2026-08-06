@@ -424,7 +424,7 @@
   "cropCalendar": "फसल कैलेंडर", "viewCalendar": "कैलेंडर देखें", "addTask": "कार्य जोड़ें", "editTask": "कार्य संपादित करें", "taskType": "कार्य प्रकार", "dueDate": "नियत तारीख", "taskNotes": "नोट्स (वैकल्पिक)", "saveTask": "कार्य सहेजें", "selectCropForTask": "कृपया एक फसल चुनें।",
   "irrigationTask": "सिंचाई", "fertilizerTask": "उर्वरक", "pestInspectionTask": "कीट निरीक्षण", "harvestTask": "कटाई की तैयारी",
   "tasksForSelectedDate": "चुनी हुई तारीख के कार्य", "upcomingCropTasks": "आगामी फसल कार्य", "noTasksForDate": "इस तारीख के लिए कोई कार्य नहीं है।", "noUpcomingCropTasks": "कोई आगामी फसल कार्य नहीं है।", "deleteTask": "कार्य हटाएँ", "deleteTaskConfirmation": "क्या आप इस कार्य को हटाना चाहते हैं?",
-  "noTasksToday": "आज कोई फसल कार्य नियत नहीं है।", "completedTasks": "पूर्ण कार्य", "noCompletedTasks": "अभी कोई कार्य पूर्ण नहीं हुआ।", "cropTimeline": "फसल समयरेखा", "noCropTimelineTasks": "समयरेखा में कोई कार्य उपलब्ध नहीं है।",
+  "noTasksToday": "आज कोई फसल कार्य नियत नहीं है।", "noCropTasksScheduled": "कोई फसल कार्य निर्धारित नहीं है", "completedTasks": "पूर्ण कार्य", "noCompletedTasks": "अभी कोई कार्य पूर्ण नहीं हुआ।", "cropTimeline": "फसल समयरेखा", "noCropTimelineTasks": "समयरेखा में कोई कार्य उपलब्ध नहीं है।",
   "today": "आज", "selectTaskType": "कृपया कार्य प्रकार चुनें।", "cropCalendarLoadError": "फसल कैलेंडर लोड नहीं हो सका। कृपया फिर प्रयास करें।",
   "reminderTime": "रिमाइंडर", "reminderAtDueTime": "नियत समय पर", "reminderThirtyMinutesBefore": "30 मिनट पहले", "reminderOneHourBefore": "1 घंटा पहले", "reminderOneDayBefore": "1 दिन पहले", "reminderNone": "कोई रिमाइंडर नहीं", "dueTime": "नियत समय",
   "cropTaskNotificationTitle": "कृषि सेच फसल कार्य",

@@ -1711,6 +1711,9 @@ class AppLocalizationsBn extends AppLocalizations {
   String get noTasksToday => 'আজ ফসলের কোনো কাজ নেই।';
 
   @override
+  String get noCropTasksScheduled => 'কোনো ফসলের কাজ নির্ধারিত নেই';
+
+  @override
   String get completedTasks => 'সম্পন্ন কাজ';
 
   @override

@@ -1713,6 +1713,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get noTasksToday => 'आज कोई फसल कार्य नियत नहीं है।';
 
   @override
+  String get noCropTasksScheduled => 'कोई फसल कार्य निर्धारित नहीं है';
+
+  @override
   String get completedTasks => 'पूर्ण कार्य';
 
   @override
