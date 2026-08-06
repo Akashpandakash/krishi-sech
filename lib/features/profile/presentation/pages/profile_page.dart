@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/core/localization/app_language.dart';
+import 'package:krishi_sech/core/localization/fallback_language_notice.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
 import 'package:krishi_sech/features/profile/domain/entities/farm_profile.dart';
@@ -241,9 +242,12 @@ class _ProfilePageState extends State<ProfilePage> {
     user.district,
     user.state,
   ].whereType<String>().where((e) => e.isNotEmpty).join(' • ');
-  String _languageName(BuildContext context) => AppLanguageCatalog.fromCode(
-    LocaleScope.of(context).locale.languageCode,
-  ).englishName;
+  String _languageName(BuildContext context) {
+    final language = AppLanguageCatalog.fromCode(
+      LocaleScope.of(context).locale.languageCode,
+    );
+    return '${language.englishName} • ${languageAvailabilityLabel(context, language)}';
+  }
 
   Future<void> _pickPhoto(BuildContext context, UserProfile user) async {
     final file = await ImagePicker().pickImage(
@@ -412,9 +416,20 @@ class _ProfilePageState extends State<ProfilePage> {
                             color: AppColors.primary,
                           ),
                           title: Text(option.englishName),
-                          subtitle: Directionality(
-                            textDirection: option.textDirection,
-                            child: Text(option.nativeName),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Directionality(
+                                textDirection: option.textDirection,
+                                child: Text(option.nativeName),
+                              ),
+                              Text(
+                                languageAvailabilityLabel(sheetContext, option),
+                                style: Theme.of(
+                                  sheetContext,
+                                ).textTheme.labelSmall,
+                              ),
+                            ],
                           ),
                           onTap: () async {
                             final value = option.code;
@@ -439,6 +454,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             if (sheetContext.mounted) {
                               Navigator.pop(sheetContext);
                             }
+                            if (!context.mounted) return;
+                            await showFallbackLanguageNotice(
+                              context,
+                              controller: locale,
+                              language: option,
+                            );
                           },
                         );
                       },

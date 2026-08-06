@@ -5,13 +5,18 @@ import 'package:krishi_sech/core/localization/app_localization_config.dart';
 import 'package:krishi_sech/core/localization/locale_controller.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/features/language_selection/presentation/pages/language_selection_page.dart';
+import 'package:krishi_sech/features/profile/presentation/pages/profile_page.dart';
 import 'package:krishi_sech/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _LanguageTestApp extends StatelessWidget {
-  const _LanguageTestApp({required this.controller});
+  const _LanguageTestApp({
+    required this.controller,
+    this.home = const LanguageSelectionPage(),
+  });
 
   final LocaleController controller;
+  final Widget home;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,7 @@ class _LanguageTestApp extends StatelessWidget {
             ),
             child: child!,
           ),
-          home: const LanguageSelectionPage(),
+          home: home,
           routes: {'/login': (_) => const Scaffold(body: Text('Login'))},
         ),
       ),
@@ -112,10 +117,37 @@ void main() {
     expect(restored.hasSavedLocale, isTrue);
   });
 
+  for (final entry in const [('gu', 'Gujarati'), ('as', 'Assamese')]) {
+    test('${entry.$2} selection persists after restart', () async {
+      SharedPreferences.setMockInitialValues({});
+      final first = await LocaleController.load();
+      await first.setLocale(Locale(entry.$1));
+      first.dispose();
+
+      final restored = await LocaleController.load();
+      addTearDown(restored.dispose);
+      expect(restored.locale.languageCode, entry.$1);
+      expect(restored.hasSavedLocale, isTrue);
+    });
+  }
+
   test('untranslated service requests safely fall back to English', () {
     expect(AppLanguageCatalog.serviceCodeFor('gu'), 'en');
     expect(AppLanguageCatalog.serviceCodeFor('bn'), 'bn');
     expect(AppLanguageCatalog.serviceCodeFor('hi'), 'hi');
+  });
+
+  test('fallback notice consumption persists across restart', () async {
+    SharedPreferences.setMockInitialValues({});
+    final language = AppLanguageCatalog.fromCode('gu');
+    final first = await LocaleController.load();
+    expect(await first.consumeFallbackNotice(language), isTrue);
+    expect(await first.consumeFallbackNotice(language), isFalse);
+    first.dispose();
+
+    final restored = await LocaleController.load();
+    addTearDown(restored.dispose);
+    expect(await restored.consumeFallbackNotice(language), isFalse);
   });
 
   testWidgets('untranslated locale renders English fallback without raw keys', (
@@ -129,6 +161,82 @@ void main() {
     expect(find.text('Choose Your Preferred Language'), findsOneWidget);
     expect(find.text('languageTitle'), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Profile keeps the selected fallback language name visible', (
+    tester,
+  ) async {
+    final controller = LocaleController.inMemory(locale: const Locale('gu'));
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(
+      _LanguageTestApp(controller: controller, home: const ProfilePage()),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Gujarati • English fallback'), findsOneWidget);
+    expect(find.text('Profile'), findsOneWidget);
+  });
+
+  testWidgets('fallback notice appears only once for a selected language', (
+    tester,
+  ) async {
+    final controller = LocaleController.inMemory(locale: const Locale('en'));
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(_LanguageTestApp(controller: controller));
+
+    await tester.enterText(
+      find.byKey(const Key('language_search')),
+      'Gujarati',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('language_gu')));
+    await tester.pump();
+
+    expect(find.byKey(const Key('fallback_language_notice')), findsOneWidget);
+    expect(
+      find.textContaining('Full translation is coming soon'),
+      findsOneWidget,
+    );
+
+    ScaffoldMessenger.of(
+      tester.element(find.byType(LanguageSelectionPage)),
+    ).hideCurrentSnackBar();
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('language_search')), 'English');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('language_en')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('language_search')),
+      'Gujarati',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('language_gu')));
+    await tester.pump();
+
+    expect(find.byKey(const Key('fallback_language_notice')), findsNothing);
+  });
+
+  testWidgets('Bangla and Hindi remain marked fully translated', (
+    tester,
+  ) async {
+    final controller = LocaleController.inMemory(locale: const Locale('en'));
+    addTearDown(controller.dispose);
+    await tester.pumpWidget(_LanguageTestApp(controller: controller));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<Text>(find.byKey(const Key('language_status_bn'))).data,
+      'Fully translated',
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('language_status_hi'))).data,
+      'Fully translated',
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('language_status_gu'))).data,
+      'English fallback',
+    );
   });
 
   for (final code in const ['ur', 'ks', 'sd']) {

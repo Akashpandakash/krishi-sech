@@ -188,6 +188,20 @@ class AppLocalizationsBn extends AppLocalizations {
       'ইংরেজি বিকল্প • অনুবাদ পর্যালোচনা বাকি';
 
   @override
+  String get languageStatusFullyTranslated => 'সম্পূর্ণ অনূদিত';
+
+  @override
+  String get languageStatusEnglishFallback => 'ইংরেজি বিকল্প';
+
+  @override
+  String get translationComingSoon => 'অনুবাদ শীঘ্রই আসছে';
+
+  @override
+  String fallbackLanguageNotice(String language) {
+    return '$language নির্বাচিত হয়েছে। সম্পূর্ণ অনুবাদ শীঘ্রই আসছে, তাই আপাতত অ্যাপটি ইংরেজি ব্যবহার করবে।';
+  }
+
+  @override
   String get bangla => 'বাংলা';
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/core/localization/app_language.dart';
+import 'package:krishi_sech/core/localization/fallback_language_notice.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
@@ -113,13 +114,22 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                                 language: language,
                                 selected:
                                     language.code == _selectedLanguage.code,
-                                onTap: () {
+                                onTap: () async {
                                   setState(() {
                                     _selectedLanguage = language;
                                   });
-                                  LocaleScope.of(
+                                  final localeController = LocaleScope.of(
                                     context,
-                                  ).setLocale(language.locale);
+                                  );
+                                  await localeController.setLocale(
+                                    language.locale,
+                                  );
+                                  if (!context.mounted) return;
+                                  await showFallbackLanguageNotice(
+                                    context,
+                                    controller: localeController,
+                                    language: language,
+                                  );
                                 },
                               ),
                             ),
@@ -238,15 +248,17 @@ class _LanguageCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (!language.isFullyTranslated) ...[
-                      const SizedBox(height: 3),
-                      Text(
-                        context.l10n.translationPendingReview,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                    const SizedBox(height: 3),
+                    Text(
+                      languageAvailabilityLabel(context, language),
+                      key: Key('language_status_${language.code}'),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: language.isFullyTranslated
+                            ? AppColors.primary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w700,
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),

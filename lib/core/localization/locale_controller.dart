@@ -6,16 +6,20 @@ class LocaleController extends ChangeNotifier {
   LocaleController._({
     required this._locale,
     required this._hasSavedLocale,
+    Set<String>? fallbackNoticeSeenCodes,
     this._preferences,
-  });
+  }) : _fallbackNoticeSeenCodes = fallbackNoticeSeenCodes ?? <String>{};
 
   static const preferenceKey = 'selected_language_code';
+  static const fallbackNoticePreferenceKey =
+      'fallback_language_notice_seen_codes';
   static const defaultLocale = Locale('bn');
   static final supportedLanguageCodes = AppLanguageCatalog.supportedCodes;
 
   final SharedPreferences? _preferences;
   Locale _locale;
   bool _hasSavedLocale;
+  final Set<String> _fallbackNoticeSeenCodes;
 
   Locale get locale => _locale;
   bool get hasSavedLocale => _hasSavedLocale;
@@ -30,6 +34,9 @@ class LocaleController extends ChangeNotifier {
     return LocaleController._(
       locale: Locale(validCode ?? defaultLocale.languageCode),
       hasSavedLocale: validCode != null,
+      fallbackNoticeSeenCodes: preferences
+          .getStringList(fallbackNoticePreferenceKey)
+          ?.toSet(),
       preferences: preferences,
     );
   }
@@ -54,5 +61,19 @@ class LocaleController extends ChangeNotifier {
     if (changed) {
       notifyListeners();
     }
+  }
+
+  Future<bool> consumeFallbackNotice(AppLanguage language) async {
+    if (language.isFullyTranslated ||
+        _fallbackNoticeSeenCodes.contains(language.code)) {
+      return false;
+    }
+
+    _fallbackNoticeSeenCodes.add(language.code);
+    await _preferences?.setStringList(
+      fallbackNoticePreferenceKey,
+      _fallbackNoticeSeenCodes.toList(growable: false),
+    );
+    return true;
   }
 }

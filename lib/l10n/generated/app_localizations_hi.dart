@@ -188,6 +188,20 @@ class AppLocalizationsHi extends AppLocalizations {
       'अंग्रेज़ी फ़ॉलबैक • अनुवाद समीक्षा लंबित';
 
   @override
+  String get languageStatusFullyTranslated => 'पूर्ण अनुवाद उपलब्ध';
+
+  @override
+  String get languageStatusEnglishFallback => 'अंग्रेज़ी फ़ॉलबैक';
+
+  @override
+  String get translationComingSoon => 'अनुवाद जल्द उपलब्ध होगा';
+
+  @override
+  String fallbackLanguageNotice(String language) {
+    return '$language चुनी गई है। पूर्ण अनुवाद जल्द उपलब्ध होगा, इसलिए फ़िलहाल ऐप अंग्रेज़ी का उपयोग करेगा।';
+  }
+
+  @override
   String get bangla => 'बांग्ला';
 
   @override

@@ -190,6 +190,20 @@ class AppLocalizationsMni extends AppLocalizations {
       'English fallback • Translation pending review';
 
   @override
+  String get languageStatusFullyTranslated => 'Fully translated';
+
+  @override
+  String get languageStatusEnglishFallback => 'English fallback';
+
+  @override
+  String get translationComingSoon => 'Translation coming soon';
+
+  @override
+  String fallbackLanguageNotice(String language) {
+    return '$language is selected. Full translation is coming soon, so the app will use English for now.';
+  }
+
+  @override
   String get bangla => 'Bangla';
 
   @override

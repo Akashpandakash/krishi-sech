@@ -488,6 +488,30 @@ abstract class AppLocalizations {
   /// **'English fallback • Translation pending review'**
   String get translationPendingReview;
 
+  /// No description provided for @languageStatusFullyTranslated.
+  ///
+  /// In en, this message translates to:
+  /// **'Fully translated'**
+  String get languageStatusFullyTranslated;
+
+  /// No description provided for @languageStatusEnglishFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'English fallback'**
+  String get languageStatusEnglishFallback;
+
+  /// No description provided for @translationComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation coming soon'**
+  String get translationComingSoon;
+
+  /// No description provided for @fallbackLanguageNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'{language} is selected. Full translation is coming soon, so the app will use English for now.'**
+  String fallbackLanguageNotice(String language);
+
   /// No description provided for @bangla.
   ///
   /// In en, this message translates to:
