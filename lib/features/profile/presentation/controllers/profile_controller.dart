@@ -16,7 +16,7 @@ class ProfileController extends ChangeNotifier {
   bool isLoading = false;
   ProfileFailure? failure;
   String get greetingName =>
-      demoMode ? 'Ramesh Kumar' : (user?.displayName ?? 'Farmer');
+      user?.displayName ?? (demoMode ? 'Ramesh Kumar' : 'Farmer');
   Future<void> load() async {
     if (_demoMode) return;
     await _run(() async {

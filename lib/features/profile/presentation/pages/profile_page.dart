@@ -95,6 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 14),
                 Text(
                   controller.greetingName,
+                  key: const Key('profile_header_name'),
                   textAlign: TextAlign.center,
                   style: Theme.of(
                     context,
@@ -137,6 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     children: [
                       _ProfileTile(
+                        key: const Key('personal_details_tile'),
                         icon: Icons.person_outline,
                         title: context.l10n.personalDetails,
                         subtitle: user?.fullName,
@@ -279,89 +281,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _editUser(BuildContext context, UserProfile user) async {
-    final name = TextEditingController(text: user.fullName);
-    final state = TextEditingController(text: user.state);
-    final district = TextEditingController(text: user.district);
-    final village = TextEditingController(text: user.village);
-    final formKey = GlobalKey<FormState>();
     await showDialog<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(context.l10n.personalDetails),
-        content: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: name,
-                  decoration: InputDecoration(labelText: context.l10n.fullName),
-                  validator: (v) => (v?.trim().length ?? 0) < 2
-                      ? context.l10n.requiredField
-                      : null,
-                ),
-                TextFormField(
-                  initialValue: user.phone,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.mobileNumber,
-                    suffixIcon: const Icon(Icons.verified_outlined),
-                  ),
-                ),
-                TextFormField(
-                  controller: state,
-                  decoration: InputDecoration(labelText: context.l10n.state),
-                ),
-                TextFormField(
-                  controller: district,
-                  decoration: InputDecoration(labelText: context.l10n.district),
-                ),
-                TextFormField(
-                  controller: village,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.villageOptional,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              if (!formKey.currentState!.validate()) return;
-              final ok = await _controller.saveUser(
-                UserProfile(
-                  id: user.id,
-                  phone: user.phone,
-                  fullName: name.text.trim(),
-                  preferredLanguage: LocaleScope.of(
-                    context,
-                  ).locale.languageCode,
-                  profilePhotoPath: user.profilePhotoPath,
-                  profilePhotoUrl: user.profilePhotoUrl,
-                  state: state.text.trim(),
-                  district: district.text.trim(),
-                  village: village.text.trim(),
-                  updatedAt: user.updatedAt,
-                ),
-              );
-              if (ok && dialogContext.mounted) Navigator.pop(dialogContext);
-            },
-            child: Text(context.l10n.save),
-          ),
-        ],
-      ),
+      builder: (_) =>
+          _PersonalDetailsDialog(user: user, profileController: _controller),
     );
-    name.dispose();
-    state.dispose();
-    district.dispose();
-    village.dispose();
   }
 
   Future<void> _editFarm(BuildContext context, FarmProfile? farm) async {
@@ -471,6 +395,139 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
+}
+
+class _PersonalDetailsDialog extends StatefulWidget {
+  const _PersonalDetailsDialog({
+    required this.user,
+    required this.profileController,
+  });
+
+  final UserProfile user;
+  final ProfileController profileController;
+
+  @override
+  State<_PersonalDetailsDialog> createState() => _PersonalDetailsDialogState();
+}
+
+class _PersonalDetailsDialogState extends State<_PersonalDetailsDialog> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _name;
+  late final TextEditingController _state;
+  late final TextEditingController _district;
+  late final TextEditingController _village;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = widget.user;
+    _name = TextEditingController(text: user.fullName);
+    _state = TextEditingController(text: user.state);
+    _district = TextEditingController(text: user.district);
+    _village = TextEditingController(text: user.village);
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _state.dispose();
+    _district.dispose();
+    _village.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    if (_saving || !(_formKey.currentState?.validate() ?? false)) return;
+    final languageCode = LocaleScope.of(context).locale.languageCode;
+    setState(() => _saving = true);
+    final user = widget.user;
+    final ok = await widget.profileController.saveUser(
+      UserProfile(
+        id: user.id,
+        phone: user.phone,
+        fullName: _name.text.trim(),
+        preferredLanguage: languageCode,
+        profilePhotoPath: user.profilePhotoPath,
+        profilePhotoUrl: user.profilePhotoUrl,
+        state: _state.text.trim(),
+        district: _district.text.trim(),
+        village: _village.text.trim(),
+        updatedAt: user.updatedAt,
+      ),
+    );
+    if (!mounted) return;
+    if (ok) {
+      Navigator.of(context).pop();
+      return;
+    }
+    setState(() => _saving = false);
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(context.l10n.personalDetails),
+    content: Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              key: const Key('personal_details_name'),
+              controller: _name,
+              decoration: InputDecoration(labelText: context.l10n.fullName),
+              validator: (value) => (value?.trim().length ?? 0) < 2
+                  ? context.l10n.requiredField
+                  : null,
+            ),
+            TextFormField(
+              key: const Key('personal_details_phone'),
+              initialValue: widget.user.phone,
+              readOnly: true,
+              decoration: InputDecoration(
+                labelText: context.l10n.mobileNumber,
+                suffixIcon: const Icon(Icons.verified_outlined),
+              ),
+            ),
+            TextFormField(
+              key: const Key('personal_details_state'),
+              controller: _state,
+              decoration: InputDecoration(labelText: context.l10n.state),
+            ),
+            TextFormField(
+              key: const Key('personal_details_district'),
+              controller: _district,
+              decoration: InputDecoration(labelText: context.l10n.district),
+            ),
+            TextFormField(
+              key: const Key('personal_details_village'),
+              controller: _village,
+              decoration: InputDecoration(
+                labelText: context.l10n.villageOptional,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: _saving ? null : () => Navigator.of(context).pop(),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+      FilledButton(
+        key: const Key('personal_details_save'),
+        onPressed: _saving ? null : _save,
+        child: _saving
+            ? const SizedBox.square(
+                dimension: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : Text(context.l10n.save),
+      ),
+    ],
+  );
 }
 
 class _FarmDetailsDialog extends StatefulWidget {
@@ -661,6 +718,7 @@ class _ProfileAvatar extends StatelessWidget {
 
 class _ProfileTile extends StatelessWidget {
   const _ProfileTile({
+    super.key,
     required this.icon,
     required this.title,
     this.subtitle,
