@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/core/localization/app_language.dart';
@@ -12,6 +10,8 @@ import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
 import 'package:krishi_sech/features/profile/domain/entities/farm_profile.dart';
 import 'package:krishi_sech/features/profile/domain/entities/user_profile.dart';
 import 'package:krishi_sech/features/profile/data/repositories/in_memory_profile_repository.dart';
+import 'package:krishi_sech/features/profile/data/repositories/local_profile_photo_repository.dart';
+import 'package:krishi_sech/features/profile/domain/repositories/profile_photo_repository.dart';
 import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:krishi_sech/features/profile/presentation/profile_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
@@ -19,7 +19,9 @@ import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({this.photoRepository, super.key});
+
+  final ProfilePhotoRepository? photoRepository;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -250,34 +252,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _pickPhoto(BuildContext context, UserProfile user) async {
-    final file = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-      maxWidth: 1024,
-    );
-    if (file == null || !context.mounted) return;
-    final documents = await getApplicationDocumentsDirectory();
-    final extension = file.path.contains('.')
-        ? file.path.split('.').last
-        : 'jpg';
-    final persisted = await File(
-      file.path,
-    ).copy('${documents.path}/profile_${user.id}.$extension');
-    if (!context.mounted) return;
-    await _controller.saveUser(
-      UserProfile(
-        id: user.id,
-        phone: user.phone,
-        fullName: user.fullName,
-        preferredLanguage: user.preferredLanguage,
-        profilePhotoPath: persisted.path,
-        profilePhotoUrl: user.profilePhotoUrl,
-        state: user.state,
-        district: user.district,
-        village: user.village,
-        updatedAt: user.updatedAt,
-      ),
-    );
+    try {
+      final path =
+          await (widget.photoRepository ?? LocalProfilePhotoRepository())
+              .selectAndPersist(userId: user.id);
+      if (path == null || !context.mounted) return;
+      final ok = await _controller.saveProfilePhoto(path);
+      if (!ok && context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.profileLoadError)));
+      }
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.profileLoadError)));
+    }
   }
 
   Future<void> _editUser(BuildContext context, UserProfile user) async {
@@ -689,16 +680,7 @@ class _ProfileAvatar extends StatelessWidget {
         onTap: onTap,
         child: Stack(
           children: [
-            CircleAvatar(
-              radius: 48,
-              backgroundColor: AppColors.lightGreen,
-              backgroundImage: path != null && File(path).existsSync()
-                  ? FileImage(File(path))
-                  : null,
-              child: path == null || !File(path).existsSync()
-                  ? const Icon(Icons.person, size: 56, color: AppColors.primary)
-                  : null,
-            ),
+            _ProfilePhoto(path: path),
             if (onTap != null)
               const Positioned(
                 right: 0,
@@ -712,6 +694,37 @@ class _ProfileAvatar extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ProfilePhoto extends StatelessWidget {
+  const _ProfilePhoto({required this.path});
+
+  final String? path;
+
+  @override
+  Widget build(BuildContext context) {
+    final file = path == null ? null : File(path!);
+    final fallback = Container(
+      key: const Key('profile_photo_fallback'),
+      width: 96,
+      height: 96,
+      color: AppColors.lightGreen,
+      alignment: Alignment.center,
+      child: const Icon(Icons.person, size: 56, color: AppColors.primary),
+    );
+    return ClipOval(
+      child: file == null || !file.existsSync()
+          ? fallback
+          : Image.file(
+              file,
+              key: ValueKey<String>('profile_photo_${file.path}'),
+              width: 96,
+              height: 96,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => fallback,
+            ),
     );
   }
 }

@@ -4,10 +4,16 @@ import '../../domain/entities/farm_profile.dart';
 import '../../domain/entities/user_profile.dart';
 
 class LocalProfileDataSource {
-  LocalProfileDataSource(this.preferences);
+  LocalProfileDataSource(this.preferences, {String? storageNamespace})
+    : _userKey = storageNamespace == null
+          ? 'cached_user_profile_v1'
+          : 'cached_user_profile_v1_$storageNamespace',
+      _farmKey = storageNamespace == null
+          ? 'cached_farm_profile_v1'
+          : 'cached_farm_profile_v1_$storageNamespace';
   final SharedPreferences preferences;
-  static const _userKey = 'cached_user_profile_v1';
-  static const _farmKey = 'cached_farm_profile_v1';
+  final String _userKey;
+  final String _farmKey;
   UserProfile? readUser() {
     final value = preferences.getString(_userKey);
     return value == null

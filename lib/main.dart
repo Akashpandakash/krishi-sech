@@ -42,6 +42,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishi_sech/features/profile/data/datasources/local_profile_data_source.dart';
 import 'package:krishi_sech/features/profile/data/datasources/remote_profile_data_source.dart';
 import 'package:krishi_sech/features/profile/data/repositories/in_memory_profile_repository.dart';
+import 'package:krishi_sech/features/profile/data/repositories/local_only_profile_repository.dart';
 import 'package:krishi_sech/features/profile/data/repositories/synced_profile_repository.dart';
 import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 
@@ -125,11 +126,17 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       const Duration(seconds: 4),
     );
 
+    final realProfileLocal = preferences == null
+        ? null
+        : LocalProfileDataSource(preferences);
+    final demoProfileLocal = preferences == null
+        ? null
+        : LocalProfileDataSource(preferences, storageNamespace: 'demo');
     final profileController = ProfileController(
       preferences == null
           ? InMemoryProfileRepository()
           : SyncedProfileRepository(
-              LocalProfileDataSource(preferences),
+              realProfileLocal!,
               RemoteProfileDataSource(
                 baseUrl: ApiConfig.baseUrl,
                 accessTokenProvider: ({bool forceRefresh = false}) =>
@@ -142,6 +149,11 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       demoMode:
           AppEnvironment.demoModeEnabled &&
           _authController?.session?.user.phone == '+919999999999',
+      demoRepository: demoProfileLocal == null
+          ? null
+          : LocalOnlyProfileRepository(demoProfileLocal),
+      demoUser: demoProfileLocal?.readUser(),
+      demoFarm: demoProfileLocal?.readFarm(),
     );
     if (_authController?.isAuthenticated == true) {
       await _safeLoad(
@@ -316,7 +328,7 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     if (userId == _loadedProfileUserId) return;
     _loadedProfileUserId = userId;
     if (AppEnvironment.demoModeEnabled && userId == 'demo-farmer') {
-      _profileController!.enterDemoMode();
+      unawaited(_profileController!.enterDemoMode());
       return;
     }
     unawaited(
