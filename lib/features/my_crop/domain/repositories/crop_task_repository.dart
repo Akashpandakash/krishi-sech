@@ -5,4 +5,5 @@ abstract interface class CropTaskRepository {
   Future<CropTask> addTask(CropTask task);
   Future<CropTask> updateTask(CropTask task);
   Future<void> deleteTask(String id);
+  Future<void> deleteTasksForCrop(String cropId);
 }

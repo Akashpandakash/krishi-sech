@@ -89,6 +89,12 @@ class SyncedCropRepository implements CropSyncAwareRepository {
       await _updatePendingState();
       lastSyncIssue = null;
     } on CropRemoteFailure catch (failure) {
+      if (failure.type == CropRemoteFailureType.notFound) {
+        await local.deleteCrop(id);
+        await _updatePendingState();
+        lastSyncIssue = null;
+        return;
+      }
       if (failure.type != CropRemoteFailureType.offline) rethrow;
       await local.deleteCrop(id);
       await local.queueDelete(id);
@@ -121,7 +127,11 @@ class SyncedCropRepository implements CropSyncAwareRepository {
             await local.updateCrop(updated);
             break;
           case 'delete':
-            await remote.deleteCrop(operation.cropId);
+            try {
+              await remote.deleteCrop(operation.cropId);
+            } on CropRemoteFailure catch (failure) {
+              if (failure.type != CropRemoteFailureType.notFound) rethrow;
+            }
             break;
         }
         await local.removePending(operation);
@@ -140,6 +150,7 @@ class SyncedCropRepository implements CropSyncAwareRepository {
   CropSyncIssue _issue(CropRemoteFailureType type) => switch (type) {
     CropRemoteFailureType.offline => CropSyncIssue.offline,
     CropRemoteFailureType.unauthorized => CropSyncIssue.unauthorized,
+    CropRemoteFailureType.notFound => CropSyncIssue.server,
     CropRemoteFailureType.server => CropSyncIssue.server,
   };
 

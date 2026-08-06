@@ -118,6 +118,8 @@ class CropController extends ChangeNotifier {
   }
 
   Future<bool> deleteCrop(String id) async {
+    if (_isMutationInProgress || cropById(id) == null) return false;
+    _isMutationInProgress = true;
     _startMutation();
     try {
       await repository?.deleteCrop(id);
@@ -128,6 +130,7 @@ class CropController extends ChangeNotifier {
       _error = error;
       return false;
     } finally {
+      _isMutationInProgress = false;
       _finishMutation();
     }
   }

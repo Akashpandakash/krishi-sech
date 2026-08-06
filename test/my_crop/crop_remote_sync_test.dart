@@ -277,6 +277,42 @@ void main() {
   });
 
   test(
+    'deleting a stale local crop succeeds when backend returns 404',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      final local = LocalCropDataSource(preferences);
+      final stale = CropModel(
+        id: 'c92cce64-aef7-4ef6-8825-50ec66e13d11',
+        userId: 'demo-farmer',
+        cropType: 'mustard',
+        variety: 'Pusa Bold',
+        sowingDate: DateTime(2026, 8, 1),
+        landArea: 1,
+        landAreaUnit: 'acre',
+        growthStage: 'vegetative',
+        healthStatus: 'healthy',
+        irrigationType: 'manual',
+        soilType: 'loamy',
+        plantingMethod: 'other',
+        createdAt: DateTime(2026, 8, 1),
+        updatedAt: DateTime(2026, 8, 1),
+      );
+      await local.addCrop(stale);
+      final remote = _cropRemote(
+        (request) async => request.method == 'DELETE'
+            ? _errorResponse(404, 'CROP_NOT_FOUND')
+            : _response(const []),
+      );
+      final repository = SyncedCropRepository(local, remote);
+
+      await repository.deleteCrop(stale.id);
+
+      expect(await local.getCrops(), isEmpty);
+    },
+  );
+
+  test(
     'crop update keeps submitted variety and health and persists after restart',
     () async {
       SharedPreferences.setMockInitialValues({});

@@ -172,6 +172,19 @@ class CropTaskController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> removeTasksForDeletedCrop(String cropId) async {
+    final related = _tasks
+        .where((task) => task.cropId == cropId)
+        .toList(growable: false);
+    for (final task in related) {
+      await _cancelReminder(task);
+    }
+    _tasks.removeWhere((task) => task.cropId == cropId);
+    await repository?.deleteTasksForCrop(cropId);
+    if (_syncing) _syncAgain = true;
+    notifyListeners();
+  }
+
   Future<void> reschedulePendingNotifications() async {
     for (var index = 0; index < _tasks.length; index++) {
       var task = _tasks[index];
@@ -227,13 +240,19 @@ class CropTaskController extends ChangeNotifier {
       do {
         _syncAgain = false;
         final validIds = cropController.crops.map((crop) => crop.id).toSet();
-        final orphanIds = _tasks
+        final orphanCropIds = _tasks
             .where((task) => !validIds.contains(task.cropId))
-            .map((task) => task.id)
-            .toList();
-        for (final id in orphanIds) {
-          _tasks.removeWhere((task) => task.id == id);
-          await repository!.deleteTask(id);
+            .map((task) => task.cropId)
+            .toSet();
+        for (final cropId in orphanCropIds) {
+          final related = _tasks
+              .where((task) => task.cropId == cropId)
+              .toList(growable: false);
+          for (final task in related) {
+            await _cancelReminder(task);
+          }
+          _tasks.removeWhere((task) => task.cropId == cropId);
+          await repository!.deleteTasksForCrop(cropId);
         }
         for (final crop in cropController.crops) {
           for (final generated in _ruleService.generate(crop)) {

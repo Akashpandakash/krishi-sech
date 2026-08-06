@@ -527,6 +527,166 @@ void main() {
       expect(controller.crops.single.id, 'crop-2');
     });
 
+    test('duplicate crop deletion is blocked', () async {
+      final repository = _ControlledCropRepository(testCrop());
+      final controller = await CropController.load(repository);
+
+      final first = controller.deleteCrop('crop-1');
+      final second = controller.deleteCrop('crop-1');
+      expect(await second, isFalse);
+      expect(repository.deleteCalls, 1);
+
+      repository.deleteCompleter.complete();
+      expect(await first, isTrue);
+      expect(controller.crops, isEmpty);
+    });
+
+    testWidgets(
+      'Crop delete cancel preserves data and success cleans related tasks',
+      (tester) async {
+        final cropController = CropController.inMemory(
+          crops: [
+            testCrop(),
+            testCrop(id: 'crop-2'),
+          ],
+          samples: false,
+        );
+        final now = DateTime.now();
+        CropTask task(String id, String cropId) => CropTask(
+          id: id,
+          cropId: cropId,
+          type: CropTaskReminderType.irrigation,
+          dueDate: now,
+          reminderTime: TaskReminderTime.none,
+          createdAt: now,
+          updatedAt: now,
+        );
+        final taskController = CropTaskController.inMemory(
+          cropController: cropController,
+          tasks: [task('related', 'crop-1'), task('unrelated', 'crop-2')],
+          generateTasks: false,
+        );
+        await tester.pumpWidget(
+          _LocalizedRouteApp(
+            initialRoute: AppRoutes.myCrop,
+            controller: LocaleController.inMemory(locale: const Locale('en')),
+            cropController: cropController,
+            cropTaskController: taskController,
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('crop_card_crop-1')));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byKey(const Key('delete_crop_action')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+        expect(cropController.totalCount, 2);
+        expect(taskController.taskById('related'), isNotNull);
+
+        await tester.tap(find.byKey(const Key('delete_crop_action')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const Key('confirm_delete_crop')));
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Crops'), findsWidgets);
+        expect(cropController.totalCount, 1);
+        expect(cropController.crops.single.id, 'crop-2');
+        expect(taskController.taskById('related'), isNull);
+        expect(taskController.taskById('unrelated'), isNotNull);
+
+        await tester.tap(find.byKey(const Key('crop_calendar_button')));
+        await tester.pumpAndSettle();
+        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(find.byKey(const Key('crop_task_calendar')), findsOneWidget);
+        expect(taskController.taskById('unrelated'), isNotNull);
+      },
+    );
+
+    testWidgets('failed Crop delete keeps data and shows retryable error', (
+      tester,
+    ) async {
+      final controller = await CropController.load(
+        _FailingCropRepository(testCrop()),
+      );
+      await tester.pumpWidget(
+        _LocalizedRouteApp(
+          initialRoute: AppRoutes.myCrop,
+          controller: LocaleController.inMemory(locale: const Locale('en')),
+          cropController: controller,
+          cropTaskController: CropTaskController.inMemory(
+            cropController: controller,
+            generateTasks: false,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('crop_card_crop-1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('delete_crop_action')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('confirm_delete_crop')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('delete_crop_error')), findsOneWidget);
+      expect(find.byKey(const Key('confirm_delete_crop')), findsOneWidget);
+      expect(controller.crops.single.id, 'crop-1');
+    });
+
+    test('crop and related task deletion persist after restart', () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      final cropRepository = CropRepositoryImpl(
+        LocalCropDataSource(preferences),
+      );
+      final taskRepository = CropTaskRepositoryImpl(
+        LocalCropTaskDataSource(preferences),
+      );
+      final cropController = await CropController.load(cropRepository);
+      await cropController.addCrop(testCrop());
+      await cropController.addCrop(testCrop(id: 'crop-2'));
+      final now = DateTime.now();
+      final taskController = await CropTaskController.load(
+        repository: taskRepository,
+        cropController: cropController,
+      );
+      await taskController.addTask(
+        CropTask(
+          id: 'related-persisted',
+          cropId: 'crop-1',
+          type: CropTaskReminderType.irrigation,
+          dueDate: now,
+          reminderTime: TaskReminderTime.none,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+      await taskController.addTask(
+        CropTask(
+          id: 'unrelated-persisted',
+          cropId: 'crop-2',
+          type: CropTaskReminderType.fertilizer,
+          dueDate: now,
+          reminderTime: TaskReminderTime.none,
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+
+      expect(await cropController.deleteCrop('crop-1'), isTrue);
+      await taskController.removeTasksForDeletedCrop('crop-1');
+
+      final restartedCrops = await CropController.load(cropRepository);
+      final restartedTasks = await CropTaskController.load(
+        repository: taskRepository,
+        cropController: restartedCrops,
+      );
+      expect(restartedCrops.crops.map((crop) => crop.id), ['crop-2']);
+      expect(restartedTasks.taskById('related-persisted'), isNull);
+      expect(restartedTasks.taskById('unrelated-persisted'), isNotNull);
+    });
+
     test('persists and restores crops after restart', () async {
       SharedPreferences.setMockInitialValues({});
       final preferences = await SharedPreferences.getInstance();

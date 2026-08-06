@@ -22,4 +22,8 @@ class CropTaskRepositoryImpl implements CropTaskRepository {
 
   @override
   Future<void> deleteTask(String id) => _dataSource.deleteTask(id);
+
+  @override
+  Future<void> deleteTasksForCrop(String cropId) =>
+      _dataSource.deleteTasksForCrop(cropId);
 }

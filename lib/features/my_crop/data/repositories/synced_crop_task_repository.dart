@@ -71,6 +71,10 @@ class SyncedCropTaskRepository implements CropTaskRepository {
     }
   }
 
+  @override
+  Future<void> deleteTasksForCrop(String cropId) =>
+      local.deleteTasksForCrop(cropId);
+
   Future<void> _syncPending() async {
     for (final operation in await local.getPendingOperations()) {
       try {

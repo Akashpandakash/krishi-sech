@@ -110,27 +110,21 @@ class CropDetailsPage extends StatelessWidget {
   }
 
   Future<void> _delete(BuildContext context, Crop crop) async {
-    final confirmed = await showDialog<bool>(
+    final cropController = CropScope.of(context);
+    final taskController = CropTaskScope.of(context);
+    final deleted = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.deleteCrop),
-        content: Text(context.l10n.deleteCropConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(context.l10n.cancel),
-          ),
-          FilledButton(
-            key: const Key('confirm_delete_crop'),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(context.l10n.delete),
-          ),
-        ],
+      barrierDismissible: false,
+      builder: (dialogContext) => _DeleteCropDialog(
+        onDelete: () async {
+          final removed = await cropController.deleteCrop(crop.id);
+          if (!removed) return false;
+          await taskController.removeTasksForDeletedCrop(crop.id);
+          return true;
+        },
       ),
     );
-    if (confirmed != true || !context.mounted) return;
-    final deleted = await CropScope.of(context).deleteCrop(crop.id);
-    if (context.mounted && deleted) Navigator.of(context).pop();
+    if (deleted == true && context.mounted) Navigator.of(context).pop(true);
   }
 
   Future<void> _updateHealth(BuildContext context, Crop crop) async {
@@ -394,6 +388,78 @@ class CropDetailsPage extends StatelessWidget {
 }
 
 enum _DiseaseImageSource { camera, gallery }
+
+class _DeleteCropDialog extends StatefulWidget {
+  const _DeleteCropDialog({required this.onDelete});
+
+  final Future<bool> Function() onDelete;
+
+  @override
+  State<_DeleteCropDialog> createState() => _DeleteCropDialogState();
+}
+
+class _DeleteCropDialogState extends State<_DeleteCropDialog> {
+  bool _deleting = false;
+  bool _failed = false;
+
+  Future<void> _delete() async {
+    if (_deleting) return;
+    setState(() {
+      _deleting = true;
+      _failed = false;
+    });
+    var deleted = false;
+    try {
+      deleted = await widget.onDelete();
+    } catch (_) {
+      deleted = false;
+    }
+    if (!mounted) return;
+    if (deleted) {
+      Navigator.pop(context, true);
+      return;
+    }
+    setState(() {
+      _deleting = false;
+      _failed = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(context.l10n.deleteCrop),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(context.l10n.deleteCropConfirmation),
+        if (_deleting) ...[
+          const SizedBox(height: 16),
+          const LinearProgressIndicator(key: Key('delete_crop_progress')),
+        ],
+        if (_failed) ...[
+          const SizedBox(height: 12),
+          Text(
+            context.l10n.cropServerError,
+            key: const Key('delete_crop_error'),
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
+      ],
+    ),
+    actions: [
+      TextButton(
+        onPressed: _deleting ? null : () => Navigator.pop(context, false),
+        child: Text(context.l10n.cancel),
+      ),
+      FilledButton(
+        key: const Key('confirm_delete_crop'),
+        onPressed: _deleting ? null : _delete,
+        child: Text(context.l10n.delete),
+      ),
+    ],
+  );
+}
 
 class _TimelineTask extends StatelessWidget {
   const _TimelineTask({

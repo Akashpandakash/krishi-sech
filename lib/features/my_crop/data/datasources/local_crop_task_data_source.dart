@@ -46,6 +46,18 @@ class LocalCropTaskDataSource {
     await _save(tasks);
   }
 
+  Future<void> deleteTasksForCrop(String cropId) async {
+    final tasks = await getTasks();
+    final taskIds = tasks
+        .where((task) => task.cropId == cropId)
+        .map((task) => task.id)
+        .toSet();
+    tasks.removeWhere((task) => task.cropId == cropId);
+    final operations = await getPendingOperations()
+      ..removeWhere((operation) => taskIds.contains(operation.taskId));
+    await Future.wait([_save(tasks), _savePending(operations)]);
+  }
+
   Future<void> replaceTasks(List<CropTaskModel> tasks) => _save(tasks);
 
   Future<List<CropTaskSyncOperation>> getPendingOperations() async {
