@@ -527,11 +527,13 @@ describe('authenticated user and farm profiles', () => {
 class MemoryCropRepository implements CropRepository {
   readonly crops: CropRecord[] = [];
 
-  async create(userId: string, input: CropInput) {
+  async create(userId: string, input: CropInput, id = randomUUID()) {
+    const existing = await this.findByIdAndUser(id, userId);
+    if (existing) return existing;
     const now = new Date();
     const crop = {
       ...input,
-      id: randomUUID(),
+      id,
       userId,
       createdAt: now,
       updatedAt: now,
@@ -889,6 +891,33 @@ describe('crop management', () => {
       .get(`/api/crops/${cropId}`)
       .set('Authorization', authorization)
       .expect(404);
+  });
+
+  it('creates one crop when an idempotency key is replayed', async () => {
+    const fixture = await authenticatedCropFixture('+919876543210');
+    const authorization = `Bearer ${fixture.accessToken}`;
+    const idempotencyKey = 'd89d24d7-1d0d-4a1c-9cd3-a457e9485760';
+
+    const first = await request(fixture.app)
+      .post('/api/crops')
+      .set('Authorization', authorization)
+      .set('Idempotency-Key', idempotencyKey)
+      .send(cropBody)
+      .expect(201);
+    const replay = await request(fixture.app)
+      .post('/api/crops')
+      .set('Authorization', authorization)
+      .set('Idempotency-Key', idempotencyKey)
+      .send(cropBody)
+      .expect(201);
+
+    assert.equal(first.body.data.id, idempotencyKey);
+    assert.equal(replay.body.data.id, idempotencyKey);
+    const list = await request(fixture.app)
+      .get('/api/crops')
+      .set('Authorization', authorization)
+      .expect(200);
+    assert.equal(list.body.data.length, 1);
   });
 
   it("never exposes another user's crop", async () => {

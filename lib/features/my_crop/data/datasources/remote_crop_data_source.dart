@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/features/my_crop/data/models/crop_model.dart';
 
-enum CropRemoteFailureType { offline, unauthorized, server }
+enum CropRemoteFailureType { offline, unauthorized, notFound, server }
 
 class CropRemoteFailure implements Exception {
   const CropRemoteFailure(this.type, [this.message]);
@@ -53,7 +53,12 @@ class RemoteCropDataSource {
       CropModel.fromJson(await _mapRequest('GET', '/api/crops/$id', null));
 
   Future<CropModel> addCrop(CropModel crop) async => CropModel.fromJson(
-    await _mapRequest('POST', '/api/crops', crop.toApiJson()),
+    await _mapRequest(
+      'POST',
+      '/api/crops',
+      crop.toApiJson(),
+      idempotencyKey: _isUuid(crop.id) ? crop.id : null,
+    ),
   );
 
   Future<CropModel> updateCrop(CropModel crop) async => CropModel.fromJson(
@@ -67,9 +72,15 @@ class RemoteCropDataSource {
   Future<Map<String, dynamic>> _mapRequest(
     String method,
     String path,
-    Map<String, dynamic>? body,
-  ) async {
-    final data = await _request(method, path, body: body);
+    Map<String, dynamic>? body, {
+    String? idempotencyKey,
+  }) async {
+    final data = await _request(
+      method,
+      path,
+      body: body,
+      idempotencyKey: idempotencyKey,
+    );
     if (data is! Map<String, dynamic>) {
       throw const CropRemoteFailure(CropRemoteFailureType.server);
     }
@@ -81,6 +92,7 @@ class RemoteCropDataSource {
     String path, {
     Map<String, dynamic>? body,
     bool retried = false,
+    String? idempotencyKey,
   }) async {
     final token = await accessTokenProvider(forceRefresh: retried);
     if (token == null) {
@@ -94,13 +106,22 @@ class RemoteCropDataSource {
           'Authorization': 'Bearer $token',
           if (body != null) 'Content-Type': 'application/json',
         });
+      if (idempotencyKey != null) {
+        request.headers['Idempotency-Key'] = idempotencyKey;
+      }
       if (body != null) request.body = jsonEncode(body);
       final streamed = await requestClient
           .send(request)
           .timeout(AppEnvironment.requestTimeout);
       final response = await http.Response.fromStream(streamed);
       if (response.statusCode == 401 && !retried) {
-        return _request(method, path, body: body, retried: true);
+        return _request(
+          method,
+          path,
+          body: body,
+          retried: true,
+          idempotencyKey: idempotencyKey,
+        );
       }
       final decoded = response.body.isEmpty ? null : jsonDecode(response.body);
       if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -114,6 +135,8 @@ class RemoteCropDataSource {
         throw CropRemoteFailure(
           response.statusCode == 401
               ? CropRemoteFailureType.unauthorized
+              : response.statusCode == 404
+              ? CropRemoteFailureType.notFound
               : CropRemoteFailureType.server,
           _errorMessage(decoded),
         );
@@ -146,4 +169,9 @@ class RemoteCropDataSource {
     final error = decoded['error'];
     return error is Map<String, dynamic> ? error['details'] : null;
   }
+
+  bool _isUuid(String value) => RegExp(
+    r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-'
+    r'[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+  ).hasMatch(value);
 }

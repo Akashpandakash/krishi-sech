@@ -7,8 +7,8 @@ import type {
 export class CropService {
   constructor(private readonly repository: CropRepository) {}
 
-  create(userId: string, input: CropInput) {
-    return this.repository.create(userId, input);
+  create(userId: string, input: CropInput, idempotencyKey?: string) {
+    return this.repository.create(userId, input, idempotencyKey);
   }
 
   list(userId: string) {

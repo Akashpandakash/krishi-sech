@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ import 'package:krishi_sech/features/my_crop/data/repositories/synced_crop_repos
 import 'package:krishi_sech/features/my_crop/domain/repositories/crop_repository.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
+import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_task_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -59,6 +61,139 @@ void main() {
     expect(created.id, 'crop-1');
     expect(created.cropType, 'paddy');
   });
+
+  test(
+    'create uses the server ID, refreshes the list, and persists after restart',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      Map<String, dynamic>? createdPayload;
+      var listRequests = 0;
+      final remote = _cropRemote((request) async {
+        if (request.method == 'POST') {
+          createdPayload = jsonDecode(request.body) as Map<String, dynamic>;
+          return http.Response(
+            jsonEncode({
+              'success': true,
+              'data': {
+                ...createdPayload!,
+                'id': 'server-crop-1',
+                'userId': 'demo-farmer',
+                'createdAt': '2026-08-06T12:00:00.000Z',
+                'updatedAt': '2026-08-06T12:00:00.000Z',
+              },
+            }),
+            201,
+            headers: {'content-type': 'application/json'},
+          );
+        }
+        listRequests += 1;
+        return _response(
+          createdPayload == null
+              ? const []
+              : [
+                  {
+                    ...createdPayload!,
+                    'id': 'server-crop-1',
+                    'userId': 'demo-farmer',
+                    'createdAt': '2026-08-06T12:00:00.000Z',
+                    'updatedAt': '2026-08-06T12:00:00.000Z',
+                  },
+                ],
+        );
+      });
+      final local = LocalCropDataSource(preferences);
+      final controller = await CropController.load(
+        SyncedCropRepository(local, remote),
+      );
+      final localCrop = Crop(
+        id: 'temporary-local-id',
+        userId: 'demo-farmer',
+        kind: CropKind.wheat,
+        variety: 'HD-2967',
+        sowingDate: DateTime(2026, 8, 1),
+        landArea: 1.5,
+        landAreaUnit: LandAreaUnit.acre,
+        growthStage: GrowthStage.germination,
+        irrigationType: IrrigationType.manual,
+      );
+
+      expect(await controller.addCrop(localCrop), isTrue);
+      expect(controller.crops.single.id, 'server-crop-1');
+      expect(controller.crops.single.variety, 'HD-2967');
+
+      await controller.refresh();
+      expect(listRequests, 2);
+      expect(controller.crops.single.id, 'server-crop-1');
+
+      final restored = await local.getCrops();
+      expect(restored.single.id, 'server-crop-1');
+      expect(restored.single.variety, 'HD-2967');
+    },
+  );
+
+  test(
+    'ambiguous create retry reuses one idempotency key and generates tasks once',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      const requestId = '913b03bd-f33f-45a4-9817-15f5564f5534';
+      Map<String, dynamic>? serverCrop;
+      var createRequests = 0;
+      final remote = _cropRemote((request) async {
+        if (request.method == 'POST') {
+          createRequests += 1;
+          expect(request.headers['Idempotency-Key'], requestId);
+          final body = jsonDecode(request.body) as Map<String, dynamic>;
+          serverCrop ??= {
+            ...body,
+            'id': requestId,
+            'userId': 'demo-farmer',
+            'createdAt': '2026-08-06T12:00:00.000Z',
+            'updatedAt': '2026-08-06T12:00:00.000Z',
+          };
+          if (createRequests == 1) {
+            throw const SocketException('response lost after create');
+          }
+          return _response(serverCrop!);
+        }
+        return _response(serverCrop == null ? const [] : [serverCrop!]);
+      });
+      final local = LocalCropDataSource(preferences);
+      final controller = await CropController.load(
+        SyncedCropRepository(local, remote),
+      );
+      final tasks = CropTaskController.inMemory(
+        cropController: controller,
+        generateTasks: false,
+      );
+      final crop = Crop(
+        id: requestId,
+        userId: 'demo-farmer',
+        kind: CropKind.mustard,
+        variety: 'Pusa Bold',
+        sowingDate: DateTime(2026, 8, 1),
+        landArea: 1,
+        landAreaUnit: LandAreaUnit.acre,
+        growthStage: GrowthStage.vegetative,
+        irrigationType: IrrigationType.manual,
+      );
+
+      expect(await controller.addCrop(crop), isTrue);
+      expect(controller.crops, hasLength(1));
+      expect(tasks.tasksForCrop(requestId), hasLength(4));
+
+      await controller.refresh();
+      expect(createRequests, 2);
+      expect(controller.crops, hasLength(1));
+      expect(controller.crops.single.id, requestId);
+      expect(tasks.tasksForCrop(requestId), hasLength(4));
+
+      final restored = await local.getCrops();
+      expect(restored, hasLength(1));
+      expect(restored.single.id, requestId);
+    },
+  );
 
   test('valid empty crop list is a successful response', () async {
     final remote = _cropRemote((_) async => _response(const []));

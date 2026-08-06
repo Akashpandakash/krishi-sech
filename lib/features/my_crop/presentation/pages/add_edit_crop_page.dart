@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
@@ -36,6 +38,7 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
   CropHealth _health = CropHealth.healthy;
   bool _initialized = false;
   bool _saving = false;
+  late final String _createRequestId = widget.cropId ?? _uuidV4();
 
   @override
   void didChangeDependencies() {
@@ -123,7 +126,7 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
         : controller.cropById(widget.cropId!);
     final now = DateTime.now();
     final crop = Crop(
-      id: widget.cropId ?? now.microsecondsSinceEpoch.toString(),
+      id: _createRequestId,
       userId: existing?.userId ?? 'local-user',
       kind: _kind!,
       customName: _kind == CropKind.other
@@ -152,6 +155,10 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
         : await controller.updateCrop(crop);
     if (!mounted) return;
     if (saved) {
+      if (widget.cropId == null) {
+        Navigator.of(context).pop(true);
+        return;
+      }
       final current = controller.cropById(crop.id);
       if (current != null &&
           current.variety == crop.variety &&
@@ -173,6 +180,19 @@ class _AddEditCropPageState extends State<AddEditCropPage> {
 
   String? _emptyToNull(String value) =>
       value.trim().isEmpty ? null : value.trim();
+
+  String _uuidV4() {
+    final random = Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    final value = bytes
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
+    return '${value.substring(0, 8)}-${value.substring(8, 12)}-'
+        '${value.substring(12, 16)}-${value.substring(16, 20)}-'
+        '${value.substring(20)}';
+  }
 
   @override
   Widget build(BuildContext context) {

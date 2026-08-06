@@ -13,6 +13,7 @@ const nullableDate = z
   .transform((value) => (value === null ? null : new Date(value)));
 
 export const cropIdSchema = z.object({ id: z.uuid() });
+export const cropIdempotencyKeySchema = z.uuid();
 
 export const cropBodySchema = z
   .object({

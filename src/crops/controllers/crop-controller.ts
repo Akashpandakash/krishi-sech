@@ -3,15 +3,24 @@ import type { Response } from 'express';
 import type { AuthenticatedRequest } from '../../auth/middleware/auth-middleware.js';
 import { sendSuccess } from '../../common/response.js';
 import type { CropService } from '../services/crop-service.js';
-import { cropBodySchema, cropIdSchema } from '../validation/crop-validation.js';
+import {
+  cropBodySchema,
+  cropIdempotencyKeySchema,
+  cropIdSchema,
+} from '../validation/crop-validation.js';
 
 export class CropController {
   constructor(private readonly service: CropService) {}
 
   create = async (request: AuthenticatedRequest, response: Response) => {
+    const rawIdempotencyKey = request.get('Idempotency-Key');
+    const idempotencyKey = rawIdempotencyKey
+      ? cropIdempotencyKeySchema.parse(rawIdempotencyKey)
+      : undefined;
     const crop = await this.service.create(
       request.auth!.userId,
       cropBodySchema.parse(request.body),
+      idempotencyKey,
     );
     return sendSuccess(response, 201, 'Crop created successfully', crop);
   };

@@ -54,7 +54,7 @@ export interface CropRecord extends CropInput {
 }
 
 export interface CropRepository {
-  create(userId: string, input: CropInput): Promise<CropRecord>;
+  create(userId: string, input: CropInput, id?: string): Promise<CropRecord>;
   findAllByUser(userId: string): Promise<CropRecord[]>;
   findByIdAndUser(id: string, userId: string): Promise<CropRecord | null>;
   update(id: string, userId: string, input: CropInput): Promise<CropRecord>;

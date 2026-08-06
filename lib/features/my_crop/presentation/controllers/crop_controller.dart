@@ -72,6 +72,8 @@ class CropController extends ChangeNotifier {
   }
 
   Future<bool> addCrop(Crop crop) async {
+    if (_isMutationInProgress) return false;
+    _isMutationInProgress = true;
     _startMutation();
     try {
       final created = await repository?.addCrop(crop) ?? crop;
@@ -83,6 +85,7 @@ class CropController extends ChangeNotifier {
       _error = error;
       return false;
     } finally {
+      _isMutationInProgress = false;
       _finishMutation();
     }
   }

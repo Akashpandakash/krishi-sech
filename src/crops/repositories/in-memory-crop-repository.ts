@@ -9,11 +9,20 @@ import type {
 export class InMemoryCropRepository implements CropRepository {
   private readonly crops = new Map<string, CropRecord>();
 
-  async create(userId: string, input: CropInput): Promise<CropRecord> {
+  async create(
+    userId: string,
+    input: CropInput,
+    id = randomUUID(),
+  ): Promise<CropRecord> {
+    const existing = this.crops.get(id);
+    if (existing) {
+      if (existing.userId === userId) return existing;
+      throw new Error('Crop idempotency key already exists');
+    }
     const now = new Date();
     const crop: CropRecord = {
       ...input,
-      id: randomUUID(),
+      id,
       userId,
       createdAt: now,
       updatedAt: now,

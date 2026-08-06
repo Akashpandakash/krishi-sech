@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,6 +36,8 @@ import 'package:krishi_sech/features/my_crop/data/repositories/crop_task_reposit
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_health_record.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_task.dart';
+import 'package:krishi_sech/features/my_crop/domain/repositories/crop_repository.dart';
+import 'package:krishi_sech/features/my_crop/domain/repositories/crop_task_repository.dart';
 import 'package:krishi_sech/features/my_crop/domain/services/crop_task_rule_service.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_controller.dart';
 import 'package:krishi_sech/features/my_crop/presentation/controllers/crop_health_record_controller.dart';
@@ -201,6 +205,124 @@ class _CachedWeatherRepository implements WeatherSyncAwareRepository {
       );
 }
 
+class _ControlledCropRepository implements CropRepository {
+  _ControlledCropRepository(this.crop);
+
+  final Crop crop;
+  final Completer<void> deleteCompleter = Completer<void>();
+  int deleteCalls = 0;
+
+  @override
+  Future<Crop> addCrop(Crop crop) async => crop;
+
+  @override
+  Future<void> deleteCrop(String id) async {
+    deleteCalls++;
+    await deleteCompleter.future;
+  }
+
+  @override
+  Future<List<Crop>> getCrops() async => [crop];
+
+  @override
+  Future<bool> hasUserCrops() async => true;
+
+  @override
+  Future<Crop> updateCrop(Crop crop) async => crop;
+}
+
+class _ControlledAddCropRepository implements CropRepository {
+  final Completer<Crop> addCompleter = Completer<Crop>();
+  int addCalls = 0;
+
+  @override
+  Future<Crop> addCrop(Crop crop) {
+    addCalls++;
+    return addCompleter.future;
+  }
+
+  @override
+  Future<void> deleteCrop(String id) async {}
+
+  @override
+  Future<List<Crop>> getCrops() async => const [];
+
+  @override
+  Future<bool> hasUserCrops() async => false;
+
+  @override
+  Future<Crop> updateCrop(Crop crop) async => crop;
+}
+
+class _FailingCropRepository implements CropRepository {
+  _FailingCropRepository(this.crop);
+
+  final Crop crop;
+
+  @override
+  Future<Crop> addCrop(Crop crop) async => crop;
+
+  @override
+  Future<void> deleteCrop(String id) =>
+      Future<void>.error(StateError('temporary delete failure'));
+
+  @override
+  Future<List<Crop>> getCrops() async => [crop];
+
+  @override
+  Future<bool> hasUserCrops() async => true;
+
+  @override
+  Future<Crop> updateCrop(Crop crop) async => crop;
+}
+
+class _EmptyThenHangingCropRepository implements CropRepository {
+  int reads = 0;
+
+  @override
+  Future<Crop> addCrop(Crop crop) async => crop;
+
+  @override
+  Future<void> deleteCrop(String id) async {}
+
+  @override
+  Future<List<Crop>> getCrops() {
+    reads++;
+    if (reads == 1) return Future.value(const []);
+    return Completer<List<Crop>>().future;
+  }
+
+  @override
+  Future<bool> hasUserCrops() async => true;
+
+  @override
+  Future<Crop> updateCrop(Crop crop) async => crop;
+}
+
+class _HangingAfterFirstTaskRepository implements CropTaskRepository {
+  int reads = 0;
+
+  @override
+  Future<CropTask> addTask(CropTask task) async => task;
+
+  @override
+  Future<void> deleteTask(String id) async {}
+
+  @override
+  Future<void> deleteTasksForCrop(String cropId) async {}
+
+  @override
+  Future<List<CropTask>> getTasks() {
+    reads++;
+    return reads == 1
+        ? Future<List<CropTask>>.value(const [])
+        : Completer<List<CropTask>>().future;
+  }
+
+  @override
+  Future<CropTask> updateTask(CropTask task) async => task;
+}
+
 class _FakeNotificationService implements NotificationService {
   final List<int> scheduledIds = [];
   final List<int> cancelledIds = [];
@@ -308,6 +430,21 @@ void main() {
       expect(controller.healthyCount, 1);
       expect(controller.attentionCount, 0);
       expect(controller.upcomingTaskCount, 1);
+    });
+
+    test('repeated Add Crop submissions create exactly once', () async {
+      final repository = _ControlledAddCropRepository();
+      final controller = await CropController.load(repository);
+      final crop = testCrop();
+
+      final first = controller.addCrop(crop);
+      final repeated = controller.addCrop(crop);
+      expect(await repeated, isFalse);
+      expect(repository.addCalls, 1);
+
+      repository.addCompleter.complete(crop);
+      expect(await first, isTrue);
+      expect(controller.crops, hasLength(1));
     });
 
     test('edits crop and updates counts immediately', () async {
