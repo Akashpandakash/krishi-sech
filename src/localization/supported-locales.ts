@@ -1,0 +1,27 @@
+export const supportedAppLocaleCodes = [
+  'as',
+  'bn',
+  'brx',
+  'doi',
+  'gu',
+  'hi',
+  'kn',
+  'ks',
+  'kok',
+  'mai',
+  'ml',
+  'mni',
+  'mr',
+  'ne',
+  'or',
+  'pa',
+  'sa',
+  'sat',
+  'sd',
+  'ta',
+  'te',
+  'ur',
+  'en',
+] as const;
+
+export type SupportedAppLocaleCode = (typeof supportedAppLocaleCodes)[number];

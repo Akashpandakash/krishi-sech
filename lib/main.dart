@@ -6,6 +6,7 @@ import 'package:krishi_sech/app/app.dart';
 import 'package:krishi_sech/app/router/app_router.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/core/localization/locale_controller.dart';
+import 'package:krishi_sech/core/localization/app_language.dart';
 import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/core/network/api_config.dart';
 import 'package:krishi_sech/core/notifications/local_notification_service.dart';
@@ -238,7 +239,9 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
           : WeatherRepositoryImpl(
               WeatherService(
                 baseUrl: ApiConfig.baseUrl,
-                languageProvider: () => localeController.locale.languageCode,
+                languageProvider: () => AppLanguageCatalog.serviceCodeFor(
+                  localeController.locale.languageCode,
+                ),
               ),
               LocalWeatherDataSource(preferences),
             ),
@@ -261,7 +264,9 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       historyStore: preferences == null
           ? null
           : LocalAiChatHistoryStore(preferences),
-      languageProvider: () => localeController.locale.languageCode,
+      languageProvider: () => AppLanguageCatalog.serviceCodeFor(
+        localeController.locale.languageCode,
+      ),
     );
     await aiChatController.restoreHistory();
 

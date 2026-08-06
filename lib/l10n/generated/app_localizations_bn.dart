@@ -181,6 +181,13 @@ class AppLocalizationsBn extends AppLocalizations {
   String get languageSubtitle => 'এগিয়ে যেতে ভাষা নির্বাচন করুন';
 
   @override
+  String get searchLanguages => 'ভাষা খুঁজুন';
+
+  @override
+  String get translationPendingReview =>
+      'ইংরেজি বিকল্প • অনুবাদ পর্যালোচনা বাকি';
+
+  @override
   String get bangla => 'বাংলা';
 
   @override

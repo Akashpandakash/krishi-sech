@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krishi_sech/core/localization/app_language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocaleController extends ChangeNotifier {
@@ -10,7 +11,7 @@ class LocaleController extends ChangeNotifier {
 
   static const preferenceKey = 'selected_language_code';
   static const defaultLocale = Locale('bn');
-  static const supportedLanguageCodes = {'bn', 'hi', 'en'};
+  static final supportedLanguageCodes = AppLanguageCatalog.supportedCodes;
 
   final SharedPreferences? _preferences;
   Locale _locale;

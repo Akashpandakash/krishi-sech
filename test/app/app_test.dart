@@ -1485,7 +1485,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Choose Your Preferred Language'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('language_continue')));
+    final languageContinue = find.byKey(const Key('language_continue'));
+    await tester.ensureVisible(languageContinue);
+    await tester.tap(languageContinue);
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField), '9876543210');
@@ -1601,14 +1603,17 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const Key('language_bangla')), findsOneWidget);
+    expect(find.byKey(const Key('language_bn')), findsOneWidget);
     expect(find.byIcon(Icons.check), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('language_english')));
+    await tester.ensureVisible(find.byKey(const Key('language_en')));
+    await tester.tap(find.byKey(const Key('language_en')));
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.check), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('language_skip')));
+    final languageSkip = find.byKey(const Key('language_skip'));
+    await tester.ensureVisible(languageSkip);
+    await tester.tap(languageSkip);
     await tester.pumpAndSettle();
     expect(find.text('Welcome to Krishi Sech'), findsOneWidget);
   });

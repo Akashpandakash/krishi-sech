@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/core/config/app_environment.dart';
+import 'package:krishi_sech/core/localization/app_language.dart';
 import 'package:krishi_sech/core/network/api_config.dart';
 import 'package:krishi_sech/features/disease_scan/data/datasources/local_disease_diagnosis_store.dart';
 import 'package:krishi_sech/features/location/data/services/location_service.dart';
@@ -63,7 +64,9 @@ class _HomePageState extends State<HomePage> {
         LocalDiseaseDiagnosisStore(),
       ),
     );
-    final language = Localizations.localeOf(context).languageCode;
+    final language = AppLanguageCatalog.serviceCodeFor(
+      Localizations.localeOf(context).languageCode,
+    );
     if (_smartLanguage != language) {
       _smartLanguage = language;
       unawaited(_smartController!.refresh(language));
@@ -76,7 +79,11 @@ class _HomePageState extends State<HomePage> {
       WeatherScope.of(context).refresh(),
       CropScope.of(context).refresh(),
       CropTaskScope.of(context).refresh(),
-      _smartController!.refresh(Localizations.localeOf(context).languageCode),
+      _smartController!.refresh(
+        AppLanguageCatalog.serviceCodeFor(
+          Localizations.localeOf(context).languageCode,
+        ),
+      ),
     ]);
     _refreshInFlight = refresh;
     try {

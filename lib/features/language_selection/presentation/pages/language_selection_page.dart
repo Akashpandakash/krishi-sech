@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/core/localization/app_language.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
-
-enum AppLanguage { bangla, hindi, english }
 
 class LanguageSelectionPage extends StatefulWidget {
   const LanguageSelectionPage({super.key});
@@ -15,30 +14,23 @@ class LanguageSelectionPage extends StatefulWidget {
 }
 
 class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
-  static const _languages = [
-    _LanguageData(AppLanguage.bangla),
-    _LanguageData(AppLanguage.hindi),
-    _LanguageData(AppLanguage.english),
-  ];
-
-  AppLanguage _selectedLanguage = AppLanguage.bangla;
+  AppLanguage _selectedLanguage = AppLanguageCatalog.fromCode('bn');
+  String _query = '';
   bool _initialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {
-      _selectedLanguage = switch (LocaleScope.of(context).locale.languageCode) {
-        'hi' => AppLanguage.hindi,
-        'en' => AppLanguage.english,
-        _ => AppLanguage.bangla,
-      };
+      _selectedLanguage = AppLanguageCatalog.fromCode(
+        LocaleScope.of(context).locale.languageCode,
+      );
       _initialized = true;
     }
   }
 
   Future<void> _openLogin() async {
-    await LocaleScope.of(context).setLocale(Locale(_selectedLanguage.code));
+    await LocaleScope.of(context).setLocale(_selectedLanguage.locale);
     if (mounted) {
       Navigator.of(
         context,
@@ -48,6 +40,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final languages = AppLanguageCatalog.search(_query);
     return Scaffold(
       backgroundColor: AppColors.paleGreen,
       body: SafeArea(
@@ -103,20 +96,30 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                                 ),
                           ),
                           SizedBox(height: compact ? 20 : 30),
-                          for (final language in _languages)
+                          TextField(
+                            key: const Key('language_search'),
+                            onChanged: (value) =>
+                                setState(() => _query = value),
+                            decoration: InputDecoration(
+                              hintText: context.l10n.searchLanguages,
+                              prefixIcon: const Icon(Icons.search),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          for (final language in languages)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: _LanguageCard(
-                                data: language,
+                                language: language,
                                 selected:
-                                    language.language == _selectedLanguage,
+                                    language.code == _selectedLanguage.code,
                                 onTap: () {
                                   setState(() {
-                                    _selectedLanguage = language.language;
+                                    _selectedLanguage = language;
                                   });
                                   LocaleScope.of(
                                     context,
-                                  ).setLocale(Locale(language.language.code));
+                                  ).setLocale(language.locale);
                                 },
                               ),
                             ),
@@ -158,28 +161,22 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
 class _LanguageCard extends StatelessWidget {
   const _LanguageCard({
-    required this.data,
+    required this.language,
     required this.selected,
     required this.onTap,
   });
 
-  final _LanguageData data;
+  final AppLanguage language;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final (englishName, nativeName) = switch (data.language) {
-      AppLanguage.bangla => (context.l10n.bangla, context.l10n.banglaNative),
-      AppLanguage.hindi => (context.l10n.hindi, context.l10n.hindiNative),
-      AppLanguage.english => (context.l10n.english, 'English'),
-    };
-
     return Material(
       color: selected ? AppColors.lightGreen : Colors.white,
       borderRadius: BorderRadius.circular(18),
       child: AppPressable(
-        key: Key('language_${data.language.name}'),
+        key: Key('language_${language.code}'),
         haptic: AppPressableHaptic.selection,
         onTap: onTap,
         child: AnimatedContainer(
@@ -225,19 +222,31 @@ class _LanguageCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      englishName,
+                      language.englishName,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: AppColors.primaryDark,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      nativeName,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    Directionality(
+                      textDirection: language.textDirection,
+                      child: Text(
+                        language.nativeName,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
+                    if (!language.isFullyTranslated) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        context.l10n.translationPendingReview,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -354,18 +363,4 @@ class _BottomIllustration extends StatelessWidget {
       ),
     );
   }
-}
-
-extension on AppLanguage {
-  String get code => switch (this) {
-    AppLanguage.bangla => 'bn',
-    AppLanguage.hindi => 'hi',
-    AppLanguage.english => 'en',
-  };
-}
-
-class _LanguageData {
-  const _LanguageData(this.language);
-
-  final AppLanguage language;
 }

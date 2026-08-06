@@ -56,6 +56,8 @@
   "fieldToWorldSubtitle": "We take care of everything,\nyou focus on farming.",
   "languageTitle": "Choose Your Preferred Language",
   "languageSubtitle": "Select your language to continue",
+  "searchLanguages": "Search languages",
+  "translationPendingReview": "English fallback • Translation pending review",
   "bangla": "Bangla",
   "banglaNative": "বাংলা",
   "hindi": "Hindi",

@@ -40,6 +40,74 @@ import { requestIdMiddleware } from './middleware/request-id.js';
 import { createErrorHandler } from './middleware/error-handler.js';
 import { InMemoryProfileRepository } from './profile/repositories/in-memory-profile-repository.js';
 import { ProfileService } from './profile/services/profile-service.js';
+import { supportedAppLocaleCodes } from './localization/supported-locales.js';
+import { updateUserProfileSchema } from './profile/validation/profile-validation.js';
+
+describe('profile language validation', () => {
+  const profile = (preferredLanguage: unknown) => ({
+    name: 'Akash Farmer',
+    preferredLanguage,
+    state: 'West Bengal',
+    district: 'Kolkata',
+    village: 'New Town',
+  });
+
+  it('uses the exact 22 Scheduled Language codes plus English', () => {
+    assert.deepEqual(supportedAppLocaleCodes, [
+      'as',
+      'bn',
+      'brx',
+      'doi',
+      'gu',
+      'hi',
+      'kn',
+      'ks',
+      'kok',
+      'mai',
+      'ml',
+      'mni',
+      'mr',
+      'ne',
+      'or',
+      'pa',
+      'sa',
+      'sat',
+      'sd',
+      'ta',
+      'te',
+      'ur',
+      'en',
+    ]);
+    assert.equal(new Set(supportedAppLocaleCodes).size, 23);
+  });
+
+  it('accepts English, Bangla, and Hindi', () => {
+    for (const code of ['en', 'bn', 'hi']) {
+      assert.equal(updateUserProfileSchema.safeParse(profile(code)).success, true);
+    }
+  });
+
+  it('accepts representative English-fallback languages', () => {
+    for (const code of ['gu', 'ta', 'as']) {
+      assert.equal(updateUserProfileSchema.safeParse(profile(code)).success, true);
+    }
+  });
+
+  it('accepts Urdu, Kashmiri, and Sindhi', () => {
+    for (const code of ['ur', 'ks', 'sd']) {
+      assert.equal(updateUserProfileSchema.safeParse(profile(code)).success, true);
+    }
+  });
+
+  it('rejects unsupported and malformed locale values', () => {
+    for (const value of ['fr', 'en-US', 'EN', '', 'unknown', 123, null]) {
+      assert.equal(
+        updateUserProfileSchema.safeParse(profile(value)).success,
+        false,
+      );
+    }
+  });
+});
 
 describe('GET /api/health', () => {
   it('preserves the backend health endpoint', async () => {

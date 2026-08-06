@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:krishi_sech/app/router/app_router.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_theme.dart';
@@ -8,6 +7,7 @@ import 'package:krishi_sech/features/ai_assistant/presentation/ai_chat_scope.dar
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
 import 'package:krishi_sech/core/localization/locale_controller.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
+import 'package:krishi_sech/core/localization/app_localization_config.dart';
 import 'package:krishi_sech/features/location/presentation/controllers/location_controller.dart';
 import 'package:krishi_sech/features/login/data/repositories/in_memory_auth_repository.dart';
 import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
@@ -210,12 +210,15 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
                                 locale: _localeController.locale,
                                 supportedLocales:
                                     AppLocalizations.supportedLocales,
-                                localizationsDelegates: const [
-                                  AppLocalizations.delegate,
-                                  GlobalMaterialLocalizations.delegate,
-                                  GlobalWidgetsLocalizations.delegate,
-                                  GlobalCupertinoLocalizations.delegate,
-                                ],
+                                localizationsDelegates:
+                                    AppLocalizationConfig.delegates,
+                                builder: (context, child) => Directionality(
+                                  textDirection:
+                                      AppLocalizationConfig.directionFor(
+                                        _localeController.locale,
+                                      ),
+                                  child: child!,
+                                ),
                                 initialRoute: AppRoutes.splash,
                                 onGenerateRoute: AppRouter.onGenerateRoute,
                               );

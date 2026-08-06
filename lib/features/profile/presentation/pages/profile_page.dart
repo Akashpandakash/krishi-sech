@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
+import 'package:krishi_sech/core/localization/app_language.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
 import 'package:krishi_sech/features/profile/domain/entities/farm_profile.dart';
@@ -240,12 +241,9 @@ class _ProfilePageState extends State<ProfilePage> {
     user.district,
     user.state,
   ].whereType<String>().where((e) => e.isNotEmpty).join(' • ');
-  String _languageName(BuildContext context) =>
-      switch (LocaleScope.of(context).locale.languageCode) {
-        'hi' => context.l10n.hindi,
-        'en' => context.l10n.english,
-        _ => context.l10n.bangla,
-      };
+  String _languageName(BuildContext context) => AppLanguageCatalog.fromCode(
+    LocaleScope.of(context).locale.languageCode,
+  ).englishName;
 
   Future<void> _pickPhoto(BuildContext context, UserProfile user) async {
     final file = await ImagePicker().pickImage(
@@ -375,55 +373,82 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _showLanguagePicker(BuildContext context) async {
     final locale = LocaleScope.of(context);
     final profileController = _controller;
+    var query = '';
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children:
-              [
-                    (const Locale('bn'), sheetContext.l10n.bangla),
-                    (const Locale('hi'), sheetContext.l10n.hindi),
-                    (const Locale('en'), sheetContext.l10n.english),
-                  ]
-                  .map(
-                    (option) => ListTile(
-                      leading: Icon(
-                        locale.locale.languageCode == option.$1.languageCode
-                            ? Icons.radio_button_checked
-                            : Icons.radio_button_off,
-                        color: AppColors.primary,
+      isScrollControlled: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setSheetState) {
+          final languages = AppLanguageCatalog.search(query);
+          return SafeArea(
+            child: FractionallySizedBox(
+              heightFactor: 0.78,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+                    child: TextField(
+                      key: const Key('profile_language_search'),
+                      onChanged: (value) => setSheetState(() => query = value),
+                      decoration: InputDecoration(
+                        hintText: sheetContext.l10n.searchLanguages,
+                        prefixIcon: const Icon(Icons.search),
                       ),
-                      title: Text(option.$2),
-                      onTap: () async {
-                        final value = option.$1.languageCode;
-                        await locale.setLocale(Locale(value));
-                        final current = profileController.user;
-                        if (current != null) {
-                          await profileController.saveUser(
-                            UserProfile(
-                              id: current.id,
-                              phone: current.phone,
-                              fullName: current.fullName,
-                              preferredLanguage: value,
-                              profilePhotoPath: current.profilePhotoPath,
-                              profilePhotoUrl: current.profilePhotoUrl,
-                              state: current.state,
-                              district: current.district,
-                              village: current.village,
-                              updatedAt: current.updatedAt,
-                            ),
-                          );
-                        }
-                        if (sheetContext.mounted) {
-                          Navigator.pop(sheetContext);
-                        }
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      key: const Key('profile_language_list'),
+                      itemCount: languages.length,
+                      itemBuilder: (context, index) {
+                        final option = languages[index];
+                        return ListTile(
+                          key: Key('profile_language_${option.code}'),
+                          leading: Icon(
+                            locale.locale.languageCode == option.code
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_off,
+                            color: AppColors.primary,
+                          ),
+                          title: Text(option.englishName),
+                          subtitle: Directionality(
+                            textDirection: option.textDirection,
+                            child: Text(option.nativeName),
+                          ),
+                          onTap: () async {
+                            final value = option.code;
+                            await locale.setLocale(option.locale);
+                            final current = profileController.user;
+                            if (current != null) {
+                              await profileController.saveUser(
+                                UserProfile(
+                                  id: current.id,
+                                  phone: current.phone,
+                                  fullName: current.fullName,
+                                  preferredLanguage: value,
+                                  profilePhotoPath: current.profilePhotoPath,
+                                  profilePhotoUrl: current.profilePhotoUrl,
+                                  state: current.state,
+                                  district: current.district,
+                                  village: current.village,
+                                  updatedAt: current.updatedAt,
+                                ),
+                              );
+                            }
+                            if (sheetContext.mounted) {
+                              Navigator.pop(sheetContext);
+                            }
+                          },
+                        );
                       },
                     ),
-                  )
-                  .toList(),
-        ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

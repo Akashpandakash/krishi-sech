@@ -1,10 +1,11 @@
 import { z } from 'zod';
+import { supportedAppLocaleCodes } from '../../localization/supported-locales.js';
 
 const optionalText = z.string().trim().max(120).nullable().optional();
 export const updateUserProfileSchema = z
   .object({
     name: z.string().trim().min(2).max(100),
-    preferredLanguage: z.enum(['bn', 'en', 'hi']),
+    preferredLanguage: z.enum(supportedAppLocaleCodes),
     profilePhotoUrl: z.string().trim().url().max(500).nullable().optional(),
     state: optionalText,
     district: optionalText,

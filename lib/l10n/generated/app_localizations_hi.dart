@@ -181,6 +181,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get languageSubtitle => 'जारी रखने के लिए भाषा चुनें';
 
   @override
+  String get searchLanguages => 'भाषाएँ खोजें';
+
+  @override
+  String get translationPendingReview =>
+      'अंग्रेज़ी फ़ॉलबैक • अनुवाद समीक्षा लंबित';
+
+  @override
   String get bangla => 'बांग्ला';
 
   @override

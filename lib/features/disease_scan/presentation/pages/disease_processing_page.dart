@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
+import 'package:krishi_sech/core/localization/app_language.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/features/disease_scan/domain/models/disease_scan_request.dart';
 import 'package:krishi_sech/features/disease_scan/domain/entities/disease_scan_failure.dart';
@@ -83,7 +84,9 @@ class _DiseaseProcessingPageState extends State<DiseaseProcessingPage> {
                   'humidity ${weather.humidityPercent}%, '
                   'wind ${weather.windSpeedKmh.toStringAsFixed(1)} km/h, '
                   'rain ${weather.rainProbabilityPercent ?? 0}%',
-        language: Localizations.localeOf(context).languageCode,
+        language: AppLanguageCatalog.serviceCodeFor(
+          Localizations.localeOf(context).languageCode,
+        ),
         notes: crop?.notes,
       ),
     );
