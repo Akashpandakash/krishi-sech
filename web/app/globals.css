@@ -1,0 +1,1749 @@
+/* ==========================================================================
+   Krishi Sech — glassmorphism design system
+   --------------------------------------------------------------------------
+   Every colour is defined once on bare :root (the light palette). Dark mode
+   redefines ONLY the tokens, under two scopes: the OS preference and an
+   explicit [data-theme] stamp, so a manual toggle wins in both directions.
+   Nothing below ever gets its only definition inside a media query.
+
+   Series colours are validated (dataviz six checks, light + dark):
+     light #237A3B / #2a78d6 — CVD deutan dE 23.0, normal dE 24.1
+     dark  #3FA85E / #3987e5 — CVD deutan dE 23.4, normal dE 24.5
+   Max two categorical series per chart. Status colours are reserved and are
+   never reused as a third series.
+   ========================================================================== */
+
+/* -------------------------------------------------------------- 1. Reset */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+ul[class],
+ol[class] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img,
+picture,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* ------------------------------------------------------------- 2. Tokens */
+
+:root {
+  color-scheme: light;
+
+  /* Brand — carried over from the Flutter app's AppColors so the web and the
+     app read as one product. */
+  --brand: #237a3b;
+  --brand-strong: #14532d;
+  --brand-soft: #eaf6ec;
+  --brand-contrast: #ffffff;
+
+  /* Page + solid surfaces — AppColors.lightBackground / paleGreen */
+  --surface-page: #f7faf7;
+  --surface-solid: #ffffff;
+  --surface-sunken: #f4faf4;
+
+  /* Glass. --glass-bg is deliberately translucent; --glass-bg-opaque is the
+     @supports fallback and must stay visually equivalent at full opacity. */
+  --glass-bg: rgba(255, 255, 255, 0.58);
+  --glass-bg-strong: rgba(255, 255, 255, 0.74);
+  --glass-bg-opaque: #fbfdfb;
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-edge: rgba(255, 255, 255, 0.92);
+  --glass-hairline: rgba(20, 60, 32, 0.1);
+  --glass-shadow: 0 18px 40px -24px rgba(12, 42, 22, 0.45);
+  --glass-blur: 20px;
+  --glass-saturate: 145%;
+
+  /* Ink */
+  --text-primary: #0e1a10;
+  --text-secondary: #48564b;
+  --text-muted: #6d7c70;
+  --text-on-brand: #ffffff;
+
+  /* Chart series — identity, assigned in fixed order and never cycled */
+  --series-1: #237a3b;
+  --series-2: #2a78d6;
+
+  /* Sequential ramp: one hue, light to dark */
+  --seq-1: #d7ebdc;
+  --seq-2: #a9d6b5;
+  --seq-3: #6fbb86;
+  --seq-4: #3d9a5b;
+  --seq-5: #237a3b;
+
+  /* Status — reserved, always shipped with an icon or label.
+     Split into ink and fill: the app's amber (#F59E0B) is only 2.04:1 on this
+     background, so it paints marks and borders while text uses a darkened
+     step that clears 4.5:1. Same reasoning for good and critical. */
+  --status-good: #0a7d0a;
+  --status-warning: #b45309;
+  --status-critical: #b32d2d;
+  --status-good-fill: #0ca30c;
+  --status-warning-fill: #f59e0b;
+  --status-critical-fill: #d03b3b;
+  --status-good-soft: rgba(12, 163, 12, 0.13);
+  --status-warning-soft: rgba(245, 158, 11, 0.16);
+  --status-critical-soft: rgba(208, 59, 59, 0.13);
+
+  /* Chart furniture — recessive by design */
+  --grid-line: rgba(14, 26, 16, 0.09);
+  --axis-line: rgba(14, 26, 16, 0.18);
+
+  /* Aurora backdrop. Deliberately faint in light mode: the app is a flat
+     green-and-white surface, and a strong wash here reads as grime rather
+     than atmosphere. It exists to give the glass something to refract. */
+  --aurora-1: rgba(35, 122, 59, 0.15);
+  --aurora-2: rgba(42, 120, 214, 0.08);
+  --aurora-3: rgba(245, 158, 11, 0.07);
+
+  /* Geometry + motion */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+  --focus-ring: 0 0 0 3px rgba(35, 122, 59, 0.38);
+  --ease: cubic-bezier(0.32, 0.72, 0.28, 1);
+
+  --font-sans:
+    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+}
+
+/* Dark tokens — a selected palette, not an automatic inversion. Declared under
+   both the OS preference and the explicit stamp; the :not() guard lets an
+   explicit light choice beat OS dark. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --brand: #3fa85e;
+    --brand-strong: #7fd39a;
+    --brand-soft: rgba(63, 168, 94, 0.16);
+    --brand-contrast: #06210e;
+
+    --surface-page: #101510;
+    --surface-solid: #18211a;
+    --surface-sunken: #131a14;
+
+    --glass-bg: rgba(24, 36, 27, 0.55);
+    --glass-bg-strong: rgba(28, 42, 31, 0.72);
+    --glass-bg-opaque: #16211a;
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-edge: rgba(255, 255, 255, 0.16);
+    --glass-hairline: rgba(255, 255, 255, 0.07);
+    --glass-shadow: 0 22px 48px -26px rgba(0, 0, 0, 0.8);
+
+    --text-primary: #edf4ee;
+    --text-secondary: #b0c1b4;
+    --text-muted: #849789;
+    --text-on-brand: #06210e;
+
+    --series-1: #3fa85e;
+    --series-2: #3987e5;
+
+    --seq-1: #16362170;
+    --seq-2: #1d5232;
+    --seq-3: #2b7c48;
+    --seq-4: #35935a;
+    --seq-5: #3fa85e;
+
+    --status-good: #3fbf3f;
+    --status-warning: #f59e0b;
+    --status-critical: #ef6a6a;
+    --status-good-fill: #3fbf3f;
+    --status-warning-fill: #f59e0b;
+    --status-critical-fill: #ef6a6a;
+    --status-good-soft: rgba(63, 191, 63, 0.16);
+    --status-warning-soft: rgba(245, 158, 11, 0.18);
+    --status-critical-soft: rgba(239, 106, 106, 0.16);
+
+    --grid-line: rgba(255, 255, 255, 0.09);
+    --axis-line: rgba(255, 255, 255, 0.2);
+
+    --aurora-1: rgba(63, 168, 94, 0.26);
+    --aurora-2: rgba(57, 135, 229, 0.2);
+    --aurora-3: rgba(245, 158, 11, 0.12);
+
+    --focus-ring: 0 0 0 3px rgba(63, 168, 94, 0.45);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --brand: #3fa85e;
+  --brand-strong: #7fd39a;
+  --brand-soft: rgba(63, 168, 94, 0.16);
+  --brand-contrast: #06210e;
+
+  --surface-page: #101510;
+  --surface-solid: #18211a;
+  --surface-sunken: #131a14;
+
+  --glass-bg: rgba(24, 36, 27, 0.55);
+  --glass-bg-strong: rgba(28, 42, 31, 0.72);
+  --glass-bg-opaque: #16211a;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-edge: rgba(255, 255, 255, 0.16);
+  --glass-hairline: rgba(255, 255, 255, 0.07);
+  --glass-shadow: 0 22px 48px -26px rgba(0, 0, 0, 0.8);
+
+  --text-primary: #edf4ee;
+  --text-secondary: #b0c1b4;
+  --text-muted: #849789;
+  --text-on-brand: #06210e;
+
+  --series-1: #3fa85e;
+  --series-2: #3987e5;
+
+  --seq-1: #16362170;
+  --seq-2: #1d5232;
+  --seq-3: #2b7c48;
+  --seq-4: #35935a;
+  --seq-5: #3fa85e;
+
+  --status-good: #3fbf3f;
+  --status-warning: #f59e0b;
+  --status-critical: #ef6a6a;
+  --status-good-fill: #3fbf3f;
+  --status-warning-fill: #f59e0b;
+  --status-critical-fill: #ef6a6a;
+  --status-good-soft: rgba(63, 191, 63, 0.16);
+  --status-warning-soft: rgba(245, 158, 11, 0.18);
+  --status-critical-soft: rgba(239, 106, 106, 0.16);
+
+  --grid-line: rgba(255, 255, 255, 0.09);
+  --axis-line: rgba(255, 255, 255, 0.2);
+
+  --aurora-1: rgba(63, 168, 94, 0.26);
+  --aurora-2: rgba(57, 135, 229, 0.2);
+  --aurora-3: rgba(245, 158, 11, 0.12);
+
+  --focus-ring: 0 0 0 3px rgba(63, 168, 94, 0.45);
+}
+
+/* --------------------------------------------------------------- 3. Base */
+
+body {
+  min-height: 100dvh;
+  /* Explicit, because a transparent body would borrow the host's ground. */
+  background-color: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* The aurora field every glass surface refracts. Fixed and non-interactive so
+   it survives scrolling without repainting layout. */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--surface-page);
+}
+
+.aurora::before,
+.aurora::after {
+  content: '';
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+}
+
+.aurora::before {
+  top: -22vmax;
+  left: -14vmax;
+  background:
+    radial-gradient(circle at 30% 30%, var(--aurora-1), transparent 62%),
+    radial-gradient(circle at 70% 70%, var(--aurora-3), transparent 60%);
+  animation: aurora-drift-a 28s var(--ease) infinite alternate;
+}
+
+.aurora::after {
+  right: -20vmax;
+  bottom: -26vmax;
+  background: radial-gradient(
+    circle at 50% 50%,
+    var(--aurora-2),
+    transparent 64%
+  );
+  animation: aurora-drift-b 34s var(--ease) infinite alternate;
+}
+
+@keyframes aurora-drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(12vmax, 8vmax, 0) scale(1.18);
+  }
+}
+
+@keyframes aurora-drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(-14vmax, -6vmax, 0) scale(1);
+  }
+}
+
+/* ------------------------------------------------------- 4. Glass surface */
+
+/* The frosted plane. Three things together read as glass: the blur, the
+   saturation lift behind it, and the 1px lit top edge. Drop any one and it
+   reads as a flat translucent box. */
+.glass {
+  position: relative;
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  isolation: isolate;
+}
+
+.glass::before {
+  /* The lit top edge, fading out by a third of the width. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px 0 0;
+  background: linear-gradient(
+    100deg,
+    var(--glass-edge),
+    transparent 34%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .glass {
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  }
+}
+
+/* No backdrop-filter (older Firefox, forced-colors, some embedded webviews):
+   go fully opaque. Translucency without blur is unreadable over the aurora. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background-color: var(--glass-bg-opaque);
+  }
+}
+
+.glass--strong {
+  background-color: var(--glass-bg-strong);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass--strong {
+    background-color: var(--glass-bg-opaque);
+  }
+}
+
+.glass--flat {
+  box-shadow: none;
+}
+
+/* Charts need a calmer ground than the aurora provides, or the plot area
+   fights the backdrop and the series contrast ratios stop holding. */
+.glass--plot {
+  background-color: var(--glass-bg-strong);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass--plot {
+    background-color: var(--glass-bg-opaque);
+  }
+}
+
+/* --------------------------------------------------------- 5. Typography */
+
+.h1,
+.h2,
+.h3 {
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.18;
+  font-weight: 650;
+}
+
+.h1 {
+  font-size: clamp(2rem, 1.4rem + 2.6vw, 3.4rem);
+}
+
+.h2 {
+  font-size: clamp(1.4rem, 1.15rem + 1.1vw, 2rem);
+}
+
+.h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.lede {
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.eyebrow {
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ 6. Buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  padding: 0 1.1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.16s var(--ease),
+    background-color 0.16s var(--ease),
+    border-color 0.16s var(--ease);
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.btn:focus-visible,
+.field:focus-visible,
+.input:focus-visible,
+a:focus-visible,
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--focus-ring);
+}
+
+.btn--primary {
+  background-color: var(--brand);
+  color: var(--text-on-brand);
+}
+
+.btn--primary:not(:disabled):hover {
+  background-color: var(--brand-strong);
+}
+
+.btn--glass {
+  background-color: var(--glass-bg-strong);
+  /* Hairline, not --glass-border: that token is a near-white highlight and
+     disappears entirely when the button sits on a white card. */
+  border-color: var(--glass-hairline);
+  color: var(--text-primary);
+}
+
+.btn--glass:not(:disabled):hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .btn--glass {
+    -webkit-backdrop-filter: blur(14px) saturate(var(--glass-saturate));
+    backdrop-filter: blur(14px) saturate(var(--glass-saturate));
+  }
+}
+
+.btn--ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+}
+
+.btn--ghost:not(:disabled):hover {
+  background-color: var(--glass-bg);
+  color: var(--text-primary);
+}
+
+.btn--danger {
+  background-color: var(--status-critical);
+  color: #ffffff;
+}
+
+.btn--sm {
+  min-height: 34px;
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+}
+
+/* ------------------------------------------------------- 7. Form controls */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field > label {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 0.85rem;
+  background-color: var(--glass-bg-strong);
+  border: 1px solid var(--glass-hairline);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  transition: border-color 0.16s var(--ease);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input:hover {
+  border-color: var(--axis-line);
+}
+
+textarea.input {
+  min-height: 104px;
+  padding: 0.6rem 0.85rem;
+  resize: vertical;
+}
+
+select.input {
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------- 8. Indicators */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Status always carries a glyph as well as a hue — never colour alone. */
+.badge::before {
+  content: attr(data-glyph);
+  font-size: 0.7em;
+  line-height: 1;
+}
+
+.badge--good {
+  background-color: var(--status-good-soft);
+  color: var(--status-good);
+}
+
+.badge--warning {
+  background-color: var(--status-warning-soft);
+  color: var(--status-warning);
+}
+
+.badge--critical {
+  background-color: var(--status-critical-soft);
+  color: var(--status-critical);
+}
+
+.badge--neutral {
+  background-color: var(--glass-bg-strong);
+  color: var(--text-secondary);
+}
+
+.badge--neutral::before {
+  content: none;
+}
+
+/* --------------------------------------------------------- 9. Data table */
+
+.table-scroll {
+  /* Wide tables scroll inside their own container; the page never does. */
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.table th {
+  padding: 0.6rem 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--glass-hairline);
+}
+
+.table td {
+  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--glass-hairline);
+  color: var(--text-secondary);
+}
+
+.table td:first-child {
+  color: var(--text-primary);
+  font-weight: 550;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background-color: var(--glass-bg);
+}
+
+/* ------------------------------------------------------------ 10. Layout */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.shell {
+  width: min(1340px, 100% - 3rem);
+  margin-inline: auto;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  background-color: var(--brand);
+  color: var(--text-on-brand);
+  border-radius: 0 0 var(--radius-sm) 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------ 11. Motion */
+
+/* One global opt-out: no drifting aurora, no transitions, no transforms. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .aurora::before,
+  .aurora::after {
+    animation: none;
+  }
+
+  .btn:not(:disabled):hover {
+    transform: none;
+  }
+}
+
+/* Forced colours: strip the glass entirely and let the OS palette through. */
+@media (forced-colors: active) {
+  .glass {
+    background-color: Canvas;
+    border-color: CanvasText;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .aurora {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------ 12. Chart pieces */
+
+.chart {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chart__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.chart__sub {
+  font-size: 0.8125rem;
+}
+
+.chart__plot {
+  position: relative;
+}
+
+.chart__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  touch-action: pan-y;
+}
+
+.chart__tick {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart__empty,
+.chart__note {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  padding: 0.5rem 0;
+}
+
+.chart__tooltip {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  min-width: 148px;
+  padding: 0.55rem 0.7rem;
+  background-color: var(--glass-bg-opaque);
+  border: 1px solid var(--glass-hairline);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--glass-shadow);
+  font-size: 0.8125rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.chart__tooltip-date {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+}
+
+.chart__tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+}
+
+.chart__tooltip-row strong {
+  margin-left: auto;
+  color: var(--text-primary);
+}
+
+.chart__table > summary {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem 0;
+}
+
+.chart__table[open] > summary {
+  margin-bottom: 0.5rem;
+}
+
+.legend {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legend__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+
+/* bar list */
+
+.barlist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.barlist__row {
+  display: grid;
+  grid-template-columns: minmax(80px, 132px) 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.8125rem;
+}
+
+.barlist__label {
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barlist__track {
+  height: 10px;
+  background-color: var(--grid-line);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.barlist__fill {
+  display: block;
+  height: 100%;
+  /* 4px rounded data-end, anchored flat to the baseline. */
+  border-radius: 0 4px 4px 0;
+  background-color: var(--series-1);
+}
+
+.barlist__value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* stat tiles */
+
+.stat {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-hairline);
+}
+
+.stat__value {
+  font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.85rem);
+  font-weight: 660;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-top: 0.15rem;
+}
+
+.stat__hint {
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.stat--good .stat__value {
+  color: var(--status-good);
+}
+
+.stat--warning .stat__value {
+  color: var(--status-warning);
+}
+
+.stat--critical .stat__value {
+  color: var(--status-critical);
+}
+
+.sparkbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 34px;
+}
+
+.sparkbar__bar {
+  flex: 1;
+  min-width: 2px;
+  background-color: var(--series-1);
+  border-radius: 2px 2px 0 0;
+  opacity: 0.75;
+}
+
+/* ------------------------------------------------------- 13. Admin shell */
+
+.admin {
+  display: grid;
+  grid-template-columns: 248px 1fr;
+  min-height: 100dvh;
+  gap: 1.1rem;
+  padding: 1.1rem;
+}
+
+.admin__sidebar {
+  position: sticky;
+  top: 1.1rem;
+  align-self: start;
+  max-height: calc(100dvh - 2.2rem);
+  overflow-y: auto;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.admin__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.admin__mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(140deg, var(--brand), var(--brand-strong));
+  display: grid;
+  place-items: center;
+  color: var(--brand-contrast);
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex: none;
+}
+
+.admin__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.admin__link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 550;
+  text-decoration: none;
+  transition: background-color 0.16s var(--ease), color 0.16s var(--ease);
+}
+
+.admin__link:hover {
+  background-color: var(--glass-bg);
+  color: var(--text-primary);
+}
+
+.admin__link[aria-current='page'] {
+  background-color: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 640;
+}
+
+.admin__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.admin__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.1rem;
+}
+
+.admin__identity {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.admin__identity strong {
+  font-size: 0.875rem;
+}
+
+.panel {
+  padding: 1.1rem;
+}
+
+.panel--tight {
+  padding: 0.85rem 1rem;
+}
+
+.grid--stats {
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+}
+
+.grid--halves {
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+}
+
+/* Charts need a wider minimum than cards do, or a third column opens up and
+   leaves a hole beside a two-chart row. */
+.grid--charts {
+  grid-template-columns: repeat(auto-fit, minmax(430px, 1fr));
+}
+
+.filters {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filters .field {
+  min-width: 150px;
+}
+
+.notice {
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  border: 1px solid transparent;
+}
+
+.notice--error {
+  background-color: var(--status-critical-soft);
+  border-color: var(--status-critical-fill);
+  color: var(--status-critical);
+}
+
+.notice--info {
+  background-color: var(--status-warning-soft);
+  border-color: var(--status-warning-fill);
+  color: var(--status-warning);
+}
+
+.notice--success {
+  background-color: var(--status-good-soft);
+  border-color: var(--status-good-fill);
+  color: var(--status-good);
+}
+
+.auth-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: min(410px, 100%);
+  padding: 1.6rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--grid-line) 25%,
+    var(--glass-bg-strong) 50%,
+    var(--grid-line) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton 1.4s linear infinite;
+}
+
+@keyframes skeleton {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin {
+    grid-template-columns: 1fr;
+  }
+
+  .admin__sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .admin__nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+
+/* ------------------------------------------- 14. Marketing + legal pages */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: 0.9rem 0;
+}
+
+/* The nav is an inset pill, so the padding around it is a see-through strip
+   that page content scrolls up into. This fades the page colour behind that
+   strip only, leaving the pill itself floating. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    var(--surface-page) 42%,
+    color-mix(in srgb, var(--surface-page) 70%, transparent) 78%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+/* The app icon is a white rounded tile; the ring keeps it from floating on
+   a light page and from glaring on a dark one. */
+
+
+
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  gap: 2.4rem;
+  align-items: center;
+  padding: clamp(2rem, 1rem + 5vw, 4.5rem) 0;
+}
+
+.hero__copy .lede {
+  margin-top: 0.9rem;
+  max-width: 52ch;
+}
+
+.hero__actions {
+  margin-top: 1.4rem;
+}
+
+.hero__media {
+  position: relative;
+}
+
+.hero__photo {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  object-fit: cover;
+  aspect-ratio: 16 / 11;
+}
+
+/* The floating card is the clearest demonstration of the glass: it sits over
+   the photograph, so the blur has real detail to refract. */
+.hero__card {
+  position: absolute;
+  right: -0.75rem;
+  bottom: -1.75rem;
+  width: min(330px, 88%);
+  padding: 1rem 1.1rem;
+}
+
+.hero__tasks {
+  gap: 0.6rem;
+  margin-top: 0.7rem;
+  font-size: 0.875rem;
+}
+
+.section {
+  padding-block: clamp(2.2rem, 1rem + 4vw, 3.75rem);
+}
+
+.section__grid {
+  margin-top: 1.2rem;
+}
+
+.section__lede {
+  margin-top: 0.4rem;
+}
+
+.feature__body {
+  margin-top: 0.4rem;
+}
+
+.language-list {
+  gap: 0.4rem;
+}
+
+.cta {
+  text-align: center;
+  align-items: center;
+}
+
+.cta__actions {
+  justify-content: center;
+}
+
+
+
+/* ----------------------------------------------------- 15. Document pages */
+
+.doc {
+  padding-block: 1.5rem 2rem;
+}
+
+.doc__card {
+  max-width: 1080px;
+  margin-inline: auto;
+  padding: clamp(1.3rem, 0.8rem + 2vw, 3rem);
+}
+
+.doc__title {
+  font-size: clamp(1.9rem, 1.4rem + 1.8vw, 2.75rem);
+}
+
+.doc__body {
+  color: var(--text-secondary);
+  line-height: 1.68;
+}
+
+.doc__body h2 {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--glass-hairline);
+}
+
+.doc__body > h2:first-child {
+  margin-top: 0.5rem;
+  border-top: 0;
+  padding-top: 0;
+}
+
+.doc__body p + p {
+  margin-top: 0.85rem;
+}
+
+.doc__body ul,
+.doc__body ol {
+  margin: 0.75rem 0 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.doc__body li::marker {
+  color: var(--brand);
+}
+
+.doc__body a {
+  color: var(--brand);
+  text-underline-offset: 2px;
+}
+
+.doc__body strong {
+  color: var(--text-primary);
+}
+
+.doc__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.9rem;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.doc__table th,
+.doc__table td {
+  padding: 0.6rem 0.7rem;
+  border-bottom: 1px solid var(--glass-hairline);
+  vertical-align: top;
+}
+
+.doc__table thead th {
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.doc__table tbody th {
+  color: var(--text-primary);
+  font-weight: 600;
+  width: 26%;
+}
+
+.doc__table tbody tr:last-child th,
+.doc__table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ------------------------------------------------- 16. Support + deletion */
+
+.faq {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.faq__item dt {
+  color: var(--text-primary);
+  font-weight: 620;
+  margin-bottom: 0.2rem;
+}
+
+.faq__item dd {
+  margin: 0;
+}
+
+.support__body {
+  margin-top: 0.4rem;
+}
+
+.support__contact {
+  margin-top: 0.9rem;
+}
+
+.delete-flow {
+  margin-block: 0.5rem;
+}
+
+.delete-flow__hint {
+  font-size: 0.75rem;
+}
+
+.delete-flow__note {
+  font-size: 0.8125rem;
+}
+
+.delete-flow__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* A destructive, irreversible action gets a deliberately large hit target
+   and a visible box — never a bare inline checkbox. */
+.delete-flow__confirm {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--status-critical-fill);
+  border-radius: var(--radius-sm);
+  background-color: var(--status-critical-soft);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.delete-flow__confirm input {
+  width: 20px;
+  height: 20px;
+  margin-top: 0.1rem;
+  flex: none;
+  accent-color: var(--status-critical-fill);
+  cursor: pointer;
+}
+
+.notfound {
+  min-height: 62dvh;
+  display: grid;
+  place-items: center;
+}
+
+.notfound__card {
+  max-width: 56ch;
+  text-align: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .hero__card {
+    position: static;
+    width: 100%;
+    margin-top: 0.9rem;
+  }
+
+  .doc__table tbody th {
+    width: auto;
+  }
+}
+
+/* Doc tables scroll inside their own container rather than pushing the page.
+   The min-width keeps the columns readable instead of crushing them to a few
+   characters each on a narrow phone. */
+.doc__body .table-scroll {
+  margin-top: 0.9rem;
+}
+
+.doc__body .table-scroll .doc__table {
+  min-width: 34rem;
+  margin-top: 0;
+}
+
+
+
+/* Card grids inside a prose-width document need a smaller minimum than the
+   admin dashboard does, or two cards stack in a single sparse column. */
+.doc .grid--halves {
+  grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+}
+
+/* ------------------------------------------- 17. Header + footer (rebuilt) */
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 0.7rem 0.55rem 0.85rem;
+  border-radius: var(--radius-pill);
+}
+
+/* The app icon is a white rounded tile; the ring stops it floating on a
+   near-white page. */
+.site-brand__mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px var(--glass-hairline);
+  flex: none;
+}
+
+.site-brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.16;
+}
+
+.site-brand__text strong {
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.site-brand__text small {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 550;
+  letter-spacing: 0.04em;
+}
+
+.site-links {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+}
+
+.site-link {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 0.8rem;
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
+  font-weight: 550;
+  text-decoration: none;
+  transition:
+    background-color 0.16s var(--ease),
+    color 0.16s var(--ease);
+}
+
+.site-link:hover {
+  background-color: var(--brand-soft);
+  color: var(--brand);
+}
+
+/* The current page is marked by weight and a tint, never by colour alone. */
+.site-link[aria-current='page'] {
+  background-color: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 650;
+}
+
+.site-cta {
+  margin-left: 0.35rem;
+}
+
+/* footer */
+
+.site-footer {
+  margin-top: 3rem;
+  padding-block: 2.75rem 2rem;
+  border-top: 1px solid var(--glass-hairline);
+  background-color: var(--surface-sunken);
+}
+
+.site-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+  gap: 2rem 1.5rem;
+}
+
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 34ch;
+}
+
+.site-footer__blurb {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.site-footer__contact a {
+  color: var(--brand);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.site-footer__contact a:hover {
+  text-decoration: underline;
+}
+
+.site-footer__heading {
+  margin-bottom: 0.7rem;
+}
+
+.site-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.site-footer__list a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.site-footer__list a:hover {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
+.site-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--glass-hairline);
+  font-size: 0.8125rem;
+}
+
+/* Prose keeps a readable measure even though the card is now page-width;
+   tables, grids and the deletion form stretch to the full card. */
+.doc__body > p,
+.doc__body > ul,
+.doc__body > ol,
+.doc__card > header > .lede {
+  max-width: 76ch;
+}
+
+@media (max-width: 860px) {
+  .site-footer__top {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .site-footer__brand {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-nav {
+    justify-content: center;
+  }
+
+  .site-footer__top {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------ 18. Telemetry setup panel */
+
+.setup__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.setup__steps li::marker {
+  color: var(--brand);
+  font-weight: 650;
+}
+
+.setup__var {
+  display: inline-block;
+  margin-right: 0.35rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 6px;
+  background-color: var(--surface-sunken);
+  border: 1px solid var(--glass-hairline);
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  color: var(--text-primary);
+}
