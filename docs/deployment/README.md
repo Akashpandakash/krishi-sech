@@ -26,7 +26,7 @@ For managed hosting, create `CNAME` records for `api` and `staging-api` pointing
 
 ## Runtime contract
 
-- Node.js: pin Node 20 LTS (the package declares `>=20`).
+- Node.js: pin Node 24 LTS (the package declares `>=22`). Node 20 fails on both counts: `firebase-admin@14` requires `>=22`, and the npm 10 it bundles cannot install `server/package-lock.json` — it reports gcp-metadata, gaxios and node-fetch as missing. npm 11 or newer is required for `npm ci`.
 - Install/build: `npm ci && npm run build` (from `server/`)
 - Database index setup: `npm run db:indexes`
 - Start: `npm start`

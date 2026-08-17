@@ -1,6 +1,6 @@
 # Option B: Ubuntu VPS
 
-Use Ubuntu 24.04 LTS with Nginx, MongoDB, Node 20 LTS, and systemd. This option requires a named operator for patching, monitoring, backup restoration, and incident response.
+Use Ubuntu 24.04 LTS with Nginx, MongoDB, Node 24 LTS, and systemd. This option requires a named operator for patching, monitoring, backup restoration, and incident response.
 
 ## Network and filesystem layout
 
@@ -12,7 +12,7 @@ Use Ubuntu 24.04 LTS with Nginx, MongoDB, Node 20 LTS, and systemd. This option 
 
 ## Commands and process supervision
 
-- Node: pin Node 20 LTS from a supported package source.
+- Node: pin Node 24 LTS from a supported package source. Node 20 cannot build this project — see the runtime contract in `README.md`.
 - Build (from `server/`): `npm ci && npm run build`
 - Create indexes: `npm run db:indexes`
 - systemd start command: `/usr/bin/node /srv/krishi-sech/current/dist/server.js`

@@ -1,10 +1,12 @@
 # Build context is server/, not the repo root.
 #   docker build -t krishi-sech-api server/
 #
-# Node 20 LTS matches the runtime contract in docs/deployment/README.md and the
-# engines field. Debian slim rather than Alpine: firebase-admin and the Google
-# Cloud libraries pull prebuilt binaries that assume glibc.
-ARG NODE_VERSION=20-bookworm-slim
+# Node 24 LTS. Not 20: firebase-admin@14 declares `node >= 22`, and Node 20
+# ships npm 10, which cannot install this lockfile — it resolves a different
+# tree and reports gcp-metadata/gaxios/node-fetch as missing. npm 11 (bundled
+# with Node 24) installs it cleanly. Debian slim rather than Alpine because the
+# Google Cloud libraries pull prebuilt binaries that assume glibc.
+ARG NODE_VERSION=24-bookworm-slim
 
 FROM node:${NODE_VERSION} AS build
 WORKDIR /app

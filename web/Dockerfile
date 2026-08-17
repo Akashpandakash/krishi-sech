@@ -1,7 +1,8 @@
 # Build context is web/, not the repo root.
 #   docker build --build-arg NEXT_PUBLIC_API_BASE_URL=https://api.krishisech.com \
 #     -t krishi-sech-web web/
-ARG NODE_VERSION=20-bookworm-slim
+# Node 24 LTS, matching the API image.
+ARG NODE_VERSION=24-bookworm-slim
 
 FROM node:${NODE_VERSION} AS build
 WORKDIR /app
