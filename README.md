@@ -30,6 +30,10 @@ npm run dev
 The development server runs at `http://localhost:3000` by default. Verify it
 with `GET http://localhost:3000/api/health`.
 
+For the client side of that API — the response envelope, the auth handshake, and
+every endpoint with its request and response shapes — see
+[docs/api/](docs/api/README.md), which has one document per backend module.
+
 Available commands:
 
 - `npm run dev` starts the TypeScript development server with file watching.
