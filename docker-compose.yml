@@ -51,8 +51,12 @@ services:
     # rejects a dependency on a service the active profiles exclude. When the
     # local-db profile IS on, /api/ready covers the startup order — the API
     # reports not-ready until its first successful ping.
+    # Loopback by default: with Nginx terminating TLS in front, publishing on
+    # 0.0.0.0 would leave the API reachable over plain HTTP on :7001, bypassing
+    # the certificate and HSTS entirely. Set BIND_ADDRESS=0.0.0.0 in .env only
+    # when nothing fronts it — a laptop serving a phone on the same LAN.
     ports:
-      - '${API_PORT:-7001}:7001'
+      - '${BIND_ADDRESS:-127.0.0.1}:${API_PORT:-7001}:7001'
 
   web:
     build:
@@ -70,7 +74,7 @@ services:
       # while the API is still coming up.
       - api
     ports:
-      - '${WEB_PORT:-7002}:7002'
+      - '${BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-7002}:7002'
 
 volumes:
   mongo-data:
