@@ -10,6 +10,7 @@
     "start": "node dist/server.js",
     "test": "NODE_ENV=test APP_ENV=development LOGGING_ENABLED=false tsx --test src/app.test.ts src/config/app-config.test.ts src/config/fast2sms-config.test.ts src/auth/providers/fast2sms-provider.test.ts src/ai/services/ai-context-service.test.ts src/fertilizer/services/fertilizer-recommendation-service.test.ts src/irrigation/services/irrigation-recommendation-service.test.ts src/weather/services/weather-service.test.ts src/admin/services/admin-auth-service.test.ts src/broadcasts/services/broadcast-service.test.ts src/account/services/account-deletion-service.test.ts src/auth/services/google-id-token-verifier.test.ts src/mandi/services/mandi-price-service.test.ts",
     "db:indexes": "node dist/database/ensure-indexes.js",
+    "db:seed": "tsx src/database/seed.ts",
     "admin:create": "tsx src/admin/scripts/create-admin.ts"
   },
   "dependencies": {

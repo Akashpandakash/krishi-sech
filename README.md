@@ -40,7 +40,23 @@ Available commands:
 - `npm run build` compiles TypeScript into `dist/`.
 - `npm start` runs the compiled server.
 - `npm run db:indexes` creates the MongoDB indexes and unique constraints.
+- `npm run db:seed` fills a development database with believable farm data.
 - `npm test` runs the backend tests.
+
+`db:seed` refuses to run when `APP_ENV=production`. Document ids are derived
+from fixed strings rather than generated, so re-running replaces the same rows
+instead of duplicating them. Useful flags:
+
+```bash
+npm run db:seed -- --dry-run      # build and print the dataset, write nothing
+npm run db:seed -- --farmers 25   # default is 8
+npm run db:seed -- --reset        # drop seeded rows, then re-seed
+npm run db:seed -- --clean        # drop seeded rows and stop
+```
+
+Sign in from the app as any seeded farmer with `+9198000000NN` (`01`–`NN`),
+reading the code from the `send-otp` response while `DEBUG_OTP_ENABLED` is set.
+Admin accounts are not seeded — use `npm run admin:create`.
 
 ### Database
 
