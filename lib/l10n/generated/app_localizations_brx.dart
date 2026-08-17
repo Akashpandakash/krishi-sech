@@ -296,27 +296,6 @@ class AppLocalizationsBrx extends AppLocalizations {
   String get notificationsLoadError => 'Notifications could not be loaded.';
 
   @override
-  String get notificationWeatherTitle => 'Rain expected today';
-
-  @override
-  String get notificationWeatherMessage =>
-      'Rain is likely this afternoon. Consider delaying irrigation.';
-
-  @override
-  String get notificationCropTaskTitle => 'Crop task reminder';
-
-  @override
-  String get notificationCropTaskMessage =>
-      'Inspect your paddy crop for pests today.';
-
-  @override
-  String get notificationMarketTitle => 'Market price update';
-
-  @override
-  String get notificationMarketMessage =>
-      'Wheat prices have increased in the local mandi.';
-
-  @override
   String get goodMorning => 'Good morning,';
 
   @override
@@ -844,78 +823,6 @@ class AppLocalizationsBrx extends AppLocalizations {
   String get aiTyping => 'Krishi AI is typing...';
 
   @override
-  String get aiResponseGreeting =>
-      'Namaste! Tell me your crop name and what help you need today.';
-
-  @override
-  String get aiResponseLanguageSupport =>
-      'Yes, I can understand Bengali. You can ask your farming question in Bangla.';
-
-  @override
-  String get aiResponseCropProblemWheat =>
-      'I can help with your wheat problem. Please tell me what you see, such as yellow leaves, spots, insects, weak growth, or drying.';
-
-  @override
-  String get aiResponseCropProblemRice =>
-      'I can help with your rice problem. Please describe whether you see yellow leaves, spots, insects, poor tillering, wilting, or drying.';
-
-  @override
-  String get aiResponseCropProblemGeneral =>
-      'I can help diagnose the crop problem. Please tell me the crop name and whether you see yellow leaves, spots, insects, weak growth, wilting, or drying.';
-
-  @override
-  String get aiResponseIrrigationRain =>
-      'Rain is likely today, so delay irrigation and check soil moisture after the rain.';
-
-  @override
-  String get aiResponseIrrigationNormal =>
-      'No heavy rain is expected. Check soil moisture 5–7 cm deep and irrigate in the early morning if it feels dry.';
-
-  @override
-  String get aiResponseRainExpected =>
-      'Rain is likely today. Keep drainage channels clear and protect harvested produce and farm inputs.';
-
-  @override
-  String get aiResponseWeatherNormal =>
-      'No strong rain signal is available right now. Continue routine work, but check the latest weather before spraying.';
-
-  @override
-  String get aiResponseFertilizer =>
-      'Fertilizer depends on the crop, growth stage and soil test. Avoid guessing doses; share those details or consult your local soil-testing centre.';
-
-  @override
-  String get aiResponsePests =>
-      'Inspect both sides of affected leaves, isolate badly affected plants and use traps first. Identify the pest before applying any pesticide.';
-
-  @override
-  String get aiResponseYellowLeaves =>
-      'Yellow leaves can result from excess water, nitrogen deficiency, root damage or disease. Check soil moisture and whether yellowing starts on old or new leaves.';
-
-  @override
-  String get aiResponseCropDisease =>
-      'Check for spots, wilting, fungal growth and affected stem areas. Avoid unnecessary spraying until the crop and symptoms are correctly identified.';
-
-  @override
-  String get aiResponseMarketPrice =>
-      'Market prices change by crop, grade and mandi. Check the Market section and compare nearby mandis before deciding where to sell.';
-
-  @override
-  String get aiResponseSowingTime =>
-      'The best sowing time depends on crop, variety, local rainfall and soil temperature. Tell me the crop and your area for a more useful recommendation.';
-
-  @override
-  String get aiResponseGovernmentSchemes =>
-      'Scheme eligibility varies by state and farmer category. Check your state agriculture portal or nearest agriculture office with Aadhaar, land and bank documents.';
-
-  @override
-  String get aiResponseAgriculturalExpert =>
-      'For expert help, contact your nearest Krishi Vigyan Kendra, agriculture extension officer or state agriculture helpline.';
-
-  @override
-  String get aiResponseGeneral =>
-      'Please tell me the crop name and the problem you are seeing.';
-
-  @override
   String get krishiMarket => 'Krishi Market';
 
   @override
@@ -955,11 +862,6 @@ class AppLocalizationsBrx extends AppLocalizations {
   }
 
   @override
-  String mandiUpdatedAt(String time) {
-    return 'Last updated: $time';
-  }
-
-  @override
   String get trendUp => 'Price trend up';
 
   @override
@@ -994,18 +896,6 @@ class AppLocalizationsBrx extends AppLocalizations {
 
   @override
   String get tools => 'Tools';
-
-  @override
-  String get premiumWheatSeeds => 'Premium Wheat Seeds';
-
-  @override
-  String get organicFertilizer => 'Organic Fertilizer';
-
-  @override
-  String get gardenSprayer => 'Garden Sprayer';
-
-  @override
-  String get tomatoSeeds => 'Tomato Seeds';
 
   @override
   String pricePerBag(String price) {
@@ -1061,22 +951,6 @@ class AppLocalizationsBrx extends AppLocalizations {
   @override
   String get marketCheckoutComingSoon =>
       'Checkout and payment are not available yet.';
-
-  @override
-  String get premiumWheatSeedsDescription =>
-      'Clean, high-quality wheat seed suitable for timely sowing and dependable field establishment.';
-
-  @override
-  String get organicFertilizerDescription =>
-      'Organic soil conditioner that supports soil structure and gradual nutrient availability.';
-
-  @override
-  String get gardenSprayerDescription =>
-      'Durable hand-operated sprayer for careful application of water and approved crop treatments.';
-
-  @override
-  String get tomatoSeedsDescription =>
-      'Selected tomato seeds suitable for kitchen gardens and small vegetable plots.';
 
   @override
   String get profile => 'Profile';
@@ -1892,4 +1766,65 @@ class AppLocalizationsBrx extends AppLocalizations {
 
   @override
   String get farmer => 'Farmer';
+
+  @override
+  String get signInWithGoogle => 'Continue with Google';
+
+  @override
+  String get orLabel => 'or';
+
+  @override
+  String get googleSignInFailed => 'Google sign-in failed. Please try again.';
+
+  @override
+  String get marketKilogram => 'kg';
+
+  @override
+  String get marketLitre => 'litre';
+
+  @override
+  String get marketOffline =>
+      'You are offline. Connect to the internet to see the market.';
+
+  @override
+  String get marketCatalogueEmpty =>
+      'No products have been listed yet. Please check back soon.';
+
+  @override
+  String get mandiOffline =>
+      'You are offline. Connect to the internet to see mandi prices.';
+
+  @override
+  String get mandiUnavailable =>
+      'Live mandi prices are unavailable right now. Please try again later.';
+
+  @override
+  String get mandiLocationMissing =>
+      'Set your farm location to see mandi prices from your state.';
+
+  @override
+  String get noMandiPricesPublished =>
+      'No mandi prices have been published for your state today.';
+
+  @override
+  String get aiResponseUnavailable =>
+      'The assistant could not answer just now. Please try again.';
+
+  @override
+  String mandiArrivalDate(String date) {
+    return 'Price date: $date';
+  }
+
+  @override
+  String get consultExpertGuidance =>
+      'For expert help, contact your nearest Krishi Vigyan Kendra, agriculture extension officer or state agriculture helpline.';
+
+  @override
+  String mandiPartialList(int count) {
+    return 'Showing $count prices entered by our team. The live mandi feed is unavailable, so this is not the full market today.';
+  }
+
+  @override
+  String get mandiPartialListShort =>
+      'Partial list — the live mandi feed is unavailable.';
 }

@@ -13,6 +13,11 @@ import 'package:krishi_sech/features/location/data/services/location_service.dar
 import 'package:krishi_sech/features/location/domain/entities/farm_location.dart';
 import 'package:krishi_sech/features/location/presentation/location_scope.dart';
 import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
+import 'package:krishi_sech/features/market/data/datasources/remote_mandi_price_data_source.dart';
+import 'package:krishi_sech/features/market/data/repositories/mandi_price_repository_impl.dart';
+import 'package:krishi_sech/features/market/domain/entities/mandi_price.dart';
+import 'package:krishi_sech/features/market/domain/repositories/mandi_price_repository.dart';
+import 'package:krishi_sech/features/market/presentation/mandi_price_text.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_task.dart';
 import 'package:krishi_sech/features/my_crop/presentation/crop_labels.dart';
@@ -125,11 +130,6 @@ class _HomePageState extends State<HomePage> {
         : crops.isNotEmpty
         ? crops.first
         : null;
-    final marketPrices = [
-      _MarketItem(context.l10n.wheat, '₹2,425', '+1.8%', Icons.grass),
-      _MarketItem(context.l10n.mustard, '₹5,680', '+0.9%', Icons.local_florist),
-      _MarketItem(context.l10n.tomato, '₹2,100', '-1.2%', Icons.eco),
-    ];
     final tasks = cropTaskController.todaysTasks;
     final services = [
       _ServiceItem(context.l10n.cropDoctor, Icons.health_and_safety_outlined),
@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                       action: context.l10n.viewMandi,
                     ),
                     const SizedBox(height: 12),
-                    _MarketPricesCard(items: marketPrices),
+                    _MarketPricesCard(crops: crops),
                     const SizedBox(height: 28),
                     SectionHeader(
                       title: context.l10n.todaysTasks,
@@ -1248,14 +1248,161 @@ class _CropCard extends StatelessWidget {
   }
 }
 
-class _MarketPricesCard extends StatelessWidget {
-  const _MarketPricesCard({required this.items});
+/// The home summary of mandi prices.
+///
+/// Shows real AGMARKNET rows for the farmer's own state, preferring the
+/// commodities they actually grow. It renders nothing rather than something
+/// invented when there is no location, no data, or no connection.
+class _MarketPricesCard extends StatefulWidget {
+  const _MarketPricesCard({required this.crops});
 
-  final List<_MarketItem> items;
+  final List<Crop> crops;
+
+  @override
+  State<_MarketPricesCard> createState() => _MarketPricesCardState();
+}
+
+class _MarketPricesCardState extends State<_MarketPricesCard> {
+  static const _visibleRows = 3;
+
+  MandiPriceRepository? _repository;
+  List<MandiPrice> _prices = const [];
+  bool _isLive = true;
+  String? _loadedState;
+  bool _loading = false;
+  bool _failed = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _repository ??= MandiPriceRepositoryImpl(
+      RemoteMandiPriceDataSource(
+        baseUrl: ApiConfig.baseUrl,
+        accessTokenProvider: ({bool forceRefresh = false}) =>
+            AuthScope.of(context).getAccessToken(forceRefresh: forceRefresh),
+      ),
+    );
+    final state = LocationScope.of(context).location?.state.trim();
+    if (state == null || state.isEmpty || state == _loadedState) return;
+    _loadedState = state;
+    unawaited(_load(state));
+  }
+
+  Future<void> _load(String state) async {
+    setState(() {
+      _loading = true;
+      _failed = false;
+    });
+    try {
+      final board = await _repository!.getPrices(state: state);
+      if (!mounted) return;
+      setState(() {
+        _prices = board.prices;
+        _isLive = board.isLive;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      // The home screen is a summary, not the Market tab: a failure here is
+      // reported by hiding the section, not by an error card competing with
+      // the weather and task cards for the farmer's attention.
+      setState(() => _failed = true);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// One row per commodity, the farmer's own crops first, and within a
+  /// commodity the nearest market — a price for a crop they do not grow, in a
+  /// district they cannot reach, is noise.
+  List<MandiPrice> get _highlights {
+    if (_prices.isEmpty) return const [];
+    // Matched on the English enum name, not the translated label: AGMARKNET
+    // publishes commodity names in English, so comparing a Bengali label
+    // against them would never match.
+    final grown = widget.crops
+        .map(
+          (crop) => crop.kind == CropKind.other
+              ? (crop.customName?.trim().toLowerCase() ?? '')
+              : crop.kind.name.toLowerCase(),
+        )
+        .where((name) => name.isNotEmpty)
+        .toSet();
+    final district = LocationScope.of(
+      context,
+    ).location?.district.trim().toLowerCase();
+
+    bool isGrown(MandiPrice price) {
+      final commodity = price.commodity.trim().toLowerCase();
+      return grown.any(
+        (name) => commodity.contains(name) || name.contains(commodity),
+      );
+    }
+
+    final ranked = [..._prices]..sort((left, right) {
+      final grownOrder = (isGrown(right) ? 1 : 0) - (isGrown(left) ? 1 : 0);
+      if (grownOrder != 0) return grownOrder;
+      final leftLocal = left.district.trim().toLowerCase() == district ? 1 : 0;
+      final rightLocal = right.district.trim().toLowerCase() == district
+          ? 1
+          : 0;
+      if (leftLocal != rightLocal) return rightLocal - leftLocal;
+      return left.commodity.compareTo(right.commodity);
+    });
+
+    final seen = <String>{};
+    final highlights = <MandiPrice>[];
+    for (final price in ranked) {
+      if (!seen.add(price.commodity.trim().toLowerCase())) continue;
+      highlights.add(price);
+      if (highlights.length == _visibleRows) break;
+    }
+    return highlights;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final items = _highlights;
+    if (_loading && items.isEmpty) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 28),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+    if (items.isEmpty) {
+      return Card(
+        key: const Key('home_market_prices_empty'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          child: Row(
+            children: [
+              Icon(
+                _failed ? Icons.cloud_off_outlined : Icons.storefront_outlined,
+                color: Theme.of(context).colorScheme.outline,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  _failed
+                      ? context.l10n.mandiUnavailable
+                      : _loadedState == null
+                      ? context.l10n.mandiLocationMissing
+                      : context.l10n.noMandiPricesPublished,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return Card(
+      key: const Key('home_market_prices'),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
         side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
@@ -1263,9 +1410,32 @@ class _MarketPricesCard extends StatelessWidget {
       child: Column(
         children: [
           for (var index = 0; index < items.length; index++) ...[
-            _MarketPriceRow(item: items[index]),
+            _MarketPriceRow(price: items[index]),
             if (index != items.length - 1)
               const Divider(height: 1, indent: 66, endIndent: 16),
+          ],
+          if (!_isLive) ...[
+            const Divider(height: 1, indent: 66, endIndent: 16),
+            Padding(
+              key: const Key('home_market_prices_partial'),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      context.l10n.mandiPartialListShort,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ],
       ),
@@ -1274,42 +1444,77 @@ class _MarketPricesCard extends StatelessWidget {
 }
 
 class _MarketPriceRow extends StatelessWidget {
-  const _MarketPriceRow({required this.item});
+  const _MarketPriceRow({required this.price});
 
-  final _MarketItem item;
+  final MandiPrice price;
+
+  /// Percentage move against the previous published day, or null when the
+  /// backend has no earlier price to compare against.
+  double? get _changePercent {
+    final previous = price.previousModalPrice;
+    if (previous == null || previous <= 0) return null;
+    return (price.modalPrice - previous) / previous * 100;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isUp = item.change.startsWith('+');
+    final change = _changePercent;
+    final isUp = (change ?? 0) >= 0;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Row(
         children: [
           CircleAvatar(
             backgroundColor: AppColors.lightGreen,
-            child: Icon(item.icon, color: AppColors.primary, size: 21),
+            child: Icon(
+              _commodityIcon(price.commodity),
+              color: AppColors.primary,
+              size: 21,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              item.name,
-              style: const TextStyle(fontWeight: FontWeight.w700),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  price.commodityLabel(context),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  price.marketName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
             ),
           ),
+          const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                item.price,
+                '₹${price.modalPrice}',
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
-              Text(
-                context.l10n.priceToday(item.change),
-                style: TextStyle(
-                  color: isUp ? AppColors.primary : Colors.red.shade600,
-                  fontSize: 12,
+              // Without a previous day there is no move to state, so the row
+              // shows the unit instead of a fabricated percentage.
+              if (change == null)
+                Text(
+                  context.l10n.mandiPriceUnit(price.unit),
+                  style: Theme.of(context).textTheme.bodySmall,
+                )
+              else
+                Text(
+                  context.l10n.priceToday(
+                    '${isUp ? '+' : ''}${change.toStringAsFixed(1)}%',
+                  ),
+                  style: TextStyle(
+                    color: isUp ? AppColors.primary : Colors.red.shade600,
+                    fontSize: 12,
+                  ),
                 ),
-              ),
             ],
           ),
         ],
@@ -1403,14 +1608,17 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
-class _MarketItem {
-  const _MarketItem(this.name, this.price, this.change, this.icon);
-
-  final String name;
-  final String price;
-  final String change;
-  final IconData icon;
-}
+/// Illustrates the commodity where the app recognises it. AGMARKNET covers
+/// hundreds of commodities, so anything unrecognised falls back to a generic
+/// crop icon rather than being forced into a wrong one.
+IconData _commodityIcon(String commodity) =>
+    switch (commodity.trim().toLowerCase()) {
+      'wheat' => Icons.grass,
+      'mustard' || 'mustard seed' || 'rape seed' => Icons.local_florist,
+      'tomato' || 'brinjal' || 'chilli' => Icons.eco,
+      'potato' || 'onion' => Icons.rice_bowl_outlined,
+      _ => Icons.agriculture_outlined,
+    };
 
 class _ServiceItem {
   const _ServiceItem(this.label, this.icon);

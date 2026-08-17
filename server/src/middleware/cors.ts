@@ -27,7 +27,7 @@ export function createCorsMiddleware(
     );
     response.setHeader(
       'Access-Control-Allow-Methods',
-      'GET, POST, PUT, DELETE, OPTIONS',
+      'GET, POST, PUT, PATCH, DELETE, OPTIONS',
     );
     if (request.method === 'OPTIONS') {
       response.sendStatus(204);

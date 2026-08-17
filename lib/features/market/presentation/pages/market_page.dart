@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
-import 'package:krishi_sech/features/market/data/datasources/local_mandi_price_data_source.dart';
-import 'package:krishi_sech/features/market/data/datasources/local_market_data_source.dart';
+import 'package:krishi_sech/core/localization/app_language.dart';
+import 'package:krishi_sech/core/localization/locale_scope.dart';
+import 'package:krishi_sech/core/network/api_config.dart';
+import 'package:krishi_sech/features/location/presentation/location_scope.dart';
+import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
+import 'package:krishi_sech/features/market/data/datasources/remote_mandi_price_data_source.dart';
+import 'package:krishi_sech/features/market/data/datasources/remote_market_data_source.dart';
 import 'package:krishi_sech/features/market/data/repositories/mandi_price_repository_impl.dart';
 import 'package:krishi_sech/features/market/data/repositories/market_repository_impl.dart';
 import 'package:krishi_sech/features/market/domain/entities/market_product.dart';
@@ -77,9 +82,16 @@ class _MarketPageState extends State<MarketPage>
                 MandiPricesView(
                   repository:
                       widget.mandiRepository ??
-                      const MandiPriceRepositoryImpl(
-                        LocalMandiPriceDataSource(),
+                      MandiPriceRepositoryImpl(
+                        RemoteMandiPriceDataSource(
+                          baseUrl: ApiConfig.baseUrl,
+                          accessTokenProvider:
+                              ({bool forceRefresh = false}) => AuthScope.of(
+                                context,
+                              ).getAccessToken(forceRefresh: forceRefresh),
+                        ),
                       ),
+                  location: LocationScope.of(context).location,
                 ),
                 ShopCatalogView(repository: widget.repository),
               ],
@@ -101,7 +113,7 @@ class ShopCatalogView extends StatefulWidget {
 }
 
 class _ShopCatalogViewState extends State<ShopCatalogView> {
-  late final MarketRepository _repository;
+  MarketRepository? _repository;
   final _searchController = TextEditingController();
   List<MarketProduct> _products = const [];
   MarketCategory? _category;
@@ -109,11 +121,25 @@ class _ShopCatalogViewState extends State<ShopCatalogView> {
   bool _loading = true;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Built here rather than in initState because the catalogue call needs an
+    // access token and the app's language, both of which live above us.
+    if (_repository != null) return;
     _repository =
         widget.repository ??
-        const MarketRepositoryImpl(LocalMarketDataSource());
+        MarketRepositoryImpl(
+          RemoteMarketDataSource(
+            baseUrl: ApiConfig.baseUrl,
+            accessTokenProvider: ({bool forceRefresh = false}) =>
+                AuthScope.of(
+                  context,
+                ).getAccessToken(forceRefresh: forceRefresh),
+            languageProvider: () => AppLanguageCatalog.serviceCodeFor(
+              LocaleScope.of(context).locale.languageCode,
+            ),
+          ),
+        );
     _load();
   }
 
@@ -129,7 +155,7 @@ class _ShopCatalogViewState extends State<ShopCatalogView> {
       _error = null;
     });
     try {
-      final products = await _repository.getProducts();
+      final products = await _repository!.getProducts();
       if (!mounted) return;
       setState(() => _products = products);
     } catch (error) {
@@ -148,7 +174,7 @@ class _ShopCatalogViewState extends State<ShopCatalogView> {
               _category == null || product.category == _category;
           final matchesQuery =
               query.isEmpty ||
-              product.name(context).toLowerCase().contains(query) ||
+              product.name.toLowerCase().contains(query) ||
               product.categoryName(context).toLowerCase().contains(query);
           return matchesCategory && matchesQuery;
         })
@@ -213,7 +239,11 @@ class _ShopCatalogViewState extends State<ShopCatalogView> {
               hasScrollBody: false,
               child: _MarketMessage(
                 icon: Icons.cloud_off_outlined,
-                message: context.l10n.marketLoadError,
+                message: _error is MarketRemoteFailure &&
+                        (_error! as MarketRemoteFailure).type ==
+                            MarketRemoteFailureType.offline
+                    ? context.l10n.marketOffline
+                    : context.l10n.marketLoadError,
                 actionLabel: context.l10n.retry,
                 onAction: _load,
               ),
@@ -223,8 +253,15 @@ class _ShopCatalogViewState extends State<ShopCatalogView> {
               hasScrollBody: false,
               child: _MarketMessage(
                 key: const Key('market_empty_state'),
-                icon: Icons.search_off,
-                message: context.l10n.noMarketProducts,
+                icon: _products.isEmpty
+                    ? Icons.storefront_outlined
+                    : Icons.search_off,
+                // An empty catalogue is not a failed search: no seller has
+                // listed anything yet, and telling a farmer to refine their
+                // search would send them looking for something that is not there.
+                message: _products.isEmpty
+                    ? context.l10n.marketCatalogueEmpty
+                    : context.l10n.noMarketProducts,
               ),
             )
           else
@@ -307,7 +344,7 @@ class _ProductCard extends StatelessWidget {
       child: AppPressable(
         key: Key('market_product_${product.id}'),
         onTap: onTap,
-        semanticLabel: product.name(context),
+        semanticLabel: product.name,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -324,7 +361,7 @@ class _ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.name(context),
+                    product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontWeight: FontWeight.w700),

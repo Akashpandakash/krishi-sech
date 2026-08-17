@@ -8,14 +8,16 @@
     "dev": "APP_ENV=development tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "NODE_ENV=test APP_ENV=development LOGGING_ENABLED=false tsx --test src/app.test.ts src/config/app-config.test.ts src/config/fast2sms-config.test.ts src/auth/providers/fast2sms-provider.test.ts src/ai/services/ai-context-service.test.ts src/fertilizer/services/fertilizer-recommendation-service.test.ts src/irrigation/services/irrigation-recommendation-service.test.ts src/weather/services/weather-service.test.ts",
-    "db:indexes": "node dist/database/ensure-indexes.js"
+    "test": "NODE_ENV=test APP_ENV=development LOGGING_ENABLED=false tsx --test src/app.test.ts src/config/app-config.test.ts src/config/fast2sms-config.test.ts src/auth/providers/fast2sms-provider.test.ts src/ai/services/ai-context-service.test.ts src/fertilizer/services/fertilizer-recommendation-service.test.ts src/irrigation/services/irrigation-recommendation-service.test.ts src/weather/services/weather-service.test.ts src/admin/services/admin-auth-service.test.ts src/broadcasts/services/broadcast-service.test.ts src/account/services/account-deletion-service.test.ts src/auth/services/google-id-token-verifier.test.ts src/mandi/services/mandi-price-service.test.ts",
+    "db:indexes": "node dist/database/ensure-indexes.js",
+    "admin:create": "tsx src/admin/scripts/create-admin.ts"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "firebase-admin": "^14.2.0",
     "jsonwebtoken": "^9.0.3",
-    "mongodb": "^6.21.0",
+    "mongoose": "^9.9.2",
     "multer": "^2.0.2",
     "zod": "^4.4.3"
   },

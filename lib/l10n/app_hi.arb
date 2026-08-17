@@ -62,7 +62,13 @@
   "languageStatusEnglishFallback": "अंग्रेज़ी फ़ॉलबैक",
   "translationComingSoon": "अनुवाद जल्द उपलब्ध होगा",
   "fallbackLanguageNotice": "{language} चुनी गई है। पूर्ण अनुवाद जल्द उपलब्ध होगा, इसलिए फ़िलहाल ऐप अंग्रेज़ी का उपयोग करेगा।",
-  "@fallbackLanguageNotice": {"placeholders": {"language": {"type": "String"}}},
+  "@fallbackLanguageNotice": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "bangla": "बांग्ला",
   "banglaNative": "বাংলা",
   "hindi": "हिंदी",
@@ -74,7 +80,13 @@
   "authVerifyOtp": "ओटीपी सत्यापित करें",
   "authOtpLabel": "6 अंकों का ओटीपी",
   "authOtpSent": "{phone} पर भेजा गया ओटीपी दर्ज करें",
-  "@authOtpSent": {"placeholders": {"phone": {"type": "String"}}},
+  "@authOtpSent": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
   "authInvalidPhone": "मान्य 10 अंकों का मोबाइल नंबर दर्ज करें।",
   "authInvalidOtp": "मान्य 6 अंकों का ओटीपी दर्ज करें।",
   "authOffline": "इंटरनेट कनेक्शन उपलब्ध नहीं है। जाँचकर फिर प्रयास करें।",
@@ -93,18 +105,21 @@
   "noNotifications": "अभी कोई सूचना नहीं है",
   "noNotificationsDescription": "खेती से जुड़े महत्वपूर्ण अपडेट यहाँ दिखाई देंगे।",
   "notificationsLoadError": "सूचनाएँ लोड नहीं हो सकीं।",
-  "notificationWeatherTitle": "आज बारिश की संभावना",
-  "notificationWeatherMessage": "आज दोपहर बारिश हो सकती है। सिंचाई कुछ समय के लिए टालें।",
-  "notificationCropTaskTitle": "फसल कार्य अनुस्मारक",
-  "notificationCropTaskMessage": "आज धान की फसल में कीटों की जाँच करें।",
-  "notificationMarketTitle": "बाज़ार भाव अपडेट",
-  "notificationMarketMessage": "स्थानीय मंडी में गेहूँ के भाव बढ़े हैं।",
   "goodMorning": "सुप्रभात,",
   "productiveFarm": "आज का दिन आपके खेत के लिए उपयोगी बनाएँ।",
   "partlyCloudy": "आंशिक बादल",
   "humidityWind": "नमी 62%  •  हवा 8 किमी/घंटा",
   "humidityWindValues": "नमी {humidity}%  •  हवा {windSpeed} किमी/घंटा",
-  "@humidityWindValues": {"placeholders": {"humidity": {"type": "int"}, "windSpeed": {"type": "int"}}},
+  "@humidityWindValues": {
+    "placeholders": {
+      "humidity": {
+        "type": "int"
+      },
+      "windSpeed": {
+        "type": "int"
+      }
+    }
+  },
   "loadingWeather": "मौसम लोड हो रहा है...",
   "weatherUnavailable": "मौसम उपलब्ध नहीं है",
   "weatherLocationRequired": "मौसम के लिए स्थान चुनें",
@@ -135,7 +150,13 @@
   "adviceLocationRequired": "मौसमी सलाह के लिए स्थान चुनें",
   "adviceWaitingForWeather": "वर्तमान मौसम की जानकारी की प्रतीक्षा है",
   "updatedAtTime": "{time} बजे अपडेट किया गया",
-  "@updatedAtTime": {"placeholders": {"time": {"type": "String"}}},
+  "@updatedAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "adviceCategoryRain": "बारिश और सिंचाई",
   "adviceCategoryCropHealth": "फसल स्वास्थ्य",
   "adviceCategoryIrrigation": "सिंचाई",
@@ -164,7 +185,19 @@
   "seasonalAdviceDetails": "मौसमी सलाह",
   "currentWeatherSummary": "वर्तमान मौसम",
   "adviceWeatherSummary": "{temperature}°C • नमी {humidity}% • हवा {windSpeed} किमी/घंटा",
-  "@adviceWeatherSummary": {"placeholders": {"temperature": {"type": "int"}, "humidity": {"type": "int"}, "windSpeed": {"type": "int"}}},
+  "@adviceWeatherSummary": {
+    "placeholders": {
+      "temperature": {
+        "type": "int"
+      },
+      "humidity": {
+        "type": "int"
+      },
+      "windSpeed": {
+        "type": "int"
+      }
+    }
+  },
   "todaysRecommendation": "आज की सलाह",
   "recommendationReason": "इस सलाह का कारण",
   "recommendedAction": "सुझाया गया कार्य",
@@ -208,10 +241,28 @@
   "smartFarmingCompanion": "आपका स्मार्ट कृषि साथी",
   "newChat": "नई चैट",
   "aiGreetingUser": "नमस्ते, {name}!",
-  "@aiGreetingUser": {"placeholders": {"name": {"type": "String"}}},
+  "@aiGreetingUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiWelcomeMessage": "फसल, सिंचाई, मौसम, कीट, उर्वरक और खेती के निर्णयों पर उपयोगी प्रश्न पूछें।",
   "aiWeatherContext": "{temperature}°C • नमी {humidity}% • बारिश {rain}%",
-  "@aiWeatherContext": {"placeholders": {"temperature": {"type": "int"}, "humidity": {"type": "int"}, "rain": {"type": "int"}}},
+  "@aiWeatherContext": {
+    "placeholders": {
+      "temperature": {
+        "type": "int"
+      },
+      "humidity": {
+        "type": "int"
+      },
+      "rain": {
+        "type": "int"
+      }
+    }
+  },
   "suggestedQuestions": "सुझाए गए प्रश्न",
   "suggestIrrigation": "क्या आज सिंचाई करनी चाहिए?",
   "suggestYellowLeaves": "फसल की पत्तियाँ पीली क्यों हो रही हैं?",
@@ -245,7 +296,13 @@
   "consultExpert": "विशेषज्ञ से सलाह लें",
   "imagePermissionDenied": "कैमरा या फोटो की अनुमति नहीं दी गई। ऐप सेटिंग में अनुमति देकर फिर प्रयास करें।",
   "uploadProgress": "अपलोड हो रहा है {progress}%",
-  "@uploadProgress": {"placeholders": {"progress": {"type": "int"}}},
+  "@uploadProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
   "diseaseScanOffline": "इंटरनेट कनेक्शन उपलब्ध नहीं है। कनेक्शन जाँचकर फिर प्रयास करें।",
   "diseaseScanTimeout": "स्कैन में बहुत अधिक समय लगा। स्थिर कनेक्शन के साथ फिर प्रयास करें।",
   "diseaseScanInvalidResponse": "स्कैन सेवा से अमान्य उत्तर मिला। कृपया फिर प्रयास करें।",
@@ -257,31 +314,19 @@
   "notMedicalDiagnosis": "यह नमूना परिणाम पक्की रोग पहचान नहीं है। उपचार से पहले कृषि विशेषज्ञ से सलाह लें।",
   "lowConfidenceResult": "परिणाम का भरोसा कम है। कदम उठाने से पहले विशेषज्ञ समीक्षा लें।",
   "scanConfidence": "विश्वसनीयता: {confidence}%",
-  "@scanConfidence": {"placeholders": {"confidence": {"type": "int"}}},
+  "@scanConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "int"
+      }
+    }
+  },
   "visibleSymptoms": "दिखाई देने वाले लक्षण",
   "recommendedActions": "सुझाए गए कदम",
   "expertReviewRecommended": "विशेषज्ञ समीक्षा की सलाह",
   "followUpQuestions": "आगे के प्रश्न",
   "retryResponse": "उत्तर फिर प्राप्त करें",
   "aiTyping": "कृषि AI उत्तर लिख रहा है...",
-  "aiResponseGreeting": "नमस्ते! आज किस फसल के लिए क्या सहायता चाहिए, बताएँ।",
-  "aiResponseLanguageSupport": "हाँ, मैं बंगाली समझ सकता हूँ। आप अपना खेती से जुड़ा प्रश्न बांग्ला में पूछ सकते हैं।",
-  "aiResponseCropProblemWheat": "मैं गेहूँ की समस्या में सहायता कर सकता हूँ। बताएँ कि पीली पत्तियाँ, धब्बे, कीट, कमजोर बढ़वार या सूखने जैसे कौन से लक्षण दिख रहे हैं।",
-  "aiResponseCropProblemRice": "मैं धान की समस्या में सहायता कर सकता हूँ। बताएँ कि पीली पत्तियाँ, धब्बे, कीट, कम कल्ले, मुरझाना या सूखना दिखाई दे रहा है।",
-  "aiResponseCropProblemGeneral": "मैं फसल की समस्या समझने में सहायता कर सकता हूँ। फसल का नाम और पीली पत्तियाँ, धब्बे, कीट, कमजोर बढ़वार, मुरझाना या सूखना जैसे लक्षण बताएँ।",
-  "aiResponseIrrigationRain": "आज बारिश की संभावना है, इसलिए सिंचाई रोकें और बारिश के बाद मिट्टी की नमी जाँचें।",
-  "aiResponseIrrigationNormal": "भारी बारिश की संभावना नहीं है। मिट्टी की नमी 5–7 सेमी गहराई तक जाँचें और सूखी होने पर सुबह जल्दी सिंचाई करें।",
-  "aiResponseRainExpected": "आज बारिश की संभावना है। निकासी नालियाँ साफ रखें और कटी फसल व कृषि सामग्री सुरक्षित करें।",
-  "aiResponseWeatherNormal": "अभी भारी बारिश का स्पष्ट संकेत नहीं है। सामान्य काम जारी रखें, लेकिन छिड़काव से पहले नवीनतम मौसम जाँचें।",
-  "aiResponseFertilizer": "उर्वरक फसल, विकास अवस्था और मिट्टी परीक्षण पर निर्भर करता है। अनुमानित मात्रा न दें; ये जानकारी बताएँ या स्थानीय मिट्टी जाँच केंद्र से संपर्क करें।",
-  "aiResponsePests": "प्रभावित पत्तियों के दोनों तरफ देखें, अधिक प्रभावित पौधों को अलग करें और पहले ट्रैप का उपयोग करें। कीट की पहचान से पहले कीटनाशक न डालें।",
-  "aiResponseYellowLeaves": "अधिक पानी, नाइट्रोजन की कमी, जड़ की क्षति या रोग से पत्तियाँ पीली हो सकती हैं। मिट्टी की नमी और पीली पड़ने की शुरुआत पुरानी या नई पत्तियों से हुई है, यह जाँचें।",
-  "aiResponseCropDisease": "धब्बे, मुरझाना, फफूंद और तने के प्रभावित हिस्से देखें। फसल और लक्षण की सही पहचान से पहले अनावश्यक छिड़काव न करें।",
-  "aiResponseMarketPrice": "फसल, गुणवत्ता और मंडी के अनुसार भाव बदलते हैं। बेचने से पहले Market अनुभाग में आसपास की मंडियों के भाव की तुलना करें।",
-  "aiResponseSowingTime": "सही बुवाई समय फसल, किस्म, स्थानीय बारिश और मिट्टी के तापमान पर निर्भर करता है। बेहतर सलाह के लिए फसल और क्षेत्र बताएँ।",
-  "aiResponseGovernmentSchemes": "राज्य और किसान श्रेणी के अनुसार योजना की पात्रता बदलती है। आधार, भूमि और बैंक दस्तावेजों के साथ राज्य कृषि पोर्टल या नजदीकी कृषि कार्यालय से संपर्क करें।",
-  "aiResponseAgriculturalExpert": "विशेषज्ञ सहायता के लिए नजदीकी कृषि विज्ञान केंद्र, कृषि विस्तार अधिकारी या राज्य कृषि हेल्पलाइन से संपर्क करें।",
-  "aiResponseGeneral": "फसल का नाम और दिखाई देने वाली समस्या बताएँ।",
   "krishiMarket": "कृषि बाज़ार",
   "mandiPrices": "मंडी भाव",
   "marketShop": "दुकान",
@@ -294,7 +339,6 @@
   "maximumPrice": "अधिकतम",
   "modalPrice": "मॉडल भाव",
   "mandiPriceUnit": "भाव इकाई: ₹ प्रति {unit}",
-  "mandiUpdatedAt": "अंतिम अपडेट: {time}",
   "trendUp": "भाव बढ़ रहा है",
   "trendDown": "भाव घट रहा है",
   "trendStable": "भाव स्थिर है",
@@ -307,10 +351,6 @@
   "seeds": "बीज",
   "fertilizers": "खाद",
   "tools": "औज़ार",
-  "premiumWheatSeeds": "उन्नत गेहूँ बीज",
-  "organicFertilizer": "जैविक खाद",
-  "gardenSprayer": "बाग़ स्प्रेयर",
-  "tomatoSeeds": "टमाटर बीज",
   "pricePerBag": "{price} / बोरी",
   "pricePerPack": "{price} / पैक",
   "productDetails": "उत्पाद विवरण",
@@ -326,10 +366,6 @@
   "marketLoadError": "बाज़ार के उत्पाद लोड नहीं हो सके। फिर प्रयास करें।",
   "noMarketProducts": "आपकी खोज से कोई उत्पाद नहीं मिला।",
   "marketCheckoutComingSoon": "चेकआउट और भुगतान अभी उपलब्ध नहीं हैं।",
-  "premiumWheatSeedsDescription": "समय पर बुवाई और अच्छी फसल स्थापना के लिए उपयुक्त स्वच्छ, उच्च गुणवत्ता वाला गेहूँ बीज।",
-  "organicFertilizerDescription": "मिट्टी की संरचना और धीरे-धीरे पोषक तत्व उपलब्ध कराने वाला जैविक मृदा सुधारक।",
-  "gardenSprayerDescription": "पानी और अनुमोदित फसल उपचारों के सावधानीपूर्वक उपयोग के लिए टिकाऊ हाथ से चलने वाला स्प्रेयर।",
-  "tomatoSeedsDescription": "घरेलू बगीचे और छोटे सब्ज़ी खेतों के लिए उपयुक्त चुने हुए टमाटर बीज।",
   "profile": "प्रोफ़ाइल",
   "personalDetails": "व्यक्तिगत जानकारी",
   "farmDetails": "खेत की जानकारी",
@@ -361,7 +397,13 @@
   "supportReportsLoadError": "सुरक्षित रिपोर्ट लोड नहीं हो सकीं।",
   "noSupportReports": "अभी कोई डेमो रिपोर्ट जमा नहीं हुई है।",
   "supportReportsSaved": "इस डिवाइस पर सुरक्षित रिपोर्ट: {count}",
-  "@supportReportsSaved": {"placeholders": {"count": {"type": "int"}}},
+  "@supportReportsSaved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "privacyPolicy": "गोपनीयता नीति",
   "privacyPolicySummary": "कृषि सेच डेमो सहायता रिपोर्ट इस डिवाइस पर स्थानीय रूप से सुरक्षित करता है। पासवर्ड, ओटीपी या संवेदनशील जानकारी शामिल न करें।",
   "termsAndConditions": "नियम और शर्तें",
@@ -386,8 +428,8 @@
   "chooseCity": "शहर खोजें या चुनें",
   "enterVillage": "गाँव का नाम दर्ज करें",
   "saveLocation": "स्थान सहेजें",
-  "selectRequiredLocation": "कृपया राज्य, ज़िला और शहर चुनें।"
-  ,"yourLocationTitle": "आपका स्थान",
+  "selectRequiredLocation": "कृपया राज्य, ज़िला और शहर चुनें।",
+  "yourLocationTitle": "आपका स्थान",
   "locationNotSelected": "स्थान चुना नहीं गया",
   "locationPermissionHint": "जीपीएस का उपयोग करें या स्थान स्वयं जोड़ें",
   "usingSavedLocation": "आपका सहेजा हुआ स्थान उपयोग हो रहा है",
@@ -397,7 +439,13 @@
   "searchLocation": "शहर, ज़िला या राज्य खोजें",
   "useCurrentLocation": "वर्तमान स्थान उपयोग करें",
   "locationAccuracy": "वर्तमान स्थान का उपयोग • सटीकता: {meters} मीटर",
-  "@locationAccuracy": {"placeholders": {"meters": {"type": "int"}}},
+  "@locationAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
   "locationServicesDisabled": "स्थान सेवाएँ बंद हैं। वर्तमान स्थान पता करने के लिए इन्हें चालू करें।",
   "preciseLocationRequired": "अनुमानित स्थान चालू है। सही शहर और जिला पता करने के लिए सटीक स्थान की अनुमति दें।",
   "locationPermissionPermanentlyDenied": "स्थान अनुमति अवरुद्ध है। इसे ऐप सेटिंग्स में चालू करें या स्थान स्वयं चुनें।",
@@ -405,31 +453,176 @@
   "locationAddressUnavailable": "GPS स्थान मिल गया, लेकिन पता निर्धारित नहीं हुआ। इंटरनेट कनेक्शन जाँचकर फिर प्रयास करें।",
   "openLocationSettings": "स्थान सेटिंग्स खोलें",
   "openAppSettings": "ऐप सेटिंग्स खोलें",
-  "cropPaddy": "धान", "cropWheat": "गेहूँ", "cropMaize": "मक्का", "cropTomato": "टमाटर", "cropBrinjal": "बैंगन", "cropChilli": "मिर्च", "cropMustard": "सरसों", "cropPotato": "आलू", "cropOnion": "प्याज़", "cropOther": "अन्य",
-  "stageSowing": "बुवाई", "stageGermination": "अंकुरण", "stageSeedling": "पौध", "stageVegetative": "वानस्पतिक वृद्धि", "stageFlowering": "फूल आना", "stageFruiting": "फल बनना", "stageMaturity": "परिपक्वता", "stageHarvested": "कटाई पूर्ण",
-  "healthHealthy": "स्वस्थ", "healthModerate": "मध्यम", "healthNeedsAttention": "ध्यान आवश्यक",
-  "unitAcre": "एकड़", "unitHectare": "हेक्टेयर", "unitBigha": "बीघा", "unitKatha": "कट्ठा",
-  "irrigationDrip": "ड्रिप", "irrigationSprinkler": "स्प्रिंकलर", "irrigationFlood": "बाढ़ सिंचाई", "irrigationRainFed": "वर्षा आधारित", "irrigationManual": "हाथ से",
-  "plantAge": "पौधे की आयु", "soilType": "मिट्टी का प्रकार", "irrigationMethod": "सिंचाई विधि", "plantingMethod": "रोपण विधि", "seedBrand": "बीज ब्रांड", "lastFertilizerUsed": "अंतिम उपयोग किया उर्वरक", "lastPesticideUsed": "अंतिम उपयोग किया कीटनाशक", "otherOption": "अन्य",
-  "soilAlluvial": "जलोढ़ मिट्टी", "soilBlack": "काली मिट्टी", "soilRed": "लाल मिट्टी", "soilLaterite": "लेटराइट", "soilSandy": "रेतीली मिट्टी", "soilClay": "चिकनी मिट्टी", "soilLoamy": "दोमट मिट्टी",
-  "plantingDirectSowing": "सीधी बुवाई", "plantingTransplanting": "रोपाई", "plantingBroadcasting": "छिटकवाँ बुवाई", "plantingRaisedBed": "उठी हुई क्यारी",
-  "taskIrrigationReminder": "सिंचाई स्मरण", "taskFertilizerReminder": "उर्वरक स्मरण", "taskPestInspection": "कीट निरीक्षण", "taskHarvestPreparation": "कटाई की तैयारी", "taskCompleted": "पूर्ण",
-  "totalCrops": "कुल फसलें", "healthyCrops": "स्वस्थ फसलें", "cropsNeedingAttention": "ध्यान आवश्यक", "upcomingTasks": "आगामी कार्य",
-  "noCropsYet": "अभी कोई फसल नहीं जोड़ी गई।", "cropName": "फसल का नाम", "otherCropName": "अन्य फसल का नाम", "variety": "किस्म", "sowingDate": "बुवाई की तारीख", "landArea": "भूमि क्षेत्र", "landAreaUnit": "क्षेत्र इकाई", "currentGrowthStage": "वर्तमान वृद्धि अवस्था", "irrigationType": "सिंचाई प्रकार", "healthStatus": "स्वास्थ्य स्थिति", "villageFarmOptional": "गाँव / खेत का नाम (वैकल्पिक)", "expectedHarvestOptional": "अपेक्षित कटाई तारीख (वैकल्पिक)", "notesOptional": "नोट्स (वैकल्पिक)", "saveCrop": "फसल सहेजें", "selectDate": "तारीख चुनें",
-  "cropNameRequired": "फसल का नाम चुनें।", "varietyRequired": "फसल की किस्म दर्ज करें।", "sowingDateRequired": "बुवाई की तारीख चुनें।", "landAreaPositive": "भूमि क्षेत्र शून्य से अधिक होना चाहिए।", "sowingDateFutureError": "बुवाई की तारीख भविष्य की नहीं हो सकती।",
-  "cropDetails": "फसल विवरण", "cropAge": "फसल की आयु", "growthProgress": "वृद्धि प्रगति", "nextAction": "अगला कार्य", "expectedHarvestDate": "अपेक्षित कटाई तारीख", "notes": "नोट्स", "updateHealthStatus": "स्वस्थ / ध्यान आवश्यक चिह्नित करें", "updateGrowthStage": "वृद्धि अवस्था अपडेट करें", "editCrop": "फसल संपादित करें", "deleteCrop": "फसल हटाएँ", "deleteCropConfirmation": "क्या आप इस फसल को हटाना चाहते हैं?", "cancel": "रद्द करें", "delete": "हटाएँ", "cropNotFound": "फसल नहीं मिली।",
-  "cropHealthRecord": "फसल स्वास्थ्य रिकॉर्ड", "diseaseHistory": "रोग इतिहास", "fertilizerHistory": "उर्वरक इतिहास", "irrigationHistory": "सिंचाई इतिहास", "sprayHistory": "छिड़काव इतिहास", "scanHistory": "स्कैन इतिहास", "photoHistory": "फोटो इतिहास", "addRecord": "रिकॉर्ड जोड़ें", "editRecord": "रिकॉर्ड संपादित करें", "deleteRecord": "रिकॉर्ड हटाएँ", "deleteRecordConfirmation": "क्या आप यह रिकॉर्ड हटाना चाहते हैं?", "noHealthRecords": "अभी कोई फसल स्वास्थ्य रिकॉर्ड नहीं है।", "recordType": "रिकॉर्ड प्रकार", "recordTitle": "शीर्षक", "recordTitleRequired": "रिकॉर्ड का शीर्षक दर्ज करें।", "recordDate": "रिकॉर्ड तारीख", "recordDetails": "विवरण (वैकल्पिक)", "saveRecord": "रिकॉर्ड सहेजें",
+  "cropPaddy": "धान",
+  "cropWheat": "गेहूँ",
+  "cropMaize": "मक्का",
+  "cropTomato": "टमाटर",
+  "cropBrinjal": "बैंगन",
+  "cropChilli": "मिर्च",
+  "cropMustard": "सरसों",
+  "cropPotato": "आलू",
+  "cropOnion": "प्याज़",
+  "cropOther": "अन्य",
+  "stageSowing": "बुवाई",
+  "stageGermination": "अंकुरण",
+  "stageSeedling": "पौध",
+  "stageVegetative": "वानस्पतिक वृद्धि",
+  "stageFlowering": "फूल आना",
+  "stageFruiting": "फल बनना",
+  "stageMaturity": "परिपक्वता",
+  "stageHarvested": "कटाई पूर्ण",
+  "healthHealthy": "स्वस्थ",
+  "healthModerate": "मध्यम",
+  "healthNeedsAttention": "ध्यान आवश्यक",
+  "unitAcre": "एकड़",
+  "unitHectare": "हेक्टेयर",
+  "unitBigha": "बीघा",
+  "unitKatha": "कट्ठा",
+  "irrigationDrip": "ड्रिप",
+  "irrigationSprinkler": "स्प्रिंकलर",
+  "irrigationFlood": "बाढ़ सिंचाई",
+  "irrigationRainFed": "वर्षा आधारित",
+  "irrigationManual": "हाथ से",
+  "plantAge": "पौधे की आयु",
+  "soilType": "मिट्टी का प्रकार",
+  "irrigationMethod": "सिंचाई विधि",
+  "plantingMethod": "रोपण विधि",
+  "seedBrand": "बीज ब्रांड",
+  "lastFertilizerUsed": "अंतिम उपयोग किया उर्वरक",
+  "lastPesticideUsed": "अंतिम उपयोग किया कीटनाशक",
+  "otherOption": "अन्य",
+  "soilAlluvial": "जलोढ़ मिट्टी",
+  "soilBlack": "काली मिट्टी",
+  "soilRed": "लाल मिट्टी",
+  "soilLaterite": "लेटराइट",
+  "soilSandy": "रेतीली मिट्टी",
+  "soilClay": "चिकनी मिट्टी",
+  "soilLoamy": "दोमट मिट्टी",
+  "plantingDirectSowing": "सीधी बुवाई",
+  "plantingTransplanting": "रोपाई",
+  "plantingBroadcasting": "छिटकवाँ बुवाई",
+  "plantingRaisedBed": "उठी हुई क्यारी",
+  "taskIrrigationReminder": "सिंचाई स्मरण",
+  "taskFertilizerReminder": "उर्वरक स्मरण",
+  "taskPestInspection": "कीट निरीक्षण",
+  "taskHarvestPreparation": "कटाई की तैयारी",
+  "taskCompleted": "पूर्ण",
+  "totalCrops": "कुल फसलें",
+  "healthyCrops": "स्वस्थ फसलें",
+  "cropsNeedingAttention": "ध्यान आवश्यक",
+  "upcomingTasks": "आगामी कार्य",
+  "noCropsYet": "अभी कोई फसल नहीं जोड़ी गई।",
+  "cropName": "फसल का नाम",
+  "otherCropName": "अन्य फसल का नाम",
+  "variety": "किस्म",
+  "sowingDate": "बुवाई की तारीख",
+  "landArea": "भूमि क्षेत्र",
+  "landAreaUnit": "क्षेत्र इकाई",
+  "currentGrowthStage": "वर्तमान वृद्धि अवस्था",
+  "irrigationType": "सिंचाई प्रकार",
+  "healthStatus": "स्वास्थ्य स्थिति",
+  "villageFarmOptional": "गाँव / खेत का नाम (वैकल्पिक)",
+  "expectedHarvestOptional": "अपेक्षित कटाई तारीख (वैकल्पिक)",
+  "notesOptional": "नोट्स (वैकल्पिक)",
+  "saveCrop": "फसल सहेजें",
+  "selectDate": "तारीख चुनें",
+  "cropNameRequired": "फसल का नाम चुनें।",
+  "varietyRequired": "फसल की किस्म दर्ज करें।",
+  "sowingDateRequired": "बुवाई की तारीख चुनें।",
+  "landAreaPositive": "भूमि क्षेत्र शून्य से अधिक होना चाहिए।",
+  "sowingDateFutureError": "बुवाई की तारीख भविष्य की नहीं हो सकती।",
+  "cropDetails": "फसल विवरण",
+  "cropAge": "फसल की आयु",
+  "growthProgress": "वृद्धि प्रगति",
+  "nextAction": "अगला कार्य",
+  "expectedHarvestDate": "अपेक्षित कटाई तारीख",
+  "notes": "नोट्स",
+  "updateHealthStatus": "स्वस्थ / ध्यान आवश्यक चिह्नित करें",
+  "updateGrowthStage": "वृद्धि अवस्था अपडेट करें",
+  "editCrop": "फसल संपादित करें",
+  "deleteCrop": "फसल हटाएँ",
+  "deleteCropConfirmation": "क्या आप इस फसल को हटाना चाहते हैं?",
+  "cancel": "रद्द करें",
+  "delete": "हटाएँ",
+  "cropNotFound": "फसल नहीं मिली।",
+  "cropHealthRecord": "फसल स्वास्थ्य रिकॉर्ड",
+  "diseaseHistory": "रोग इतिहास",
+  "fertilizerHistory": "उर्वरक इतिहास",
+  "irrigationHistory": "सिंचाई इतिहास",
+  "sprayHistory": "छिड़काव इतिहास",
+  "scanHistory": "स्कैन इतिहास",
+  "photoHistory": "फोटो इतिहास",
+  "addRecord": "रिकॉर्ड जोड़ें",
+  "editRecord": "रिकॉर्ड संपादित करें",
+  "deleteRecord": "रिकॉर्ड हटाएँ",
+  "deleteRecordConfirmation": "क्या आप यह रिकॉर्ड हटाना चाहते हैं?",
+  "noHealthRecords": "अभी कोई फसल स्वास्थ्य रिकॉर्ड नहीं है।",
+  "recordType": "रिकॉर्ड प्रकार",
+  "recordTitle": "शीर्षक",
+  "recordTitleRequired": "रिकॉर्ड का शीर्षक दर्ज करें।",
+  "recordDate": "रिकॉर्ड तारीख",
+  "recordDetails": "विवरण (वैकल्पिक)",
+  "saveRecord": "रिकॉर्ड सहेजें",
   "scanDisease": "रोग स्कैन करें",
-  "inDays": "{days} दिनों में", "@inDays": {"placeholders": {"days": {"type": "int"}}}, "sownOn": "बुवाई",
-  "cropCalendar": "फसल कैलेंडर", "viewCalendar": "कैलेंडर देखें", "addTask": "कार्य जोड़ें", "editTask": "कार्य संपादित करें", "taskType": "कार्य प्रकार", "dueDate": "नियत तारीख", "taskNotes": "नोट्स (वैकल्पिक)", "saveTask": "कार्य सहेजें", "selectCropForTask": "कृपया एक फसल चुनें।",
-  "irrigationTask": "सिंचाई", "fertilizerTask": "उर्वरक", "pestInspectionTask": "कीट निरीक्षण", "harvestTask": "कटाई की तैयारी",
-  "tasksForSelectedDate": "चुनी हुई तारीख के कार्य", "upcomingCropTasks": "आगामी फसल कार्य", "noTasksForDate": "इस तारीख के लिए कोई कार्य नहीं है।", "noUpcomingCropTasks": "कोई आगामी फसल कार्य नहीं है।", "deleteTask": "कार्य हटाएँ", "deleteTaskConfirmation": "क्या आप इस कार्य को हटाना चाहते हैं?",
-  "noTasksToday": "आज कोई फसल कार्य नियत नहीं है।", "noCropTasksScheduled": "कोई फसल कार्य निर्धारित नहीं है", "completedTasks": "पूर्ण कार्य", "noCompletedTasks": "अभी कोई कार्य पूर्ण नहीं हुआ।", "cropTimeline": "फसल समयरेखा", "noCropTimelineTasks": "समयरेखा में कोई कार्य उपलब्ध नहीं है।",
-  "today": "आज", "selectTaskType": "कृपया कार्य प्रकार चुनें।", "cropCalendarLoadError": "फसल कैलेंडर लोड नहीं हो सका। कृपया फिर प्रयास करें।",
-  "reminderTime": "रिमाइंडर", "reminderAtDueTime": "नियत समय पर", "reminderThirtyMinutesBefore": "30 मिनट पहले", "reminderOneHourBefore": "1 घंटा पहले", "reminderOneDayBefore": "1 दिन पहले", "reminderNone": "कोई रिमाइंडर नहीं", "dueTime": "नियत समय",
+  "inDays": "{days} दिनों में",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "sownOn": "बुवाई",
+  "cropCalendar": "फसल कैलेंडर",
+  "viewCalendar": "कैलेंडर देखें",
+  "addTask": "कार्य जोड़ें",
+  "editTask": "कार्य संपादित करें",
+  "taskType": "कार्य प्रकार",
+  "dueDate": "नियत तारीख",
+  "taskNotes": "नोट्स (वैकल्पिक)",
+  "saveTask": "कार्य सहेजें",
+  "selectCropForTask": "कृपया एक फसल चुनें।",
+  "irrigationTask": "सिंचाई",
+  "fertilizerTask": "उर्वरक",
+  "pestInspectionTask": "कीट निरीक्षण",
+  "harvestTask": "कटाई की तैयारी",
+  "tasksForSelectedDate": "चुनी हुई तारीख के कार्य",
+  "upcomingCropTasks": "आगामी फसल कार्य",
+  "noTasksForDate": "इस तारीख के लिए कोई कार्य नहीं है।",
+  "noUpcomingCropTasks": "कोई आगामी फसल कार्य नहीं है।",
+  "deleteTask": "कार्य हटाएँ",
+  "deleteTaskConfirmation": "क्या आप इस कार्य को हटाना चाहते हैं?",
+  "noTasksToday": "आज कोई फसल कार्य नियत नहीं है।",
+  "noCropTasksScheduled": "कोई फसल कार्य निर्धारित नहीं है",
+  "completedTasks": "पूर्ण कार्य",
+  "noCompletedTasks": "अभी कोई कार्य पूर्ण नहीं हुआ।",
+  "cropTimeline": "फसल समयरेखा",
+  "noCropTimelineTasks": "समयरेखा में कोई कार्य उपलब्ध नहीं है।",
+  "today": "आज",
+  "selectTaskType": "कृपया कार्य प्रकार चुनें।",
+  "cropCalendarLoadError": "फसल कैलेंडर लोड नहीं हो सका। कृपया फिर प्रयास करें।",
+  "reminderTime": "रिमाइंडर",
+  "reminderAtDueTime": "नियत समय पर",
+  "reminderThirtyMinutesBefore": "30 मिनट पहले",
+  "reminderOneHourBefore": "1 घंटा पहले",
+  "reminderOneDayBefore": "1 दिन पहले",
+  "reminderNone": "कोई रिमाइंडर नहीं",
+  "dueTime": "नियत समय",
   "cropTaskNotificationTitle": "कृषि सेच फसल कार्य",
   "cropTaskNotificationBody": "{cropName} {taskName} का समय {dueTime} है। कार्य देखने के लिए कृषि सेच खोलें।",
-  "@cropTaskNotificationBody": {"placeholders": {"cropName": {"type": "String"}, "taskName": {"type": "String"}, "dueTime": {"type": "String"}}},
+  "@cropTaskNotificationBody": {
+    "placeholders": {
+      "cropName": {
+        "type": "String"
+      },
+      "taskName": {
+        "type": "String"
+      },
+      "dueTime": {
+        "type": "String"
+      }
+    }
+  },
   "cropOfflineCache": "ऑफ़लाइन — सहेजी गई फसलें दिखाई जा रही हैं। बदलाव अपने आप सिंक होंगे।",
   "cropServerError": "फसल की जानकारी अपडेट नहीं हो सकी। फिर कोशिश करें।",
   "cropChangesPending": "फसल के बदलाव सिंक होने की प्रतीक्षा में हैं।",
@@ -443,9 +636,21 @@
   "smartOfflineData": "ऑफ़लाइन — सहेजे गए सुझाव दिखाए जा रहे हैं",
   "smartNoIrrigation": "आज सिंचाई की जरूरत नहीं",
   "smartIrrigationRequired": "प्रति एकड़ {liters} लीटर सिंचाई करें",
-  "@smartIrrigationRequired": {"placeholders": {"liters": {"type": "int"}}},
+  "@smartIrrigationRequired": {
+    "placeholders": {
+      "liters": {
+        "type": "int"
+      }
+    }
+  },
   "smartTaskCount": "{count} कार्य बाकी",
-  "@smartTaskCount": {"placeholders": {"count": {"type": "int"}}},
+  "@smartTaskCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "smartRiskLow": "कम जोखिम",
   "smartRiskMedium": "मध्यम जोखिम",
   "smartRiskHigh": "उच्च जोखिम",
@@ -466,5 +671,18 @@
   "profileUnavailable": "प्रोफ़ाइल उपलब्ध नहीं है",
   "profileLoadError": "प्रोफ़ाइल लोड नहीं हुई। दोबारा प्रयास के लिए नीचे खींचें या रीफ़्रेश दबाएँ।",
   "featureComingSoon": "यह सुविधा जल्द उपलब्ध होगी।",
-  "farmer": "किसान"
+  "farmer": "किसान",
+  "marketKilogram": "किलो",
+  "marketLitre": "लीटर",
+  "marketOffline": "आप ऑफ़लाइन हैं। बाज़ार देखने के लिए इंटरनेट से जुड़ें।",
+  "marketCatalogueEmpty": "अभी तक कोई उत्पाद सूचीबद्ध नहीं है। कृपया कुछ समय बाद देखें।",
+  "mandiOffline": "आप ऑफ़लाइन हैं। मंडी भाव देखने के लिए इंटरनेट से जुड़ें।",
+  "mandiUnavailable": "अभी मंडी भाव उपलब्ध नहीं हैं। कृपया बाद में पुनः प्रयास करें।",
+  "mandiLocationMissing": "अपने राज्य के मंडी भाव देखने के लिए अपने खेत का स्थान सेट करें।",
+  "noMandiPricesPublished": "आज आपके राज्य के लिए कोई मंडी भाव प्रकाशित नहीं हुआ है।",
+  "aiResponseUnavailable": "सहायक अभी उत्तर नहीं दे सका। कृपया फिर से प्रयास करें।",
+  "mandiArrivalDate": "भाव की तारीख: {date}",
+  "consultExpertGuidance": "विशेषज्ञ सहायता के लिए नजदीकी कृषि विज्ञान केंद्र, कृषि विस्तार अधिकारी या राज्य कृषि हेल्पलाइन से संपर्क करें।",
+  "mandiPartialList": "हमारी टीम द्वारा दर्ज {count} भाव दिखाए जा रहे हैं। लाइव मंडी फ़ीड उपलब्ध नहीं है, इसलिए यह आज का पूरा बाज़ार नहीं है।",
+  "mandiPartialListShort": "आंशिक सूची — लाइव मंडी फ़ीड उपलब्ध नहीं है।"
 }

@@ -39,7 +39,7 @@ export class MongoCalendarTaskRepository implements CalendarTaskRepository {
     const documents = await this.database.calendarTasks
       .find({ userId })
       .sort({ dueDate: 1 })
-      .toArray();
+      .lean();
     return documents.map(toCalendarTaskRecord);
   }
 
@@ -50,7 +50,7 @@ export class MongoCalendarTaskRepository implements CalendarTaskRepository {
     const document = await this.database.calendarTasks.findOne({
       _id: id,
       userId,
-    });
+    }).lean();
     return document ? toCalendarTaskRecord(document) : null;
   }
 
@@ -63,7 +63,7 @@ export class MongoCalendarTaskRepository implements CalendarTaskRepository {
       { _id: id, userId },
       { $set: { ...input, updatedAt: new Date() } },
       { returnDocument: 'after' },
-    );
+    ).lean();
     if (!document) throw new Error('Calendar task not found');
     return toCalendarTaskRecord(document);
   }

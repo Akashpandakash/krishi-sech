@@ -11,6 +11,7 @@ import type {
   AuthRefreshToken,
   AuthRepository,
   AuthUser,
+  GoogleUserInput,
 } from './auth-repository.js';
 
 export function toAuthUser(document: UserDocument): AuthUser {
@@ -62,10 +63,9 @@ export class MongoAuthRepository implements AuthRepository {
   }
 
   async findLatestOtp(phone: string): Promise<AuthOtp | null> {
-    const document = await this.database.otpCodes.findOne(
-      { phone, consumedAt: null },
-      { sort: { createdAt: -1 } },
-    );
+    const document = await this.database.otpCodes.findOne({ phone, consumedAt: null })
+      .sort({ createdAt: -1 })
+      .lean();
     return document ? toAuthOtp(document) : null;
   }
 
@@ -83,13 +83,39 @@ export class MongoAuthRepository implements AuthRepository {
     );
   }
 
+  async findUserByGoogleId(googleId: string): Promise<AuthUser | null> {
+    const document = await this.database.users.findOne({ googleId }).lean();
+    return document ? toAuthUser(document) : null;
+  }
+
+  async createGoogleUser(input: GoogleUserInput): Promise<AuthUser> {
+    const now = new Date();
+    const document: UserDocument = {
+      _id: randomUUID(),
+      phone: null,
+      email: input.email,
+      googleId: input.googleId,
+      name: input.name,
+      preferredLanguage: 'bn',
+      profilePhotoUrl: input.profilePhotoUrl,
+      state: null,
+      district: null,
+      village: null,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.database.users.insertOne(document);
+    return toAuthUser(document);
+  }
+
   async findUserByPhone(phone: string): Promise<AuthUser | null> {
-    const document = await this.database.users.findOne({ phone });
+    const document = await this.database.users.findOne({ phone }).lean();
     return document ? toAuthUser(document) : null;
   }
 
   async findUserById(id: string): Promise<AuthUser | null> {
-    const document = await this.database.users.findOne({ _id: id });
+    const document = await this.database.users.findOne({ _id: id }).lean();
     return document ? toAuthUser(document) : null;
   }
 
@@ -98,6 +124,8 @@ export class MongoAuthRepository implements AuthRepository {
     const document: UserDocument = {
       _id: randomUUID(),
       phone,
+      email: null,
+      googleId: null,
       name: null,
       preferredLanguage: 'bn',
       profilePhotoUrl: null,
@@ -125,6 +153,8 @@ export class MongoAuthRepository implements AuthRepository {
         },
         $setOnInsert: {
           _id: randomUUID(),
+          email: null,
+          googleId: null,
           profilePhotoUrl: null,
           state: null,
           district: null,
@@ -133,9 +163,14 @@ export class MongoAuthRepository implements AuthRepository {
         },
       },
       { upsert: true, returnDocument: 'after' },
-    );
+    ).lean();
     if (!document) throw new Error('Failed to upsert demo user');
     return toAuthUser(document);
+  }
+
+  async deleteUser(id: string) {
+    await this.database.users.deleteOne({ _id: id });
+    await this.database.refreshTokens.deleteMany({ userId: id });
   }
 
   async createRefreshToken(userId: string, tokenHash: string, expiresAt: Date) {
@@ -150,7 +185,7 @@ export class MongoAuthRepository implements AuthRepository {
   }
 
   async findRefreshToken(tokenHash: string): Promise<AuthRefreshToken | null> {
-    const document = await this.database.refreshTokens.findOne({ tokenHash });
+    const document = await this.database.refreshTokens.findOne({ tokenHash }).lean();
     return document ? toAuthRefreshToken(document) : null;
   }
 

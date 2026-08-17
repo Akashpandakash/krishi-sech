@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:krishi_sech/core/auth/google_sign_in_service.dart';
 import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/features/login/data/datasources/auth_remote_data_source.dart';
 import 'package:krishi_sech/features/login/data/datasources/auth_token_storage.dart';
@@ -7,15 +8,32 @@ import 'package:krishi_sech/features/login/domain/entities/auth_session.dart';
 import 'package:krishi_sech/features/login/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  const AuthRepositoryImpl(
+  AuthRepositoryImpl(
     this.remote,
     this.storage, {
     this.demoModeEnabled = AppEnvironment.demoModeEnabled,
-  });
+    GoogleSignInService? googleSignIn,
+  }) : googleSignIn = googleSignIn ?? GoogleSignInService();
 
   final AuthRemoteDataSource remote;
   final AuthTokenStorage storage;
   final bool demoModeEnabled;
+  final GoogleSignInService googleSignIn;
+
+  @override
+  Future<AuthSession> signInWithGoogle() async {
+    final String idToken;
+    try {
+      idToken = await googleSignIn.authenticate();
+    } on GoogleSignInCancelled {
+      rethrow;
+    } on GoogleSignInUnavailable catch (error) {
+      throw AuthFailure(AuthFailureType.unauthorized, error.message);
+    }
+    final session = await remote.signInWithGoogle(idToken);
+    await storage.write(session);
+    return session;
+  }
 
   @override
   Future<OtpDispatch> sendOtp(String phone) => remote.sendOtp(phone);
@@ -93,6 +111,9 @@ class AuthRepositoryImpl implements AuthRepository {
       if (stored != null) await remote.logout(stored.refreshToken);
     } finally {
       await storage.clear();
+      // Without this the account chooser silently reuses the last Google
+      // account, so a shared handset cannot switch farmers.
+      await googleSignIn.signOut();
     }
   }
 

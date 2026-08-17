@@ -30,6 +30,25 @@ abstract final class AppEnvironment {
     defaultValue: true,
   );
 
+  /// Telemetry is off by default in debug builds so local runs and hot reloads
+  /// do not pollute the Firebase dashboards. Pass the dart-define explicitly to
+  /// exercise Crashlytics or the Analytics DebugView from a debug build.
+  static const crashReportingEnabled = bool.fromEnvironment(
+    'CRASH_REPORTING_ENABLED',
+    defaultValue: !kDebugMode,
+  );
+  static const analyticsEnabled = bool.fromEnvironment(
+    'ANALYTICS_ENABLED',
+    defaultValue: !kDebugMode,
+  );
+
+  /// Web OAuth client ID. Android only issues an ID token with the audience
+  /// the backend expects when this is supplied as serverClientId. Empty hides
+  /// the Google sign-in button rather than offering a button that cannot work.
+  static const googleServerClientId = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+  );
+
   static const isDevelopment = appEnv == 'development';
   static const isStaging = appEnv == 'staging';
   static const isProduction = appEnv == 'production';

@@ -18,9 +18,11 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Backend
 
-The backend uses Node.js, TypeScript, and Express.
+The backend uses Node.js, TypeScript, and Express. It lives in `server/`, and
+every backend command below runs from that directory.
 
 ```bash
+cd server
 npm install
 npm run dev
 ```
@@ -33,21 +35,35 @@ Available commands:
 - `npm run dev` starts the TypeScript development server with file watching.
 - `npm run build` compiles TypeScript into `dist/`.
 - `npm start` runs the compiled server.
+- `npm run db:indexes` creates the MongoDB indexes and unique constraints.
 - `npm test` runs the backend tests.
+
+### Database
+
+The backend stores data in MongoDB. Copy `server/.env.example` to
+`server/.env` and set
+`MONGODB_URI` (optionally `MONGODB_DB_NAME` to override the database named in
+the connection string). Collections are created on first write, and the server
+ensures indexes on startup; run them explicitly against a deployed database
+with:
+
+```bash
+npm run build
+npm run db:indexes
+```
+
+Leaving `MONGODB_URI` unset outside production keeps the backend on in-memory
+repositories, which is useful for local UI work but loses all data on restart.
+Production startup fails without it.
 
 ### Authentication
 
-Copy `.env.example` to `.env`, set a PostgreSQL `DATABASE_URL`, and replace all
-JWT and OTP secrets with independent random values. Then generate the Prisma
-client and create the database schema:
+Set `MONGODB_URI` and replace all JWT and OTP secrets with independent random
+values, then start the server:
 
 ```bash
-npx prisma generate
-npx prisma migrate dev --name authentication
 npm run dev
 ```
-
-Do not run the migration until `DATABASE_URL` points to the intended database.
 
 Authentication endpoints:
 
@@ -68,12 +84,32 @@ curl -X POST http://localhost:3000/api/auth/send-otp \
 `DEBUG_OTP_ENABLED=true` enables the development response field. Production
 configuration validation rejects that flag.
 
+### AI provider
+
+AI chat and crop-disease scanning run through one provider, selected by
+`AI_PROVIDER`:
+
+- `gemini` (default) uses `GEMINI_API_KEY` and `GEMINI_MODEL`
+  (default `gemini-flash-latest`).
+- `openai` uses `OPENAI_API_KEY` and `OPENAI_MODEL`.
+
+Only the selected provider's key is required; production startup fails if it is
+missing. Set `AI_ENABLED=false` to disable both AI features, in which case
+neither key is needed and the endpoints return `AI_UNAVAILABLE`.
+
+The Gemini image-diagnosis request disables the model's thinking budget: with it
+enabled a scan measured 84 seconds and exceeded the 60-second request timeout,
+against 10 seconds with it off. A model that cannot disable thinking needs that
+value raised in `gemini-completion-provider.ts`.
+
 ## Environments
 
-The backend loads the existing ignored `.env` first, then fills missing values
-from `.env.development`, `.env.staging`, or `.env.production` according to
-`APP_ENV`. Keep real staging and production files outside Git; use the tracked
-`.example` files as deployment templates.
+The backend loads the ignored `server/.env` first, then fills missing values
+from `server/.env.development`, `server/.env.staging`, or
+`server/.env.production` according to `APP_ENV`. These paths resolve from the
+working directory, so start the backend from `server/`. Keep real staging and
+production files outside Git; use the tracked `.example` files as deployment
+templates.
 
 Flutter configuration is supplied at build time:
 

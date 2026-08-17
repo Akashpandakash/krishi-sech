@@ -1,36 +1,20 @@
 enum ChatAuthor { user, assistant }
 
-enum AiResponseType {
-  greeting,
-  languageSupport,
-  cropProblemWheat,
-  cropProblemRice,
-  cropProblemGeneral,
-  irrigationDelayForRain,
-  irrigationNormal,
-  rainExpected,
-  weatherNormal,
-  fertilizer,
-  pests,
-  yellowLeaves,
-  cropDisease,
-  marketPrice,
-  sowingTime,
-  governmentSchemes,
-  agriculturalExpert,
-  general,
-}
-
 class ChatMessage {
   const ChatMessage({
     required this.author,
     required this.createdAt,
     this.text,
-    this.responseType,
+    this.isError = false,
   });
 
   final ChatAuthor author;
   final DateTime createdAt;
   final String? text;
-  final AiResponseType? responseType;
+
+  /// Marks an assistant turn where the request failed and no answer was
+  /// produced. The transcript keeps the turn so the farmer can see their
+  /// question went unanswered, and the UI renders it as a failure rather than
+  /// substituting advice the assistant never gave.
+  final bool isError;
 }

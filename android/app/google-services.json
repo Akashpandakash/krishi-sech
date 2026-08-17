@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "810187577371",
+    "project_id": "krishi-sech",
+    "storage_bucket": "krishi-sech.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810187577371:android:1d81c161d6ae8c43c540be",
+        "android_client_info": {
+          "package_name": "com.krishisech.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "810187577371-89mmeh62aiia2kmhcmvu69hgfaruaqkn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.krishisech.app",
+            "certificate_hash": "3fa6574d20384d1958b8e2aece54657f57a0ce2e"
+          }
+        },
+        {
+          "client_id": "810187577371-apob0l8upe5g8qchccpucrvpr1prp2jo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiPttn5C37_c-jo_1VxaIeOqSCkUdKSS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "810187577371-apob0l8upe5g8qchccpucrvpr1prp2jo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "810187577371-f5rshgmavbhockn3onqrl3mehf6ifpuo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.krishisech.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

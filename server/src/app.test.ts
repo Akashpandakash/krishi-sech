@@ -11,6 +11,7 @@ import type {
   AuthRefreshToken,
   AuthRepository,
   AuthUser,
+  GoogleUserInput,
 } from './auth/repositories/auth-repository.js';
 import { AuthService } from './auth/services/auth-service.js';
 import type {
@@ -26,7 +27,7 @@ import type {
 import { EmptyAiContextRepository } from './ai/repositories/empty-ai-context-repository.js';
 import { AiChatService } from './ai/services/ai-chat-service.js';
 import { AiContextService } from './ai/services/ai-context-service.js';
-import { app, createApp } from './app.js';
+import { createApp } from './app.js';
 import type { AuthConfig } from './config/auth-config.js';
 import type {
   CropInput,
@@ -38,10 +39,10 @@ import { loadAppConfig } from './config/app-config.js';
 import { AppError } from './common/app-error.js';
 import { requestIdMiddleware } from './middleware/request-id.js';
 import { createErrorHandler } from './middleware/error-handler.js';
-import { InMemoryProfileRepository } from './profile/repositories/in-memory-profile-repository.js';
 import { ProfileService } from './profile/services/profile-service.js';
 import { supportedAppLocaleCodes } from './localization/supported-locales.js';
 import { updateUserProfileSchema } from './profile/validation/profile-validation.js';
+import { InMemoryProfileRepository } from './testing/repository-fakes.js';
 
 describe('profile language validation', () => {
   const profile = (preferredLanguage: unknown) => ({
@@ -111,7 +112,10 @@ describe('profile language validation', () => {
 
 describe('GET /api/health', () => {
   it('preserves the backend health endpoint', async () => {
-    const response = await request(app).get('/api/health').expect(200);
+    // Built locally rather than importing the composed app: app.ts is now a
+    // side-effect-free factory, and the composition root requires a database.
+    const { app: healthApp } = authenticationFixture();
+    const response = await request(healthApp).get('/api/health').expect(200);
     assert.deepEqual(response.body, {
       success: true,
       message: 'Krishi Sech Backend Running',
@@ -126,6 +130,29 @@ describe('GET /api/health', () => {
 
 class MemoryAuthRepository implements AuthRepository {
   readonly users: AuthUser[] = [];
+
+  async findUserByGoogleId(googleId: string) {
+    return this.users.find((user) => user.googleId === googleId) ?? null;
+  }
+
+  async createGoogleUser(input: GoogleUserInput) {
+    const now = new Date();
+    const user: AuthUser = {
+      id: `user-${this.users.length + 1}`,
+      phone: null,
+      email: input.email,
+      googleId: input.googleId,
+      name: input.name,
+      preferredLanguage: 'bn',
+      profilePhotoUrl: input.profilePhotoUrl,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.users.push(user);
+    return user;
+  }
+
   readonly otps: (AuthOtp & { createdAt: Date })[] = [];
   readonly refreshTokens: AuthRefreshToken[] = [];
 
@@ -173,11 +200,18 @@ class MemoryAuthRepository implements AuthRepository {
     return this.users.find((user) => user.id === id) ?? null;
   }
 
+  async deleteUser(id: string) {
+    const index = this.users.findIndex((user) => user.id === id);
+    if (index >= 0) this.users.splice(index, 1);
+  }
+
   async createUser(phone: string) {
     const now = new Date();
     const user: AuthUser = {
       id: `user-${this.users.length + 1}`,
       phone,
+      email: null,
+      googleId: null,
       name: null,
       preferredLanguage: 'bn',
       isActive: true,

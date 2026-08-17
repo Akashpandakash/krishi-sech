@@ -4,11 +4,11 @@ This directory is the deployment runbook for the backend and Flutter release. It
 
 ## Recommended topology
 
-Use the managed-hosting plan for RC1: one staging web service and database, plus one production web service and database, in the closest available region to Indian users. A managed platform reduces operating-system, TLS, database-backup, and rollback work. Use the VPS plan only if the team has an operator who can own patching, monitoring, backups, and recovery.
+Use the managed-hosting plan for RC1: one staging web service and database, plus one production web service and database, in the closest available region to Indian users. MongoDB is hosted separately from the web services (MongoDB Atlas is the reference choice). A managed platform reduces operating-system, TLS, database-backup, and rollback work. Use the VPS plan only if the team has an operator who can own patching, monitoring, backups, and recovery.
 
 | Environment | Flutter API URL | Backend | Database |
 | --- | --- | --- | --- |
-| Development | Existing local/LAN strategy | Local Node process | Local PostgreSQL |
+| Development | Existing local/LAN strategy | Local Node process | Local MongoDB |
 | Staging | `https://staging-api.krishisech.com` | Separate service | Separate staging database |
 | Production | `https://api.krishisech.com` | Separate service | Separate production database |
 
@@ -20,31 +20,30 @@ For managed hosting, create `CNAME` records for `api` and `staging-api` pointing
 
 ## Planning estimate (USD/month, before tax and usage APIs)
 
-- Managed Render baseline: approximately $13 per always-on Starter web service plus Basic PostgreSQL environment, or about $26 for isolated staging and production before bandwidth/storage growth. Confirm the live provider quote before purchase.
 - Railway alternative: the production-oriented Pro subscription begins at $20/month and includes a matching usage credit; CPU, memory, storage, and egress above that are usage billed. Isolated staging adds its own resource use.
-- VPS baseline: a 2 GiB VM is about $12, daily VM backup about $3.60, and optional object storage about $5. A separate staging VM adds $6–12. Local PostgreSQL has no license fee but substantially increases operator responsibility; managed PostgreSQL starts around $15 on the cited comparison provider.
+- VPS baseline: a 2 GiB VM is about $12, daily VM backup about $3.60, and optional object storage about $5. A separate staging VM adds $6–12. Self-hosted MongoDB has no license fee but substantially increases operator responsibility; managed MongoDB starts around $15 on the cited comparison provider.
 - Variable services are additional: domain registration, SMS/OTP traffic, OpenAI tokens, monitoring/alerting upgrades, database growth, and outbound bandwidth.
 
 ## Runtime contract
 
 - Node.js: pin Node 20 LTS (the package declares `>=20`).
-- Install/build: `npm ci && npm run build`
-- Database migration: `npm run migrate:deploy`
+- Install/build: `npm ci && npm run build` (from `server/`)
+- Database index setup: `npm run db:indexes`
 - Start: `npm start`
 - Hosted bind: `HOST=0.0.0.0` and the platform-supplied `PORT`.
 - Liveness: `GET /api/health`
 - Readiness: `GET /api/ready`
 
-`/api/health` proves that Express is serving. `/api/ready` additionally reports configuration validation and performs a time-bounded database query. Responses do not reveal database addresses, secrets, stack traces, or topology. Route platform health checks to `/api/ready` so an instance is not admitted while its database is unavailable.
+`/api/health` proves that Express is serving. `/api/ready` additionally reports configuration validation and performs a time-bounded MongoDB ping. Responses do not reveal database addresses, secrets, stack traces, or topology. Route platform health checks to `/api/ready` so an instance is not admitted while its database is unavailable.
 
 ## Required backend environment variable names
 
 - `APP_ENV`, `NODE_ENV`, `HOST`, `PORT`
-- `DATABASE_URL`
+- `MONGODB_URI`, `MONGODB_DB_NAME`
 - `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `OTP_HASH_SECRET`
 - `REQUEST_TIMEOUT_MS`
 - `LOGGING_ENABLED`, `DEMO_LOGIN_ENABLED`, `DEBUG_OTP_ENABLED`
-- `OPENAI_ENABLED`, `OPENAI_MODEL`, and `OPENAI_API_KEY` when OpenAI is enabled
+- `AI_PROVIDER` (`gemini` or `openai`), `AI_ENABLED`, and the selected provider's key: `GEMINI_API_KEY`/`GEMINI_MODEL` or `OPENAI_API_KEY`/`OPENAI_MODEL`
 - `WEATHER_PROVIDER`, `WEATHER_API_BASE_URL`
 - `TRUST_PROXY`, `CORS_ALLOWED_ORIGINS`
 - `RATE_LIMIT_WINDOW_MS`, `AUTH_RATE_LIMIT_MAX`, `AI_RATE_LIMIT_MAX`
@@ -58,21 +57,21 @@ Use the platform secret store or a root-readable environment file outside the ch
 ## Release gate
 
 1. Provision isolated staging resources and DNS.
-2. Set variables in the host secret store; validate names against `.env.staging.example` without copying values into the repository.
-3. Run `npm ci`, `npm test`, `npm run build`, then `npm run migrate:deploy` against staging.
+2. Set variables in the host secret store; validate names against `server/.env.staging.example` without copying values into the repository.
+3. From `server/`, run `npm ci`, `npm test`, `npm run build`, then `npm run db:indexes` against staging.
 4. Verify health/readiness, login/refresh/logout, weather, calendar, recommendations, AI chat, and disease scanning.
 5. Confirm error responses have a request ID and contain no stack trace or secret.
 6. Build staging with `--dart-define-from-file=config/staging.json` and complete a physical-device smoke test.
-7. Take a production database snapshot, deploy the reviewed commit, run migrations once, and wait for readiness.
+7. Take a production database snapshot, deploy the reviewed commit, run `npm run db:indexes` once, and wait for readiness.
 8. Build production with `--dart-define-from-file=config/production.json`; its guard rejects HTTP, localhost, emulator, private-LAN, demo-login, or debug-OTP configuration.
 9. Observe error rate, latency, database connections, rate-limit responses, and provider failures before widening release.
 
 ## Current blockers before deployment
 
 - Fast2SMS delivery is implemented outside development. Account KYC, wallet funding, and DLT-approved sender/route activation must be confirmed with a real staging delivery before release.
-- The completed migration chain must be rehearsed on a disposable clean PostgreSQL database and reconciled with any existing database created outside Prisma migrations.
+- Index creation must be rehearsed on a disposable clean MongoDB database. The unique indexes on `users.phone`, `farm_profiles.userId`, and `refresh_tokens.tokenHash` fail to build if an existing database already holds duplicates; deduplicate before running them.
 - Hosting accounts, regions, database plans, custom-domain ownership, DNS access, alert recipients, retention requirements, and a rollback operator are not selected.
 - Android release signing and store credentials must be configured outside Git before publishing.
 - The endpoint limiter is in-process. Multi-instance production needs provider edge limits or a shared rate-limit store for a global budget.
 
-The hosting decision is Render. See [render.md](render.md) for the authoritative service, database, DNS, and secret-entry configuration. The older [managed-hosting.md](managed-hosting.md) and [ubuntu-vps.md](ubuntu-vps.md) documents remain comparison material only.
+The backend is deployed to a self-managed server. See [ubuntu-vps.md](ubuntu-vps.md) for the authoritative process, firewall, TLS, and backup configuration. [managed-hosting.md](managed-hosting.md) remains comparison material for a managed platform.

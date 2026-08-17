@@ -27,6 +27,10 @@ class _AuthRepositoryStub implements AuthRepository {
       throw UnimplementedError();
 
   @override
+  Future<AuthSession> signInWithGoogle() =>
+      throw UnimplementedError('Google sign-in is not exercised here');
+
+  @override
   Future<AuthSession> createDemoSession() => throw UnimplementedError();
 }
 

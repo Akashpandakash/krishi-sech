@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/features/notifications/domain/entities/app_notification.dart';
 import 'package:krishi_sech/features/notifications/presentation/app_notification_scope.dart';
-import 'package:krishi_sech/features/notifications/presentation/app_notification_text.dart';
 import 'package:krishi_sech/l10n/l10n.dart';
 import 'package:krishi_sech/shared/presentation/widgets/app_pressable.dart';
 import 'package:krishi_sech/shared/presentation/widgets/responsive_content.dart';
@@ -90,7 +89,7 @@ class _NotificationCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          notification.title(context),
+                          notification.title,
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
@@ -109,7 +108,7 @@ class _NotificationCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  Text(notification.message(context)),
+                  Text(notification.message),
                   const SizedBox(height: 8),
                   Text(
                     '${MaterialLocalizations.of(context).formatMediumDate(notification.createdAt)} • '
@@ -129,8 +128,10 @@ class _NotificationCard extends StatelessWidget {
 
   IconData _iconFor(AppNotificationType type) => switch (type) {
     AppNotificationType.weather => Icons.cloud_outlined,
-    AppNotificationType.cropTask => Icons.event_note_outlined,
+    AppNotificationType.advisory => Icons.event_note_outlined,
     AppNotificationType.market => Icons.trending_up,
+    AppNotificationType.maintenance => Icons.build_outlined,
+    AppNotificationType.general => Icons.notifications_outlined,
   };
 }
 

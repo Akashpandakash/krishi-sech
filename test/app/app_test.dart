@@ -7,7 +7,7 @@ import 'package:krishi_sech/core/notifications/notification_service.dart';
 import 'package:krishi_sech/app/app.dart';
 import 'package:krishi_sech/app/router/app_router.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
-import 'package:krishi_sech/features/ai_assistant/data/repositories/local_ai_response_repository.dart';
+import 'package:krishi_sech/features/ai_assistant/domain/repositories/ai_chat_gateway.dart';
 import 'package:krishi_sech/features/ai_assistant/domain/entities/chat_message.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/ai_chat_scope.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
@@ -101,7 +101,7 @@ class _LocalizedRouteApp extends StatelessWidget {
               controller:
                   aiChatController ??
                   AiChatController(
-                    repository: const LocalAiResponseRepository(),
+                    gateway: const _StubAiGateway(),
                     locationController:
                         locationController ?? LocationController.inMemory(),
                     weatherController:
@@ -1486,80 +1486,6 @@ void main() {
     });
   });
 
-  group('local Krishi AI intent detection', () {
-    const repository = LocalAiResponseRepository();
-
-    Future<AiResponseType> responseFor(
-      String question, {
-      CurrentWeather? weather,
-    }) => repository.generateResponse(question: question, weather: weather);
-
-    test('detects Bengali language question', () async {
-      expect(await responseFor('বাংলা জানো?'), AiResponseType.languageSupport);
-    });
-
-    test('detects transliterated Bengali wheat problem', () async {
-      expect(
-        await responseFor('amar gom er somossa'),
-        AiResponseType.cropProblemWheat,
-      );
-    });
-
-    test('detects Bengali-script wheat problem', () async {
-      expect(
-        await responseFor('আমার গমে সমস্যা'),
-        AiResponseType.cropProblemWheat,
-      );
-    });
-
-    test('detects English irrigation and uses rain context', () async {
-      expect(
-        await responseFor(
-          'should I irrigate today?',
-          weather: const CurrentWeather(
-            temperatureCelsius: 28,
-            weatherCode: 61,
-            humidityPercent: 75,
-            windSpeedKmh: 8,
-            rainProbabilityPercent: 80,
-          ),
-        ),
-        AiResponseType.irrigationDelayForRain,
-      );
-    });
-
-    test('detects fertilizer question', () async {
-      expect(
-        await responseFor('which fertilizer should I use?'),
-        AiResponseType.fertilizer,
-      );
-    });
-
-    test('detects pest question', () async {
-      expect(await responseFor('amar fasole poka ache'), AiResponseType.pests);
-    });
-
-    test('uses fallback only for an unknown question', () async {
-      expect(
-        await responseFor('tell me something unexpected'),
-        AiResponseType.general,
-      );
-    });
-
-    test('different questions return different responses', () async {
-      final fertilizer = await responseFor('urea or dap fertilizer?');
-      final pest = await responseFor('how do I control insects?');
-      expect(fertilizer, isNot(pest));
-    });
-
-    test('detects Hindi-script wheat problem', () async {
-      expect(
-        await responseFor('गेहूं में समस्या'),
-        AiResponseType.cropProblemWheat,
-      );
-    });
-  });
-
   testWidgets('Home AI card opens the existing assistant', (tester) async {
     final locationController = LocationController.inMemory(
       location: const FarmLocation(
@@ -1577,7 +1503,7 @@ void main() {
       ),
     );
     final aiController = AiChatController(
-      repository: const LocalAiResponseRepository(),
+      gateway: const _StubAiGateway(),
       locationController: locationController,
       weatherController: weatherController,
     );
@@ -1624,7 +1550,7 @@ void main() {
         ),
       );
       final aiController = AiChatController(
-        repository: const LocalAiResponseRepository(),
+        gateway: const _StubAiGateway(),
         locationController: locationController,
         weatherController: weatherController,
       );
@@ -1650,13 +1576,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 350));
       await tester.pumpAndSettle();
       expect(aiController.messages, hasLength(2));
-      expect(
-        find.text(
-          'Rain is likely today, so delay irrigation and check soil moisture '
-          'after the rain.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text(_StubAiGateway.reply), findsOneWidget);
 
       aiController.newChat();
       await tester.pumpAndSettle();
@@ -2282,4 +2202,20 @@ void main() {
     expect(find.text('Page not found'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+}
+
+/// Stands in for the backend assistant. Answers now come only from the
+/// gateway, so the widget tests supply one rather than relying on a local
+/// response engine that no longer exists.
+class _StubAiGateway implements AiChatGateway {
+  const _StubAiGateway();
+
+  static const reply = 'Check soil moisture before irrigating today.';
+
+  @override
+  Future<AiChatReply> sendMessage({
+    required String question,
+    required String language,
+    required List<ChatMessage> history,
+  }) async => const AiChatReply(text: reply);
 }

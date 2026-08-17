@@ -14,6 +14,7 @@ class DiseaseScanResult {
     required this.organicAlternative,
     required this.prevention,
     required this.createdAt,
+    this.isDemo = false,
   });
 
   final String scanId;
@@ -30,6 +31,10 @@ class DiseaseScanResult {
   final List<String> organicAlternative;
   final List<String> prevention;
   final DateTime createdAt;
+
+  /// True only for the debug-gated sample diagnosis. A real diagnosis must
+  /// never be labelled a demo, and a demo must never pass for a real one.
+  final bool isDemo;
 
   factory DiseaseScanResult.fromJson(Map<String, dynamic> json) {
     final confidence = _requiredNumber(json, 'confidence').toDouble();

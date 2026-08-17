@@ -6,6 +6,7 @@ import type {
   AuthRepository,
   AuthUser,
 } from '../repositories/auth-repository.js';
+import type { GoogleIdTokenVerifier } from './google-id-token-verifier.js';
 import { JwtService } from './jwt-service.js';
 import { OtpService } from './otp-service.js';
 
@@ -19,7 +20,31 @@ export class AuthService {
     readonly config: AuthConfig,
     readonly jwtService = new JwtService(config),
     private readonly otpService = new OtpService(config.otpHashSecret),
+    private readonly googleVerifier?: GoogleIdTokenVerifier,
   ) {}
+
+  /**
+   * Signs in with a Google ID token. The token is the only evidence trusted
+   * here: the client never states who it is.
+   */
+  async loginWithGoogle(idToken: string) {
+    if (!this.googleVerifier?.configured) {
+      throw new AppError(
+        503,
+        'GOOGLE_LOGIN_UNAVAILABLE',
+        'Google sign-in is not configured',
+      );
+    }
+    const identity = await this.googleVerifier.verify(idToken);
+    const existing = await this.repository.findUserByGoogleId(
+      identity.googleId,
+    );
+    if (existing && !existing.isActive) {
+      throw new AppError(403, 'ACCOUNT_DISABLED', 'Account is disabled');
+    }
+    const user = existing ?? (await this.repository.createGoogleUser(identity));
+    return this.createSession(user);
+  }
 
   async sendOtp(
     phone: string,
@@ -77,6 +102,34 @@ export class AuthService {
       throw new AppError(403, 'USER_INACTIVE', 'User account is inactive');
     }
     return this.createSession(user);
+  }
+
+  /**
+   * Proves ownership of a phone number without minting a session or creating
+   * an account, for destructive flows such as web account deletion.
+   */
+  async confirmOtpOwnership(phone: string, code: string): Promise<AuthUser> {
+    const otp = await this.repository.findLatestOtp(phone);
+    if (!otp || otp.expiresAt.getTime() <= Date.now()) {
+      throw new AppError(400, 'OTP_EXPIRED', 'OTP is invalid or expired');
+    }
+    if (otp.attempts >= 5) {
+      throw new AppError(429, 'OTP_ATTEMPTS_EXCEEDED', 'Too many OTP attempts');
+    }
+    if (!this.otpService.matches(code, otp.codeHash)) {
+      await this.repository.incrementOtpAttempts(otp.id);
+      throw new AppError(400, 'OTP_INVALID', 'OTP is invalid or expired');
+    }
+    await this.repository.consumeOtp(otp.id);
+    const user = await this.repository.findUserByPhone(phone);
+    if (!user) {
+      throw new AppError(
+        404,
+        'ACCOUNT_NOT_FOUND',
+        'No Krishi Sech account uses this number',
+      );
+    }
+    return user;
   }
 
   async refresh(refreshToken: string) {

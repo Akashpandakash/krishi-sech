@@ -2,24 +2,25 @@ import 'package:flutter/foundation.dart';
 import 'package:krishi_sech/features/ai_assistant/domain/entities/chat_message.dart';
 import 'package:krishi_sech/features/ai_assistant/data/datasources/local_ai_chat_history_store.dart';
 import 'package:krishi_sech/features/ai_assistant/domain/repositories/ai_chat_gateway.dart';
-import 'package:krishi_sech/features/ai_assistant/domain/repositories/ai_response_repository.dart';
 import 'package:krishi_sech/features/location/presentation/controllers/location_controller.dart';
 import 'package:krishi_sech/features/weather/presentation/controllers/weather_controller.dart';
 
 class AiChatController extends ChangeNotifier {
   AiChatController({
-    required this.repository,
+    required this.gateway,
     required this.locationController,
     required this.weatherController,
-    this.gateway,
     this.historyStore,
     this.languageProvider,
   });
 
-  final AiResponseRepository repository;
+  /// The only source of answers. There is deliberately no local fallback: a
+  /// keyword-matched canned reply presented as the assistant's answer is
+  /// advice the farmer did not actually receive, and acting on it could cost
+  /// them a crop.
+  final AiChatGateway gateway;
   final LocationController locationController;
   final WeatherController weatherController;
-  final AiChatGateway? gateway;
   final LocalAiChatHistoryStore? historyStore;
   final String Function()? languageProvider;
   final List<ChatMessage> _messages = [];
@@ -56,54 +57,35 @@ class AiChatController extends ChangeNotifier {
     await _saveHistory();
 
     try {
-      if (gateway != null) {
-        final response = await gateway!.sendMessage(
-          question: trimmed,
-          language: languageProvider?.call() ?? 'en',
-          history: _messages.length > 1
-              ? _messages.sublist(0, _messages.length - 1)
-              : const [],
-        );
-        _messages.add(
-          ChatMessage(
-            author: ChatAuthor.assistant,
-            text: response.text,
-            createdAt: DateTime.now(),
-          ),
-        );
-        await _saveHistory();
-        return true;
-      }
-      final response = await repository.generateResponse(
+      final response = await gateway.sendMessage(
         question: trimmed,
-        location: locationController.location,
-        weather: weatherController.weather,
+        language: languageProvider?.call() ?? 'en',
+        history: _messages.length > 1
+            ? _messages.sublist(0, _messages.length - 1)
+            : const [],
       );
       _messages.add(
         ChatMessage(
           author: ChatAuthor.assistant,
-          responseType: response,
+          text: response.text,
           createdAt: DateTime.now(),
         ),
       );
       await _saveHistory();
       return true;
     } catch (_) {
+      // The turn is recorded as a failure and the question is held for retry.
+      // Nothing is invented to fill the gap.
       _failedQuestion = trimmed;
-      final fallback = await repository.generateResponse(
-        question: trimmed,
-        location: locationController.location,
-        weather: weatherController.weather,
-      );
       _messages.add(
         ChatMessage(
           author: ChatAuthor.assistant,
-          responseType: fallback,
+          isError: true,
           createdAt: DateTime.now(),
         ),
       );
       await _saveHistory();
-      return true;
+      return false;
     } finally {
       _isTyping = false;
       notifyListeners();
@@ -113,6 +95,15 @@ class AiChatController extends ChangeNotifier {
   Future<bool> retry() async {
     final question = _failedQuestion;
     if (question == null) return false;
+    // Drop the failed turn and the question that produced it, so a successful
+    // retry leaves one clean exchange rather than a stack of failures.
+    if (_messages.isNotEmpty && _messages.last.isError) {
+      _messages.removeLast();
+      if (_messages.isNotEmpty && _messages.last.author == ChatAuthor.user) {
+        _messages.removeLast();
+      }
+    }
+    _failedQuestion = null;
     return submit(question);
   }
 

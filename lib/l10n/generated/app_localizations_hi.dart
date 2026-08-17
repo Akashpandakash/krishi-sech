@@ -295,27 +295,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get notificationsLoadError => 'सूचनाएँ लोड नहीं हो सकीं।';
 
   @override
-  String get notificationWeatherTitle => 'आज बारिश की संभावना';
-
-  @override
-  String get notificationWeatherMessage =>
-      'आज दोपहर बारिश हो सकती है। सिंचाई कुछ समय के लिए टालें।';
-
-  @override
-  String get notificationCropTaskTitle => 'फसल कार्य अनुस्मारक';
-
-  @override
-  String get notificationCropTaskMessage =>
-      'आज धान की फसल में कीटों की जाँच करें।';
-
-  @override
-  String get notificationMarketTitle => 'बाज़ार भाव अपडेट';
-
-  @override
-  String get notificationMarketMessage =>
-      'स्थानीय मंडी में गेहूँ के भाव बढ़े हैं।';
-
-  @override
   String get goodMorning => 'सुप्रभात,';
 
   @override
@@ -837,77 +816,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get aiTyping => 'कृषि AI उत्तर लिख रहा है...';
 
   @override
-  String get aiResponseGreeting =>
-      'नमस्ते! आज किस फसल के लिए क्या सहायता चाहिए, बताएँ।';
-
-  @override
-  String get aiResponseLanguageSupport =>
-      'हाँ, मैं बंगाली समझ सकता हूँ। आप अपना खेती से जुड़ा प्रश्न बांग्ला में पूछ सकते हैं।';
-
-  @override
-  String get aiResponseCropProblemWheat =>
-      'मैं गेहूँ की समस्या में सहायता कर सकता हूँ। बताएँ कि पीली पत्तियाँ, धब्बे, कीट, कमजोर बढ़वार या सूखने जैसे कौन से लक्षण दिख रहे हैं।';
-
-  @override
-  String get aiResponseCropProblemRice =>
-      'मैं धान की समस्या में सहायता कर सकता हूँ। बताएँ कि पीली पत्तियाँ, धब्बे, कीट, कम कल्ले, मुरझाना या सूखना दिखाई दे रहा है।';
-
-  @override
-  String get aiResponseCropProblemGeneral =>
-      'मैं फसल की समस्या समझने में सहायता कर सकता हूँ। फसल का नाम और पीली पत्तियाँ, धब्बे, कीट, कमजोर बढ़वार, मुरझाना या सूखना जैसे लक्षण बताएँ।';
-
-  @override
-  String get aiResponseIrrigationRain =>
-      'आज बारिश की संभावना है, इसलिए सिंचाई रोकें और बारिश के बाद मिट्टी की नमी जाँचें।';
-
-  @override
-  String get aiResponseIrrigationNormal =>
-      'भारी बारिश की संभावना नहीं है। मिट्टी की नमी 5–7 सेमी गहराई तक जाँचें और सूखी होने पर सुबह जल्दी सिंचाई करें।';
-
-  @override
-  String get aiResponseRainExpected =>
-      'आज बारिश की संभावना है। निकासी नालियाँ साफ रखें और कटी फसल व कृषि सामग्री सुरक्षित करें।';
-
-  @override
-  String get aiResponseWeatherNormal =>
-      'अभी भारी बारिश का स्पष्ट संकेत नहीं है। सामान्य काम जारी रखें, लेकिन छिड़काव से पहले नवीनतम मौसम जाँचें।';
-
-  @override
-  String get aiResponseFertilizer =>
-      'उर्वरक फसल, विकास अवस्था और मिट्टी परीक्षण पर निर्भर करता है। अनुमानित मात्रा न दें; ये जानकारी बताएँ या स्थानीय मिट्टी जाँच केंद्र से संपर्क करें।';
-
-  @override
-  String get aiResponsePests =>
-      'प्रभावित पत्तियों के दोनों तरफ देखें, अधिक प्रभावित पौधों को अलग करें और पहले ट्रैप का उपयोग करें। कीट की पहचान से पहले कीटनाशक न डालें।';
-
-  @override
-  String get aiResponseYellowLeaves =>
-      'अधिक पानी, नाइट्रोजन की कमी, जड़ की क्षति या रोग से पत्तियाँ पीली हो सकती हैं। मिट्टी की नमी और पीली पड़ने की शुरुआत पुरानी या नई पत्तियों से हुई है, यह जाँचें।';
-
-  @override
-  String get aiResponseCropDisease =>
-      'धब्बे, मुरझाना, फफूंद और तने के प्रभावित हिस्से देखें। फसल और लक्षण की सही पहचान से पहले अनावश्यक छिड़काव न करें।';
-
-  @override
-  String get aiResponseMarketPrice =>
-      'फसल, गुणवत्ता और मंडी के अनुसार भाव बदलते हैं। बेचने से पहले Market अनुभाग में आसपास की मंडियों के भाव की तुलना करें।';
-
-  @override
-  String get aiResponseSowingTime =>
-      'सही बुवाई समय फसल, किस्म, स्थानीय बारिश और मिट्टी के तापमान पर निर्भर करता है। बेहतर सलाह के लिए फसल और क्षेत्र बताएँ।';
-
-  @override
-  String get aiResponseGovernmentSchemes =>
-      'राज्य और किसान श्रेणी के अनुसार योजना की पात्रता बदलती है। आधार, भूमि और बैंक दस्तावेजों के साथ राज्य कृषि पोर्टल या नजदीकी कृषि कार्यालय से संपर्क करें।';
-
-  @override
-  String get aiResponseAgriculturalExpert =>
-      'विशेषज्ञ सहायता के लिए नजदीकी कृषि विज्ञान केंद्र, कृषि विस्तार अधिकारी या राज्य कृषि हेल्पलाइन से संपर्क करें।';
-
-  @override
-  String get aiResponseGeneral => 'फसल का नाम और दिखाई देने वाली समस्या बताएँ।';
-
-  @override
   String get krishiMarket => 'कृषि बाज़ार';
 
   @override
@@ -946,11 +854,6 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String mandiUpdatedAt(String time) {
-    return 'अंतिम अपडेट: $time';
-  }
-
-  @override
   String get trendUp => 'भाव बढ़ रहा है';
 
   @override
@@ -985,18 +888,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get tools => 'औज़ार';
-
-  @override
-  String get premiumWheatSeeds => 'उन्नत गेहूँ बीज';
-
-  @override
-  String get organicFertilizer => 'जैविक खाद';
-
-  @override
-  String get gardenSprayer => 'बाग़ स्प्रेयर';
-
-  @override
-  String get tomatoSeeds => 'टमाटर बीज';
 
   @override
   String pricePerBag(String price) {
@@ -1052,22 +943,6 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get marketCheckoutComingSoon =>
       'चेकआउट और भुगतान अभी उपलब्ध नहीं हैं।';
-
-  @override
-  String get premiumWheatSeedsDescription =>
-      'समय पर बुवाई और अच्छी फसल स्थापना के लिए उपयुक्त स्वच्छ, उच्च गुणवत्ता वाला गेहूँ बीज।';
-
-  @override
-  String get organicFertilizerDescription =>
-      'मिट्टी की संरचना और धीरे-धीरे पोषक तत्व उपलब्ध कराने वाला जैविक मृदा सुधारक।';
-
-  @override
-  String get gardenSprayerDescription =>
-      'पानी और अनुमोदित फसल उपचारों के सावधानीपूर्वक उपयोग के लिए टिकाऊ हाथ से चलने वाला स्प्रेयर।';
-
-  @override
-  String get tomatoSeedsDescription =>
-      'घरेलू बगीचे और छोटे सब्ज़ी खेतों के लिए उपयुक्त चुने हुए टमाटर बीज।';
 
   @override
   String get profile => 'प्रोफ़ाइल';
@@ -1883,4 +1758,65 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get farmer => 'किसान';
+
+  @override
+  String get signInWithGoogle => 'Continue with Google';
+
+  @override
+  String get orLabel => 'or';
+
+  @override
+  String get googleSignInFailed => 'Google sign-in failed. Please try again.';
+
+  @override
+  String get marketKilogram => 'किलो';
+
+  @override
+  String get marketLitre => 'लीटर';
+
+  @override
+  String get marketOffline =>
+      'आप ऑफ़लाइन हैं। बाज़ार देखने के लिए इंटरनेट से जुड़ें।';
+
+  @override
+  String get marketCatalogueEmpty =>
+      'अभी तक कोई उत्पाद सूचीबद्ध नहीं है। कृपया कुछ समय बाद देखें।';
+
+  @override
+  String get mandiOffline =>
+      'आप ऑफ़लाइन हैं। मंडी भाव देखने के लिए इंटरनेट से जुड़ें।';
+
+  @override
+  String get mandiUnavailable =>
+      'अभी मंडी भाव उपलब्ध नहीं हैं। कृपया बाद में पुनः प्रयास करें।';
+
+  @override
+  String get mandiLocationMissing =>
+      'अपने राज्य के मंडी भाव देखने के लिए अपने खेत का स्थान सेट करें।';
+
+  @override
+  String get noMandiPricesPublished =>
+      'आज आपके राज्य के लिए कोई मंडी भाव प्रकाशित नहीं हुआ है।';
+
+  @override
+  String get aiResponseUnavailable =>
+      'सहायक अभी उत्तर नहीं दे सका। कृपया फिर से प्रयास करें।';
+
+  @override
+  String mandiArrivalDate(String date) {
+    return 'भाव की तारीख: $date';
+  }
+
+  @override
+  String get consultExpertGuidance =>
+      'विशेषज्ञ सहायता के लिए नजदीकी कृषि विज्ञान केंद्र, कृषि विस्तार अधिकारी या राज्य कृषि हेल्पलाइन से संपर्क करें।';
+
+  @override
+  String mandiPartialList(int count) {
+    return 'हमारी टीम द्वारा दर्ज $count भाव दिखाए जा रहे हैं। लाइव मंडी फ़ीड उपलब्ध नहीं है, इसलिए यह आज का पूरा बाज़ार नहीं है।';
+  }
+
+  @override
+  String get mandiPartialListShort =>
+      'आंशिक सूची — लाइव मंडी फ़ीड उपलब्ध नहीं है।';
 }

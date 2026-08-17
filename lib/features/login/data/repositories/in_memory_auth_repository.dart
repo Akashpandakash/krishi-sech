@@ -27,6 +27,21 @@ class InMemoryAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<AuthSession> signInWithGoogle() async {
+    _session = const AuthSession(
+      user: AuthUser(
+        id: 'local-google-user',
+        phone: null,
+        preferredLanguage: 'en',
+        isActive: true,
+      ),
+      accessToken: 'local-access-token',
+      refreshToken: 'local-refresh-token',
+    );
+    return _session!;
+  }
+
+  @override
   Future<AuthSession> createDemoSession() async {
     _session = const AuthSession(
       user: AuthUser(

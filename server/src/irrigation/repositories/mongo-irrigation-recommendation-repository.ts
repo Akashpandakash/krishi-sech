@@ -35,7 +35,7 @@ export class MongoIrrigationRecommendationRepository
     const documents = await this.database.irrigationRecommendations
       .find({ userId, cropId })
       .sort({ createdAt: -1 })
-      .toArray();
+      .lean();
     return documents.map(toRecord);
   }
 }

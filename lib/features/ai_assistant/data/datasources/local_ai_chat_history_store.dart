@@ -37,15 +37,13 @@ class LocalAiChatHistoryStore {
     'author': message.author.name,
     'createdAt': message.createdAt.toIso8601String(),
     'text': message.text,
-    'responseType': message.responseType?.name,
+    'isError': message.isError,
   };
 
   ChatMessage _fromJson(Map<String, dynamic> json) => ChatMessage(
     author: ChatAuthor.values.byName(json['author'] as String),
     createdAt: DateTime.parse(json['createdAt'] as String),
     text: json['text'] as String?,
-    responseType: json['responseType'] == null
-        ? null
-        : AiResponseType.values.byName(json['responseType'] as String),
+    isError: json['isError'] as bool? ?? false,
   );
 }

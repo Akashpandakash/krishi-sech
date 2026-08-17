@@ -8,19 +8,17 @@ import { AiContextService } from "./ai/services/ai-context-service.js";
 import { AiChatService } from "./ai/services/ai-chat-service.js";
 import { AiDiseaseScanService } from "./ai/services/ai-disease-scan-service.js";
 import { createSmsProvider } from "./auth/providers/sms-provider-factory.js";
-import { InMemoryAuthRepository } from "./auth/repositories/in-memory-auth-repository.js";
 import { MongoAuthRepository } from "./auth/repositories/mongo-auth-repository.js";
 import { createAuthRouter } from "./auth/routes/auth-routes.js";
 import { AuthService } from "./auth/services/auth-service.js";
+import { GoogleIdTokenVerifier } from "./auth/services/google-id-token-verifier.js";
 import { loadAuthConfig } from "./config/auth-config.js";
 import { loadAppConfig } from "./config/app-config.js";
 import { MongoDatabase } from "./database/mongo-database.js";
 import { MongoCalendarTaskRepository } from "./calendar/repositories/mongo-calendar-task-repository.js";
-import { InMemoryCalendarTaskRepository } from "./calendar/repositories/in-memory-calendar-task-repository.js";
 import { createCalendarTaskRouter } from "./calendar/routes/calendar-task-routes.js";
 import { CalendarTaskService } from "./calendar/services/calendar-task-service.js";
 import { MongoCropRepository } from "./crops/repositories/mongo-crop-repository.js";
-import { InMemoryCropRepository } from "./crops/repositories/in-memory-crop-repository.js";
 import { createCropRouter } from "./crops/routes/crop-routes.js";
 import { CropService } from "./crops/services/crop-service.js";
 import {
@@ -34,23 +32,58 @@ import { createFertilizerRecommendationRouter } from "./fertilizer/routes/fertil
 import { FertilizerRecommendationService } from "./fertilizer/services/fertilizer-recommendation-service.js";
 import { RuleBasedFertilizerRecommendationProvider } from "./fertilizer/providers/rule-based-fertilizer-recommendation-provider.js";
 import { MongoFertilizerRecommendationRepository } from "./fertilizer/repositories/mongo-fertilizer-recommendation-repository.js";
-import { InMemoryFertilizerRecommendationRepository } from "./fertilizer/repositories/in-memory-fertilizer-recommendation-repository.js";
 import { createIrrigationRecommendationRouter } from "./irrigation/routes/irrigation-recommendation-routes.js";
 import { IrrigationRecommendationService } from "./irrigation/services/irrigation-recommendation-service.js";
 import { RuleBasedIrrigationRecommendationProvider } from "./irrigation/providers/rule-based-irrigation-recommendation-provider.js";
 import { MongoIrrigationRecommendationRepository } from "./irrigation/repositories/mongo-irrigation-recommendation-repository.js";
-import { InMemoryIrrigationRecommendationRepository } from "./irrigation/repositories/in-memory-irrigation-recommendation-repository.js";
 import { createWeatherRouter } from "./weather/routes/weather-routes.js";
 import { WeatherService } from "./weather/services/weather-service.js";
 import { OpenMeteoWeatherProvider } from "./weather/providers/open-meteo-weather-provider.js";
 import { createProfileRouter } from "./profile/routes/profile-routes.js";
 import { ProfileService } from "./profile/services/profile-service.js";
 import { MongoProfileRepository } from "./profile/repositories/mongo-profile-repository.js";
-import { InMemoryProfileRepository } from "./profile/repositories/in-memory-profile-repository.js";
+import { createAdminRouter } from "./admin/routes/admin-routes.js";
+import type { AdminRouterDependencies } from "./admin/routes/admin-routes.js";
+import { AdminAuthService } from "./admin/services/admin-auth-service.js";
+import { MongoAdminRepository } from "./admin/repositories/mongo-admin-repository.js";
+import { MongoAdminAnalyticsRepository } from "./admin/repositories/mongo-admin-analytics-repository.js";
+import {
+  MongoAuditLogRepository,
+} from "./admin/repositories/mongo-audit-log-repository.js";
+import { loadAdminConfig } from "./config/admin-config.js";
+import { loadTelemetryConfig } from "./config/telemetry-config.js";
+import { TelemetryService } from "./telemetry/services/telemetry-service.js";
+import { BroadcastService } from "./broadcasts/services/broadcast-service.js";
+import { MongoBroadcastRepository } from "./broadcasts/repositories/mongo-broadcast-repository.js";
+import { createNotificationRouter } from "./broadcasts/routes/notification-routes.js";
+import { createPushDeliveryProvider } from "./broadcasts/providers/push-provider-factory.js";
+import { BroadcastAnalyticsService } from "./broadcasts/services/broadcast-analytics-service.js";
+import { AccountDeletionService } from "./account/services/account-deletion-service.js";
+import { createDeviceRouter } from "./devices/routes/device-routes.js";
+import { DeviceService } from "./devices/services/device-service.js";
+import { MongoDeviceRepository } from "./devices/repositories/mongo-device-repository.js";
+import { MongoAccountDeletionRepository } from "./account/repositories/mongo-account-deletion-repository.js";
+import { createAccountRouter } from "./account/routes/account-routes.js";
+import { createMandiPriceRouter } from "./mandi/routes/mandi-price-routes.js";
+import { MandiPriceService } from "./mandi/services/mandi-price-service.js";
+import { createMarketProductRouter } from "./market/routes/market-product-routes.js";
+import { MarketProductService } from "./market/services/market-product-service.js";
 
 interface CreateAppOptions {
   config?: ReturnType<typeof loadAppConfig>;
   readinessProbe?: () => Promise<void>;
+  /** Admin panel API; omitted in tests that only exercise the app endpoints. */
+  admin?: AdminRouterDependencies;
+  /** In-app notification inbox fed by admin broadcasts. */
+  broadcastService?: BroadcastService;
+  /** Self-service account deletion required by the Play Store listing. */
+  accountDeletionService?: AccountDeletionService;
+  /** FCM device-token registry that gives broadcasts an audience. */
+  deviceService?: DeviceService;
+  /** Live AGMARKNET mandi prices; absent leaves /api/mandi unmounted. */
+  mandiPriceService?: MandiPriceService;
+  /** Seller product catalogue behind the Market tab. */
+  marketProductService?: MarketProductService;
 }
 
 export function createApp(
@@ -211,6 +244,48 @@ export function createApp(
       "/api/profile",
       createProfileRouter(authService, profileService),
     );
+  if (options.broadcastService)
+    application.use(
+      "/api/notifications",
+      createNotificationRouter(authService, options.broadcastService),
+    );
+  if (options.accountDeletionService)
+    application.use(
+      "/api/account",
+      // Deletion is destructive and unauthenticated up to the OTP step, so it
+      // shares the stricter auth budget rather than the general one.
+      createRateLimiter({
+        windowMs: runtimeConfig.rateLimitWindowMs,
+        maxRequests: runtimeConfig.authRateLimitMax,
+        scope: "account",
+      }),
+      createAccountRouter(authService, options.accountDeletionService),
+    );
+  if (options.deviceService)
+    application.use(
+      "/api/devices",
+      createDeviceRouter(authService, options.deviceService),
+    );
+  if (options.mandiPriceService)
+    application.use(
+      "/api/mandi",
+      createMandiPriceRouter(authService, options.mandiPriceService),
+    );
+  if (options.marketProductService)
+    application.use(
+      "/api/market",
+      createMarketProductRouter(authService, options.marketProductService),
+    );
+  if (options.admin)
+    application.use(
+      "/api/admin",
+      createRateLimiter({
+        windowMs: runtimeConfig.rateLimitWindowMs,
+        maxRequests: runtimeConfig.adminRateLimitMax,
+        scope: "admin",
+      }),
+      createAdminRouter(options.admin),
+    );
   application.use(notFoundHandler);
   application.use(
     createErrorHandler({
@@ -221,106 +296,3 @@ export function createApp(
 
   return application;
 }
-
-export const appConfig = loadAppConfig();
-const mongoUri = process.env.MONGODB_URI?.trim();
-if (!mongoUri && appConfig.appEnv === "production") {
-  throw new Error("MONGODB_URI is required in production");
-}
-export const mongoDatabase = mongoUri
-  ? new MongoDatabase(mongoUri, process.env.MONGODB_DB_NAME)
-  : null;
-export const authRepository = mongoDatabase
-  ? new MongoAuthRepository(mongoDatabase)
-  : new InMemoryAuthRepository();
-export const cropRepository = mongoDatabase
-  ? new MongoCropRepository(mongoDatabase)
-  : new InMemoryCropRepository();
-export const profileRepository = mongoDatabase
-  ? new MongoProfileRepository(mongoDatabase)
-  : new InMemoryProfileRepository(authRepository);
-export const profileService = new ProfileService(profileRepository);
-export const calendarTaskRepository = mongoDatabase
-  ? new MongoCalendarTaskRepository(mongoDatabase)
-  : new InMemoryCalendarTaskRepository();
-export const smsProvider = createSmsProvider(appConfig);
-export const authService = new AuthService(
-  authRepository,
-  smsProvider,
-  loadAuthConfig(),
-);
-export const cropService = new CropService(cropRepository);
-export const aiContextService = new AiContextService(
-  authRepository,
-  cropRepository,
-  new EmptyAiContextRepository(),
-);
-export const calendarTaskService = new CalendarTaskService(
-  calendarTaskRepository,
-  cropRepository,
-);
-export const aiProvider =
-  appConfig.aiProvider === "gemini"
-    ? new GeminiCompletionProvider(
-        process.env.GEMINI_API_KEY?.trim(),
-        process.env.GEMINI_MODEL?.trim() || "gemini-flash-latest",
-        appConfig.aiEnabled,
-        appConfig.requestTimeoutMs,
-        appConfig.loggingEnabled,
-      )
-    : new OpenAiCompletionProvider(
-        process.env.OPENAI_API_KEY?.trim(),
-        process.env.OPENAI_MODEL?.trim() || "gpt-4o-mini",
-        appConfig.aiEnabled,
-        appConfig.requestTimeoutMs,
-        appConfig.loggingEnabled,
-      );
-export const aiChatService = new AiChatService(aiContextService, aiProvider);
-export const aiDiseaseScanService = new AiDiseaseScanService(
-  aiContextService,
-  aiProvider,
-);
-export const fertilizerRecommendationService =
-  new FertilizerRecommendationService(
-    cropRepository,
-    aiContextService,
-    new RuleBasedFertilizerRecommendationProvider(),
-    mongoDatabase
-      ? new MongoFertilizerRecommendationRepository(mongoDatabase)
-      : new InMemoryFertilizerRecommendationRepository(),
-  );
-export const irrigationRecommendationService =
-  new IrrigationRecommendationService(
-    cropRepository,
-    aiContextService,
-    new RuleBasedIrrigationRecommendationProvider(),
-    mongoDatabase
-      ? new MongoIrrigationRecommendationRepository(mongoDatabase)
-      : new InMemoryIrrigationRecommendationRepository(),
-  );
-export const weatherService = new WeatherService(
-  new OpenMeteoWeatherProvider(
-    fetch,
-    appConfig.weatherApiBaseUrl,
-    appConfig.requestTimeoutMs,
-  ),
-);
-export const app = createApp(
-  authService,
-  cropService,
-  aiContextService,
-  calendarTaskService,
-  aiChatService,
-  aiDiseaseScanService,
-  fertilizerRecommendationService,
-  irrigationRecommendationService,
-  weatherService,
-  {
-    config: appConfig,
-    readinessProbe: async () => {
-      if (!mongoDatabase) throw new Error("MONGODB_URI is not configured");
-      await mongoDatabase.ping();
-    },
-  },
-  profileService,
-);

@@ -8,6 +8,7 @@ export function createAuthRouter(authService: AuthService): Router {
   const router = Router();
   const controller = new AuthController(authService);
 
+  router.post('/google', controller.googleSignIn);
   router.post('/send-otp', controller.sendOtp);
   router.post('/verify-otp', controller.verifyOtp);
   router.post('/refresh', controller.refresh);

@@ -9,6 +9,8 @@ export interface AppConfig {
   debugOtpEnabled: boolean;
   aiEnabled: boolean;
   aiProvider: AiProviderName;
+  /** Accepted audiences for Google ID tokens; empty disables Google sign-in. */
+  googleClientIds: string[];
   weatherProvider: 'open-meteo';
   weatherApiBaseUrl: string;
   trustProxy: boolean;
@@ -16,6 +18,7 @@ export interface AppConfig {
   rateLimitWindowMs: number;
   authRateLimitMax: number;
   aiRateLimitMax: number;
+  adminRateLimitMax: number;
 }
 
 type EnvironmentValues = Record<string, string | undefined>;
@@ -80,6 +83,10 @@ export function loadAppConfig(
   if (!['gemini', 'openai'].includes(aiProvider)) {
     throw new Error('AI_PROVIDER must be gemini or openai');
   }
+  const googleClientIds = (values.GOOGLE_CLIENT_IDS ?? '')
+    .split(',')
+    .map((clientId) => clientId.trim())
+    .filter(Boolean);
   const trustProxy = booleanValue(values, 'TRUST_PROXY', false);
   const corsAllowedOrigins = (values.CORS_ALLOWED_ORIGINS ?? '')
     .split(',')
@@ -134,6 +141,7 @@ export function loadAppConfig(
     debugOtpEnabled,
     aiEnabled,
     aiProvider,
+    googleClientIds,
     weatherProvider,
     weatherApiBaseUrl: weatherUri.toString(),
     trustProxy,
@@ -145,5 +153,6 @@ export function loadAppConfig(
     ),
     authRateLimitMax: positiveInteger(values, 'AUTH_RATE_LIMIT_MAX', 60),
     aiRateLimitMax: positiveInteger(values, 'AI_RATE_LIMIT_MAX', 30),
+    adminRateLimitMax: positiveInteger(values, 'ADMIN_RATE_LIMIT_MAX', 120),
   };
 }

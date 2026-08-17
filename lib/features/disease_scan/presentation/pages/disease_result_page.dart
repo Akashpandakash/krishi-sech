@@ -46,23 +46,28 @@ class DiseaseResultPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.lightGreen,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            context.l10n.demoResult,
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w700,
+                        // Only the debug sample carries this badge; a real
+                        // diagnosis showed it too, which read as though the
+                        // app had never actually analysed the photo.
+                        if (arguments.result.isDemo)
+                          Container(
+                            key: const Key('disease_demo_badge'),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.lightGreen,
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              context.l10n.demoResult,
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
-                        ),
                         const SizedBox(height: 14),
                         if (arguments.isLowConfidence) ...[
                           Container(
@@ -146,7 +151,7 @@ class DiseaseResultPage extends StatelessWidget {
                     context: context,
                     builder: (dialogContext) => AlertDialog(
                       title: Text(context.l10n.consultExpert),
-                      content: Text(context.l10n.aiResponseAgriculturalExpert),
+                      content: Text(context.l10n.consultExpertGuidance),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(dialogContext),

@@ -48,7 +48,7 @@ export class MongoCropRepository implements CropRepository {
     const documents = await this.database.crops
       .find({ userId })
       .sort({ createdAt: -1 })
-      .toArray();
+      .lean();
     return documents.map(toCropRecord);
   }
 
@@ -56,7 +56,7 @@ export class MongoCropRepository implements CropRepository {
     id: string,
     userId: string,
   ): Promise<CropRecord | null> {
-    const document = await this.database.crops.findOne({ _id: id, userId });
+    const document = await this.database.crops.findOne({ _id: id, userId }).lean();
     return document ? toCropRecord(document) : null;
   }
 
@@ -69,7 +69,7 @@ export class MongoCropRepository implements CropRepository {
       { _id: id, userId },
       { $set: { ...input, updatedAt: new Date() } },
       { returnDocument: 'after' },
-    );
+    ).lean();
     if (!document) throw new Error('Crop not found');
     return toCropRecord(document);
   }

@@ -62,7 +62,13 @@
   "languageStatusEnglishFallback": "ইংরেজি বিকল্প",
   "translationComingSoon": "অনুবাদ শীঘ্রই আসছে",
   "fallbackLanguageNotice": "{language} নির্বাচিত হয়েছে। সম্পূর্ণ অনুবাদ শীঘ্রই আসছে, তাই আপাতত অ্যাপটি ইংরেজি ব্যবহার করবে।",
-  "@fallbackLanguageNotice": {"placeholders": {"language": {"type": "String"}}},
+  "@fallbackLanguageNotice": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "bangla": "বাংলা",
   "banglaNative": "বাংলা",
   "hindi": "হিন্দি",
@@ -74,7 +80,13 @@
   "authVerifyOtp": "ওটিপি যাচাই করুন",
   "authOtpLabel": "৬ সংখ্যার ওটিপি",
   "authOtpSent": "{phone} নম্বরে পাঠানো ওটিপি লিখুন",
-  "@authOtpSent": {"placeholders": {"phone": {"type": "String"}}},
+  "@authOtpSent": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
   "authInvalidPhone": "সঠিক ১০ সংখ্যার মোবাইল নম্বর লিখুন।",
   "authInvalidOtp": "সঠিক ৬ সংখ্যার ওটিপি লিখুন।",
   "authOffline": "ইন্টারনেট সংযোগ নেই। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
@@ -93,18 +105,21 @@
   "noNotifications": "এখনও কোনো বিজ্ঞপ্তি নেই",
   "noNotificationsDescription": "গুরুত্বপূর্ণ কৃষি আপডেট এখানে দেখা যাবে।",
   "notificationsLoadError": "বিজ্ঞপ্তি লোড করা যায়নি।",
-  "notificationWeatherTitle": "আজ বৃষ্টির সম্ভাবনা",
-  "notificationWeatherMessage": "আজ বিকেলে বৃষ্টি হতে পারে। সেচ কিছুটা পিছিয়ে দিন।",
-  "notificationCropTaskTitle": "ফসলের কাজের স্মরণিকা",
-  "notificationCropTaskMessage": "আজ ধানক্ষেতে পোকামাকড় পরীক্ষা করুন।",
-  "notificationMarketTitle": "বাজারদরের আপডেট",
-  "notificationMarketMessage": "স্থানীয় মণ্ডিতে গমের দাম বেড়েছে।",
   "goodMorning": "সুপ্রভাত,",
   "productiveFarm": "আজকের দিনটি আপনার খামারের জন্য ফলপ্রসূ করি।",
   "partlyCloudy": "আংশিক মেঘলা",
   "humidityWind": "আর্দ্রতা ৬২%  •  বাতাস ৮ কিমি/ঘণ্টা",
   "humidityWindValues": "আর্দ্রতা {humidity}%  •  বাতাস {windSpeed} কিমি/ঘণ্টা",
-  "@humidityWindValues": {"placeholders": {"humidity": {"type": "int"}, "windSpeed": {"type": "int"}}},
+  "@humidityWindValues": {
+    "placeholders": {
+      "humidity": {
+        "type": "int"
+      },
+      "windSpeed": {
+        "type": "int"
+      }
+    }
+  },
   "loadingWeather": "আবহাওয়া লোড হচ্ছে...",
   "weatherUnavailable": "আবহাওয়া পাওয়া যাচ্ছে না",
   "weatherLocationRequired": "আবহাওয়ার জন্য অবস্থান নির্বাচন করুন",
@@ -135,7 +150,13 @@
   "adviceLocationRequired": "মৌসুমি পরামর্শের জন্য অবস্থান নির্বাচন করুন",
   "adviceWaitingForWeather": "বর্তমান আবহাওয়ার তথ্যের অপেক্ষায়",
   "updatedAtTime": "{time}-এ হালনাগাদ",
-  "@updatedAtTime": {"placeholders": {"time": {"type": "String"}}},
+  "@updatedAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "adviceCategoryRain": "বৃষ্টি ও সেচ",
   "adviceCategoryCropHealth": "ফসলের স্বাস্থ্য",
   "adviceCategoryIrrigation": "সেচ",
@@ -164,7 +185,19 @@
   "seasonalAdviceDetails": "মৌসুমি পরামর্শ",
   "currentWeatherSummary": "বর্তমান আবহাওয়া",
   "adviceWeatherSummary": "{temperature}°C • আর্দ্রতা {humidity}% • বাতাস {windSpeed} কিমি/ঘণ্টা",
-  "@adviceWeatherSummary": {"placeholders": {"temperature": {"type": "int"}, "humidity": {"type": "int"}, "windSpeed": {"type": "int"}}},
+  "@adviceWeatherSummary": {
+    "placeholders": {
+      "temperature": {
+        "type": "int"
+      },
+      "humidity": {
+        "type": "int"
+      },
+      "windSpeed": {
+        "type": "int"
+      }
+    }
+  },
   "todaysRecommendation": "আজকের পরামর্শ",
   "recommendationReason": "এই পরামর্শের কারণ",
   "recommendedAction": "করণীয়",
@@ -208,10 +241,28 @@
   "smartFarmingCompanion": "আপনার স্মার্ট কৃষি সহায়ক",
   "newChat": "নতুন চ্যাট",
   "aiGreetingUser": "নমস্কার, {name}!",
-  "@aiGreetingUser": {"placeholders": {"name": {"type": "String"}}},
+  "@aiGreetingUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiWelcomeMessage": "ফসল, সেচ, আবহাওয়া, পোকামাকড়, সার এবং কৃষি সিদ্ধান্ত নিয়ে ব্যবহারিক প্রশ্ন করুন।",
   "aiWeatherContext": "{temperature}°C • আর্দ্রতা {humidity}% • বৃষ্টি {rain}%",
-  "@aiWeatherContext": {"placeholders": {"temperature": {"type": "int"}, "humidity": {"type": "int"}, "rain": {"type": "int"}}},
+  "@aiWeatherContext": {
+    "placeholders": {
+      "temperature": {
+        "type": "int"
+      },
+      "humidity": {
+        "type": "int"
+      },
+      "rain": {
+        "type": "int"
+      }
+    }
+  },
   "suggestedQuestions": "প্রস্তাবিত প্রশ্ন",
   "suggestIrrigation": "আজ কি সেচ দেওয়া উচিত?",
   "suggestYellowLeaves": "ফসলের পাতা হলুদ হচ্ছে কেন?",
@@ -245,7 +296,13 @@
   "consultExpert": "বিশেষজ্ঞের পরামর্শ নিন",
   "imagePermissionDenied": "ক্যামেরা বা ছবির অনুমতি দেওয়া হয়নি। অ্যাপ সেটিংসে অনুমতি দিয়ে আবার চেষ্টা করুন।",
   "uploadProgress": "আপলোড হচ্ছে {progress}%",
-  "@uploadProgress": {"placeholders": {"progress": {"type": "int"}}},
+  "@uploadProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
   "diseaseScanOffline": "ইন্টারনেট সংযোগ নেই। সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
   "diseaseScanTimeout": "স্ক্যান করতে বেশি সময় লেগেছে। স্থিতিশীল সংযোগে আবার চেষ্টা করুন।",
   "diseaseScanInvalidResponse": "স্ক্যান সেবা থেকে সঠিক উত্তর পাওয়া যায়নি। আবার চেষ্টা করুন।",
@@ -257,31 +314,19 @@
   "notMedicalDiagnosis": "এই নমুনা ফলাফল নিশ্চিত রোগ নির্ণয় নয়। চিকিৎসার আগে কৃষি বিশেষজ্ঞের পরামর্শ নিন।",
   "lowConfidenceResult": "ফলাফলের নির্ভরযোগ্যতা কম। পদক্ষেপ নেওয়ার আগে বিশেষজ্ঞের পর্যালোচনা নিন।",
   "scanConfidence": "নির্ভরযোগ্যতা: {confidence}%",
-  "@scanConfidence": {"placeholders": {"confidence": {"type": "int"}}},
+  "@scanConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "int"
+      }
+    }
+  },
   "visibleSymptoms": "দৃশ্যমান লক্ষণ",
   "recommendedActions": "প্রস্তাবিত পদক্ষেপ",
   "expertReviewRecommended": "বিশেষজ্ঞের পর্যালোচনা প্রয়োজন",
   "followUpQuestions": "পরবর্তী প্রশ্ন",
   "retryResponse": "উত্তর আবার চেষ্টা করুন",
   "aiTyping": "কৃষি AI উত্তর লিখছে...",
-  "aiResponseGreeting": "নমস্কার! আজ কোন ফসল সম্পর্কে কী সাহায্য চান তা বলুন।",
-  "aiResponseLanguageSupport": "হ্যাঁ, আমি বাংলা বুঝতে পারি। আপনি বাংলায় কৃষিবিষয়ক প্রশ্ন করতে পারেন।",
-  "aiResponseCropProblemWheat": "আপনার গমের সমস্যায় আমি সাহায্য করতে পারি। হলুদ পাতা, দাগ, পোকা, দুর্বল বৃদ্ধি বা শুকিয়ে যাওয়ার মতো কী লক্ষণ দেখছেন তা বলুন।",
-  "aiResponseCropProblemRice": "আপনার ধানের সমস্যায় আমি সাহায্য করতে পারি। হলুদ পাতা, দাগ, পোকা, কম কুশি, ঢলে পড়া বা শুকিয়ে যাওয়ার লক্ষণ আছে কি না বলুন।",
-  "aiResponseCropProblemGeneral": "ফসলের সমস্যা বুঝতে আমি সাহায্য করতে পারি। ফসলের নাম এবং হলুদ পাতা, দাগ, পোকা, দুর্বল বৃদ্ধি, ঢলে পড়া বা শুকানোর মতো কী লক্ষণ দেখছেন তা বলুন।",
-  "aiResponseIrrigationRain": "আজ বৃষ্টির সম্ভাবনা আছে, তাই সেচ স্থগিত রাখুন এবং বৃষ্টির পরে মাটির আর্দ্রতা পরীক্ষা করুন।",
-  "aiResponseIrrigationNormal": "ভারী বৃষ্টির সম্ভাবনা নেই। ৫–৭ সেমি গভীরে মাটির আর্দ্রতা দেখুন এবং শুকনো হলে ভোরে সেচ দিন।",
-  "aiResponseRainExpected": "আজ বৃষ্টির সম্ভাবনা আছে। নিকাশিনালা পরিষ্কার রাখুন এবং তোলা ফসল ও কৃষি উপকরণ সুরক্ষিত করুন।",
-  "aiResponseWeatherNormal": "এখন ভারী বৃষ্টির স্পষ্ট সংকেত নেই। নিয়মিত কাজ চালিয়ে যান, তবে স্প্রে করার আগে সর্বশেষ আবহাওয়া দেখুন।",
-  "aiResponseFertilizer": "সার ফসল, বৃদ্ধির পর্যায় ও মাটি পরীক্ষার ওপর নির্ভর করে। অনুমান করে মাত্রা দেবেন না; এসব তথ্য জানান অথবা স্থানীয় মাটি পরীক্ষা কেন্দ্রে যোগাযোগ করুন।",
-  "aiResponsePests": "আক্রান্ত পাতার দুই পাশ দেখুন, বেশি আক্রান্ত গাছ আলাদা করুন এবং প্রথমে ফাঁদ ব্যবহার করুন। কীট শনাক্ত না করে কীটনাশক দেবেন না।",
-  "aiResponseYellowLeaves": "অতিরিক্ত পানি, নাইট্রোজেনের ঘাটতি, শিকড়ের ক্ষতি বা রোগে পাতা হলুদ হতে পারে। মাটির আর্দ্রতা এবং পুরোনো না নতুন পাতায় প্রথম হলুদ হচ্ছে তা দেখুন।",
-  "aiResponseCropDisease": "দাগ, ঢলে পড়া, ছত্রাকের আবরণ ও কাণ্ডের আক্রান্ত অংশ দেখুন। ফসল ও লক্ষণ সঠিকভাবে শনাক্ত না হওয়া পর্যন্ত অপ্রয়োজনীয় স্প্রে করবেন না।",
-  "aiResponseMarketPrice": "ফসল, মান ও মন্ডি অনুযায়ী বাজারদর বদলে যায়। বিক্রির আগে Market বিভাগে কাছাকাছি মন্ডির দাম তুলনা করুন।",
-  "aiResponseSowingTime": "সঠিক বপনের সময় ফসল, জাত, স্থানীয় বৃষ্টি ও মাটির তাপমাত্রার ওপর নির্ভর করে। ভালো পরামর্শের জন্য ফসল ও এলাকার নাম জানান।",
-  "aiResponseGovernmentSchemes": "রাজ্য ও কৃষকের শ্রেণি অনুযায়ী প্রকল্পের যোগ্যতা বদলে যায়। আধার, জমি ও ব্যাংকের কাগজ নিয়ে রাজ্যের কৃষি পোর্টাল বা নিকটস্থ কৃষি দপ্তরে যোগাযোগ করুন।",
-  "aiResponseAgriculturalExpert": "বিশেষজ্ঞ সহায়তার জন্য নিকটস্থ কৃষি বিজ্ঞান কেন্দ্র, কৃষি সম্প্রসারণ কর্মকর্তা বা রাজ্যের কৃষি হেল্পলাইনে যোগাযোগ করুন।",
-  "aiResponseGeneral": "ফসলের নাম এবং আপনি কী সমস্যা দেখছেন তা বলুন।",
   "krishiMarket": "কৃষি বাজার",
   "mandiPrices": "মন্ডির দাম",
   "marketShop": "দোকান",
@@ -294,7 +339,6 @@
   "maximumPrice": "সর্বোচ্চ",
   "modalPrice": "প্রধান দাম",
   "mandiPriceUnit": "দামের একক: প্রতি {unit}-এ ₹",
-  "mandiUpdatedAt": "সর্বশেষ আপডেট: {time}",
   "trendUp": "দাম ঊর্ধ্বমুখী",
   "trendDown": "দাম নিম্নমুখী",
   "trendStable": "দাম স্থিতিশীল",
@@ -307,10 +351,6 @@
   "seeds": "বীজ",
   "fertilizers": "সার",
   "tools": "যন্ত্র",
-  "premiumWheatSeeds": "উন্নত গমের বীজ",
-  "organicFertilizer": "জৈব সার",
-  "gardenSprayer": "বাগানের স্প্রেয়ার",
-  "tomatoSeeds": "টমেটোর বীজ",
   "pricePerBag": "{price} / বস্তা",
   "pricePerPack": "{price} / প্যাক",
   "productDetails": "পণ্যের বিস্তারিত",
@@ -326,10 +366,6 @@
   "marketLoadError": "বাজারের পণ্য লোড করা যায়নি। আবার চেষ্টা করুন।",
   "noMarketProducts": "আপনার অনুসন্ধানের সঙ্গে কোনো পণ্য মেলেনি।",
   "marketCheckoutComingSoon": "চেকআউট ও পেমেন্ট এখনও উপলভ্য নয়।",
-  "premiumWheatSeedsDescription": "সময়মতো বপন ও ভালোভাবে চারা প্রতিষ্ঠার উপযোগী পরিষ্কার, উন্নত মানের গম বীজ।",
-  "organicFertilizerDescription": "মাটির গঠন ও ধীরে ধীরে পুষ্টি সরবরাহে সহায়ক জৈব মাটি উন্নয়ন উপাদান।",
-  "gardenSprayerDescription": "পানি ও অনুমোদিত ফসল পরিচর্যা উপকরণ সতর্কভাবে প্রয়োগের জন্য টেকসই হাতে চালিত স্প্রেয়ার।",
-  "tomatoSeedsDescription": "বাড়ির বাগান ও ছোট সবজি জমির উপযোগী নির্বাচিত টমেটোর বীজ।",
   "profile": "প্রোফাইল",
   "personalDetails": "ব্যক্তিগত তথ্য",
   "farmDetails": "খামারের তথ্য",
@@ -361,7 +397,13 @@
   "supportReportsLoadError": "সংরক্ষিত রিপোর্ট লোড করা যায়নি।",
   "noSupportReports": "এখনও কোনো নমুনা রিপোর্ট জমা হয়নি।",
   "supportReportsSaved": "এই ডিভাইসে সংরক্ষিত রিপোর্ট: {count}",
-  "@supportReportsSaved": {"placeholders": {"count": {"type": "int"}}},
+  "@supportReportsSaved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "privacyPolicy": "গোপনীয়তা নীতি",
   "privacyPolicySummary": "কৃষি সেচ নমুনা সহায়তা রিপোর্ট এই ডিভাইসে স্থানীয়ভাবে সংরক্ষণ করে। পাসওয়ার্ড, ওটিপি বা সংবেদনশীল তথ্য দেবেন না।",
   "termsAndConditions": "শর্তাবলি",
@@ -386,8 +428,8 @@
   "chooseCity": "শহর খুঁজুন বা বেছে নিন",
   "enterVillage": "গ্রামের নাম লিখুন",
   "saveLocation": "অবস্থান সংরক্ষণ করুন",
-  "selectRequiredLocation": "অনুগ্রহ করে রাজ্য, জেলা ও শহর নির্বাচন করুন।"
-  ,"yourLocationTitle": "আপনার অবস্থান",
+  "selectRequiredLocation": "অনুগ্রহ করে রাজ্য, জেলা ও শহর নির্বাচন করুন।",
+  "yourLocationTitle": "আপনার অবস্থান",
   "locationNotSelected": "অবস্থান নির্বাচন করা হয়নি",
   "locationPermissionHint": "জিপিএস ব্যবহার করুন বা নিজে অবস্থান যোগ করুন",
   "usingSavedLocation": "আপনার সংরক্ষিত অবস্থান ব্যবহার করা হচ্ছে",
@@ -397,7 +439,13 @@
   "searchLocation": "শহর, জেলা বা রাজ্য খুঁজুন",
   "useCurrentLocation": "বর্তমান অবস্থান ব্যবহার করুন",
   "locationAccuracy": "বর্তমান অবস্থান ব্যবহার হচ্ছে • নির্ভুলতা: {meters} মিটার",
-  "@locationAccuracy": {"placeholders": {"meters": {"type": "int"}}},
+  "@locationAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
   "locationServicesDisabled": "লোকেশন সেবা বন্ধ আছে। বর্তমান অবস্থান শনাক্ত করতে এটি চালু করুন।",
   "preciseLocationRequired": "আনুমানিক লোকেশন চালু আছে। সঠিক শহর ও জেলা শনাক্ত করতে নির্ভুল লোকেশনের অনুমতি দিন।",
   "locationPermissionPermanentlyDenied": "লোকেশন অনুমতি বন্ধ করা আছে। অ্যাপ সেটিংস থেকে চালু করুন অথবা নিজে অবস্থান নির্বাচন করুন।",
@@ -405,31 +453,176 @@
   "locationAddressUnavailable": "GPS অবস্থান পাওয়া গেছে, কিন্তু ঠিকানা নির্ধারণ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
   "openLocationSettings": "লোকেশন সেটিংস খুলুন",
   "openAppSettings": "অ্যাপ সেটিংস খুলুন",
-  "cropPaddy": "ধান", "cropWheat": "গম", "cropMaize": "ভুট্টা", "cropTomato": "টমেটো", "cropBrinjal": "বেগুন", "cropChilli": "মরিচ", "cropMustard": "সরিষা", "cropPotato": "আলু", "cropOnion": "পেঁয়াজ", "cropOther": "অন্যান্য",
-  "stageSowing": "বপন", "stageGermination": "অঙ্কুরোদ্গম", "stageSeedling": "চারা", "stageVegetative": "অঙ্গজ বৃদ্ধি", "stageFlowering": "ফুল আসা", "stageFruiting": "ফল ধরা", "stageMaturity": "পরিপক্বতা", "stageHarvested": "কাটা হয়েছে",
-  "healthHealthy": "সুস্থ", "healthModerate": "মাঝারি", "healthNeedsAttention": "যত্ন প্রয়োজন",
-  "unitAcre": "একর", "unitHectare": "হেক্টর", "unitBigha": "বিঘা", "unitKatha": "কাঠা",
-  "irrigationDrip": "ড্রিপ", "irrigationSprinkler": "স্প্রিঙ্কলার", "irrigationFlood": "প্লাবন", "irrigationRainFed": "বৃষ্টিনির্ভর", "irrigationManual": "হাতে",
-  "plantAge": "গাছের বয়স", "soilType": "মাটির ধরন", "irrigationMethod": "সেচ পদ্ধতি", "plantingMethod": "রোপণ পদ্ধতি", "seedBrand": "বীজের ব্র্যান্ড", "lastFertilizerUsed": "সর্বশেষ ব্যবহৃত সার", "lastPesticideUsed": "সর্বশেষ ব্যবহৃত কীটনাশক", "otherOption": "অন্যান্য",
-  "soilAlluvial": "পলিমাটি", "soilBlack": "কালো মাটি", "soilRed": "লাল মাটি", "soilLaterite": "ল্যাটেরাইট", "soilSandy": "বেলে মাটি", "soilClay": "এঁটেল মাটি", "soilLoamy": "দোআঁশ মাটি",
-  "plantingDirectSowing": "সরাসরি বপন", "plantingTransplanting": "চারা রোপণ", "plantingBroadcasting": "ছিটিয়ে বপন", "plantingRaisedBed": "উঁচু বেড",
-  "taskIrrigationReminder": "সেচের স্মরণিকা", "taskFertilizerReminder": "সার দেওয়ার স্মরণিকা", "taskPestInspection": "পোকা পরিদর্শন", "taskHarvestPreparation": "ফসল কাটার প্রস্তুতি", "taskCompleted": "সম্পন্ন",
-  "totalCrops": "মোট ফসল", "healthyCrops": "সুস্থ ফসল", "cropsNeedingAttention": "যত্ন প্রয়োজন", "upcomingTasks": "আসন্ন কাজ",
-  "noCropsYet": "এখনও কোনো ফসল যোগ করা হয়নি।", "cropName": "ফসলের নাম", "otherCropName": "অন্য ফসলের নাম", "variety": "জাত", "sowingDate": "বপনের তারিখ", "landArea": "জমির পরিমাণ", "landAreaUnit": "জমির একক", "currentGrowthStage": "বর্তমান বৃদ্ধির পর্যায়", "irrigationType": "সেচের ধরন", "healthStatus": "স্বাস্থ্যের অবস্থা", "villageFarmOptional": "গ্রাম / খামারের নাম (ঐচ্ছিক)", "expectedHarvestOptional": "সম্ভাব্য কাটার তারিখ (ঐচ্ছিক)", "notesOptional": "নোট (ঐচ্ছিক)", "saveCrop": "ফসল সংরক্ষণ করুন", "selectDate": "তারিখ নির্বাচন করুন",
-  "cropNameRequired": "ফসলের নাম নির্বাচন করুন।", "varietyRequired": "ফসলের জাত লিখুন।", "sowingDateRequired": "বপনের তারিখ নির্বাচন করুন।", "landAreaPositive": "জমির পরিমাণ শূন্যের বেশি হতে হবে।", "sowingDateFutureError": "বপনের তারিখ ভবিষ্যতের হতে পারে না।",
-  "cropDetails": "ফসলের বিস্তারিত", "cropAge": "ফসলের বয়স", "growthProgress": "বৃদ্ধির অগ্রগতি", "nextAction": "পরবর্তী কাজ", "expectedHarvestDate": "সম্ভাব্য কাটার তারিখ", "notes": "নোট", "updateHealthStatus": "সুস্থ / যত্ন প্রয়োজন চিহ্নিত করুন", "updateGrowthStage": "বৃদ্ধির পর্যায় বদলান", "editCrop": "ফসল সম্পাদনা", "deleteCrop": "ফসল মুছুন", "deleteCropConfirmation": "আপনি কি এই ফসলটি মুছতে চান?", "cancel": "বাতিল", "delete": "মুছুন", "cropNotFound": "ফসল পাওয়া যায়নি।",
-  "cropHealthRecord": "ফসলের স্বাস্থ্য রেকর্ড", "diseaseHistory": "রোগের ইতিহাস", "fertilizerHistory": "সারের ইতিহাস", "irrigationHistory": "সেচের ইতিহাস", "sprayHistory": "স্প্রে ইতিহাস", "scanHistory": "স্ক্যান ইতিহাস", "photoHistory": "ছবির ইতিহাস", "addRecord": "রেকর্ড যোগ করুন", "editRecord": "রেকর্ড সম্পাদনা", "deleteRecord": "রেকর্ড মুছুন", "deleteRecordConfirmation": "আপনি কি এই রেকর্ডটি মুছতে চান?", "noHealthRecords": "এখনও কোনো ফসলের স্বাস্থ্য রেকর্ড নেই।", "recordType": "রেকর্ডের ধরন", "recordTitle": "শিরোনাম", "recordTitleRequired": "রেকর্ডের শিরোনাম লিখুন।", "recordDate": "রেকর্ডের তারিখ", "recordDetails": "বিস্তারিত (ঐচ্ছিক)", "saveRecord": "রেকর্ড সংরক্ষণ করুন",
+  "cropPaddy": "ধান",
+  "cropWheat": "গম",
+  "cropMaize": "ভুট্টা",
+  "cropTomato": "টমেটো",
+  "cropBrinjal": "বেগুন",
+  "cropChilli": "মরিচ",
+  "cropMustard": "সরিষা",
+  "cropPotato": "আলু",
+  "cropOnion": "পেঁয়াজ",
+  "cropOther": "অন্যান্য",
+  "stageSowing": "বপন",
+  "stageGermination": "অঙ্কুরোদ্গম",
+  "stageSeedling": "চারা",
+  "stageVegetative": "অঙ্গজ বৃদ্ধি",
+  "stageFlowering": "ফুল আসা",
+  "stageFruiting": "ফল ধরা",
+  "stageMaturity": "পরিপক্বতা",
+  "stageHarvested": "কাটা হয়েছে",
+  "healthHealthy": "সুস্থ",
+  "healthModerate": "মাঝারি",
+  "healthNeedsAttention": "যত্ন প্রয়োজন",
+  "unitAcre": "একর",
+  "unitHectare": "হেক্টর",
+  "unitBigha": "বিঘা",
+  "unitKatha": "কাঠা",
+  "irrigationDrip": "ড্রিপ",
+  "irrigationSprinkler": "স্প্রিঙ্কলার",
+  "irrigationFlood": "প্লাবন",
+  "irrigationRainFed": "বৃষ্টিনির্ভর",
+  "irrigationManual": "হাতে",
+  "plantAge": "গাছের বয়স",
+  "soilType": "মাটির ধরন",
+  "irrigationMethod": "সেচ পদ্ধতি",
+  "plantingMethod": "রোপণ পদ্ধতি",
+  "seedBrand": "বীজের ব্র্যান্ড",
+  "lastFertilizerUsed": "সর্বশেষ ব্যবহৃত সার",
+  "lastPesticideUsed": "সর্বশেষ ব্যবহৃত কীটনাশক",
+  "otherOption": "অন্যান্য",
+  "soilAlluvial": "পলিমাটি",
+  "soilBlack": "কালো মাটি",
+  "soilRed": "লাল মাটি",
+  "soilLaterite": "ল্যাটেরাইট",
+  "soilSandy": "বেলে মাটি",
+  "soilClay": "এঁটেল মাটি",
+  "soilLoamy": "দোআঁশ মাটি",
+  "plantingDirectSowing": "সরাসরি বপন",
+  "plantingTransplanting": "চারা রোপণ",
+  "plantingBroadcasting": "ছিটিয়ে বপন",
+  "plantingRaisedBed": "উঁচু বেড",
+  "taskIrrigationReminder": "সেচের স্মরণিকা",
+  "taskFertilizerReminder": "সার দেওয়ার স্মরণিকা",
+  "taskPestInspection": "পোকা পরিদর্শন",
+  "taskHarvestPreparation": "ফসল কাটার প্রস্তুতি",
+  "taskCompleted": "সম্পন্ন",
+  "totalCrops": "মোট ফসল",
+  "healthyCrops": "সুস্থ ফসল",
+  "cropsNeedingAttention": "যত্ন প্রয়োজন",
+  "upcomingTasks": "আসন্ন কাজ",
+  "noCropsYet": "এখনও কোনো ফসল যোগ করা হয়নি।",
+  "cropName": "ফসলের নাম",
+  "otherCropName": "অন্য ফসলের নাম",
+  "variety": "জাত",
+  "sowingDate": "বপনের তারিখ",
+  "landArea": "জমির পরিমাণ",
+  "landAreaUnit": "জমির একক",
+  "currentGrowthStage": "বর্তমান বৃদ্ধির পর্যায়",
+  "irrigationType": "সেচের ধরন",
+  "healthStatus": "স্বাস্থ্যের অবস্থা",
+  "villageFarmOptional": "গ্রাম / খামারের নাম (ঐচ্ছিক)",
+  "expectedHarvestOptional": "সম্ভাব্য কাটার তারিখ (ঐচ্ছিক)",
+  "notesOptional": "নোট (ঐচ্ছিক)",
+  "saveCrop": "ফসল সংরক্ষণ করুন",
+  "selectDate": "তারিখ নির্বাচন করুন",
+  "cropNameRequired": "ফসলের নাম নির্বাচন করুন।",
+  "varietyRequired": "ফসলের জাত লিখুন।",
+  "sowingDateRequired": "বপনের তারিখ নির্বাচন করুন।",
+  "landAreaPositive": "জমির পরিমাণ শূন্যের বেশি হতে হবে।",
+  "sowingDateFutureError": "বপনের তারিখ ভবিষ্যতের হতে পারে না।",
+  "cropDetails": "ফসলের বিস্তারিত",
+  "cropAge": "ফসলের বয়স",
+  "growthProgress": "বৃদ্ধির অগ্রগতি",
+  "nextAction": "পরবর্তী কাজ",
+  "expectedHarvestDate": "সম্ভাব্য কাটার তারিখ",
+  "notes": "নোট",
+  "updateHealthStatus": "সুস্থ / যত্ন প্রয়োজন চিহ্নিত করুন",
+  "updateGrowthStage": "বৃদ্ধির পর্যায় বদলান",
+  "editCrop": "ফসল সম্পাদনা",
+  "deleteCrop": "ফসল মুছুন",
+  "deleteCropConfirmation": "আপনি কি এই ফসলটি মুছতে চান?",
+  "cancel": "বাতিল",
+  "delete": "মুছুন",
+  "cropNotFound": "ফসল পাওয়া যায়নি।",
+  "cropHealthRecord": "ফসলের স্বাস্থ্য রেকর্ড",
+  "diseaseHistory": "রোগের ইতিহাস",
+  "fertilizerHistory": "সারের ইতিহাস",
+  "irrigationHistory": "সেচের ইতিহাস",
+  "sprayHistory": "স্প্রে ইতিহাস",
+  "scanHistory": "স্ক্যান ইতিহাস",
+  "photoHistory": "ছবির ইতিহাস",
+  "addRecord": "রেকর্ড যোগ করুন",
+  "editRecord": "রেকর্ড সম্পাদনা",
+  "deleteRecord": "রেকর্ড মুছুন",
+  "deleteRecordConfirmation": "আপনি কি এই রেকর্ডটি মুছতে চান?",
+  "noHealthRecords": "এখনও কোনো ফসলের স্বাস্থ্য রেকর্ড নেই।",
+  "recordType": "রেকর্ডের ধরন",
+  "recordTitle": "শিরোনাম",
+  "recordTitleRequired": "রেকর্ডের শিরোনাম লিখুন।",
+  "recordDate": "রেকর্ডের তারিখ",
+  "recordDetails": "বিস্তারিত (ঐচ্ছিক)",
+  "saveRecord": "রেকর্ড সংরক্ষণ করুন",
   "scanDisease": "রোগ স্ক্যান করুন",
-  "inDays": "{days} দিনের মধ্যে", "@inDays": {"placeholders": {"days": {"type": "int"}}}, "sownOn": "বপন হয়েছে",
-  "cropCalendar": "ফসল ক্যালেন্ডার", "viewCalendar": "ক্যালেন্ডার দেখুন", "addTask": "কাজ যোগ করুন", "editTask": "কাজ সম্পাদনা", "taskType": "কাজের ধরন", "dueDate": "নির্ধারিত তারিখ", "taskNotes": "নোট (ঐচ্ছিক)", "saveTask": "কাজ সংরক্ষণ করুন", "selectCropForTask": "একটি ফসল নির্বাচন করুন।",
-  "irrigationTask": "সেচ", "fertilizerTask": "সার প্রয়োগ", "pestInspectionTask": "পোকা পরিদর্শন", "harvestTask": "ফসল কাটার প্রস্তুতি",
-  "tasksForSelectedDate": "নির্বাচিত তারিখের কাজ", "upcomingCropTasks": "আসন্ন ফসলের কাজ", "noTasksForDate": "এই তারিখে কোনো কাজ নেই।", "noUpcomingCropTasks": "কোনো আসন্ন ফসলের কাজ নেই।", "deleteTask": "কাজ মুছুন", "deleteTaskConfirmation": "আপনি কি এই কাজটি মুছতে চান?",
-  "noTasksToday": "আজ ফসলের কোনো কাজ নেই।", "noCropTasksScheduled": "কোনো ফসলের কাজ নির্ধারিত নেই", "completedTasks": "সম্পন্ন কাজ", "noCompletedTasks": "এখনও কোনো কাজ সম্পন্ন হয়নি।", "cropTimeline": "ফসলের সময়রেখা", "noCropTimelineTasks": "সময়রেখায় কোনো কাজ নেই।",
-  "today": "আজ", "selectTaskType": "কাজের ধরন নির্বাচন করুন।", "cropCalendarLoadError": "ফসল ক্যালেন্ডার লোড করা যায়নি। আবার চেষ্টা করুন।",
-  "reminderTime": "স্মরণিকার সময়", "reminderAtDueTime": "নির্ধারিত সময়ে", "reminderThirtyMinutesBefore": "৩০ মিনিট আগে", "reminderOneHourBefore": "১ ঘণ্টা আগে", "reminderOneDayBefore": "১ দিন আগে", "reminderNone": "স্মরণিকা নয়", "dueTime": "কাজের সময়",
+  "inDays": "{days} দিনের মধ্যে",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "sownOn": "বপন হয়েছে",
+  "cropCalendar": "ফসল ক্যালেন্ডার",
+  "viewCalendar": "ক্যালেন্ডার দেখুন",
+  "addTask": "কাজ যোগ করুন",
+  "editTask": "কাজ সম্পাদনা",
+  "taskType": "কাজের ধরন",
+  "dueDate": "নির্ধারিত তারিখ",
+  "taskNotes": "নোট (ঐচ্ছিক)",
+  "saveTask": "কাজ সংরক্ষণ করুন",
+  "selectCropForTask": "একটি ফসল নির্বাচন করুন।",
+  "irrigationTask": "সেচ",
+  "fertilizerTask": "সার প্রয়োগ",
+  "pestInspectionTask": "পোকা পরিদর্শন",
+  "harvestTask": "ফসল কাটার প্রস্তুতি",
+  "tasksForSelectedDate": "নির্বাচিত তারিখের কাজ",
+  "upcomingCropTasks": "আসন্ন ফসলের কাজ",
+  "noTasksForDate": "এই তারিখে কোনো কাজ নেই।",
+  "noUpcomingCropTasks": "কোনো আসন্ন ফসলের কাজ নেই।",
+  "deleteTask": "কাজ মুছুন",
+  "deleteTaskConfirmation": "আপনি কি এই কাজটি মুছতে চান?",
+  "noTasksToday": "আজ ফসলের কোনো কাজ নেই।",
+  "noCropTasksScheduled": "কোনো ফসলের কাজ নির্ধারিত নেই",
+  "completedTasks": "সম্পন্ন কাজ",
+  "noCompletedTasks": "এখনও কোনো কাজ সম্পন্ন হয়নি।",
+  "cropTimeline": "ফসলের সময়রেখা",
+  "noCropTimelineTasks": "সময়রেখায় কোনো কাজ নেই।",
+  "today": "আজ",
+  "selectTaskType": "কাজের ধরন নির্বাচন করুন।",
+  "cropCalendarLoadError": "ফসল ক্যালেন্ডার লোড করা যায়নি। আবার চেষ্টা করুন।",
+  "reminderTime": "স্মরণিকার সময়",
+  "reminderAtDueTime": "নির্ধারিত সময়ে",
+  "reminderThirtyMinutesBefore": "৩০ মিনিট আগে",
+  "reminderOneHourBefore": "১ ঘণ্টা আগে",
+  "reminderOneDayBefore": "১ দিন আগে",
+  "reminderNone": "স্মরণিকা নয়",
+  "dueTime": "কাজের সময়",
   "cropTaskNotificationTitle": "কৃষি সেচ ফসলের কাজ",
   "cropTaskNotificationBody": "{cropName} {taskName} কাজটি {dueTime}-এ নির্ধারিত। কাজটি দেখতে কৃষি সেচ খুলুন।",
-  "@cropTaskNotificationBody": {"placeholders": {"cropName": {"type": "String"}, "taskName": {"type": "String"}, "dueTime": {"type": "String"}}},
+  "@cropTaskNotificationBody": {
+    "placeholders": {
+      "cropName": {
+        "type": "String"
+      },
+      "taskName": {
+        "type": "String"
+      },
+      "dueTime": {
+        "type": "String"
+      }
+    }
+  },
   "cropOfflineCache": "অফলাইন — সংরক্ষিত ফসল দেখানো হচ্ছে। পরিবর্তন স্বয়ংক্রিয়ভাবে সিঙ্ক হবে।",
   "cropServerError": "ফসলের তথ্য আপডেট করা যায়নি। আবার চেষ্টা করুন।",
   "cropChangesPending": "ফসলের পরিবর্তন সিঙ্ক হওয়ার অপেক্ষায় আছে।",
@@ -443,9 +636,21 @@
   "smartOfflineData": "অফলাইন — সংরক্ষিত পরামর্শ দেখানো হচ্ছে",
   "smartNoIrrigation": "আজ সেচের প্রয়োজন নেই",
   "smartIrrigationRequired": "একরপ্রতি {liters} লিটার সেচ দিন",
-  "@smartIrrigationRequired": {"placeholders": {"liters": {"type": "int"}}},
+  "@smartIrrigationRequired": {
+    "placeholders": {
+      "liters": {
+        "type": "int"
+      }
+    }
+  },
   "smartTaskCount": "আরও {count}টি কাজ বাকি",
-  "@smartTaskCount": {"placeholders": {"count": {"type": "int"}}},
+  "@smartTaskCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "smartRiskLow": "কম ঝুঁকি",
   "smartRiskMedium": "মাঝারি ঝুঁকি",
   "smartRiskHigh": "উচ্চ ঝুঁকি",
@@ -466,5 +671,18 @@
   "profileUnavailable": "প্রোফাইল পাওয়া যাচ্ছে না",
   "profileLoadError": "প্রোফাইল লোড করা যায়নি। আবার চেষ্টা করতে নিচে টানুন বা রিফ্রেশ চাপুন।",
   "featureComingSoon": "এই সুবিধাটি শীঘ্রই আসছে।",
-  "farmer": "কৃষক"
+  "farmer": "কৃষক",
+  "marketKilogram": "কেজি",
+  "marketLitre": "লিটার",
+  "marketOffline": "আপনি অফলাইনে আছেন। বাজার দেখতে ইন্টারনেটে সংযোগ করুন।",
+  "marketCatalogueEmpty": "এখনও কোনো পণ্য তালিকাভুক্ত হয়নি। কিছুক্ষণ পরে আবার দেখুন।",
+  "mandiOffline": "আপনি অফলাইনে আছেন। মন্ডির দাম দেখতে ইন্টারনেটে সংযোগ করুন।",
+  "mandiUnavailable": "এই মুহূর্তে মন্ডির সরাসরি দাম পাওয়া যাচ্ছে না। পরে আবার চেষ্টা করুন।",
+  "mandiLocationMissing": "আপনার রাজ্যের মন্ডির দাম দেখতে খামারের অবস্থান নির্ধারণ করুন।",
+  "noMandiPricesPublished": "আজ আপনার রাজ্যের জন্য কোনো মন্ডির দাম প্রকাশিত হয়নি।",
+  "aiResponseUnavailable": "সহকারী এখন উত্তর দিতে পারেনি। আবার চেষ্টা করুন।",
+  "mandiArrivalDate": "দামের তারিখ: {date}",
+  "consultExpertGuidance": "বিশেষজ্ঞ সহায়তার জন্য নিকটস্থ কৃষি বিজ্ঞান কেন্দ্র, কৃষি সম্প্রসারণ কর্মকর্তা বা রাজ্যের কৃষি হেল্পলাইনে যোগাযোগ করুন।",
+  "mandiPartialList": "আমাদের দল থেকে দেওয়া {count}টি দাম দেখানো হচ্ছে। সরাসরি মন্ডি তথ্য পাওয়া যাচ্ছে না, তাই আজকের পুরো বাজার এখানে নেই।",
+  "mandiPartialListShort": "আংশিক তালিকা — সরাসরি মন্ডি তথ্য পাওয়া যাচ্ছে না।"
 }

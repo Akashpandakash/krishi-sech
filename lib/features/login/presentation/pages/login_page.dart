@@ -69,6 +69,32 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> _continueWithGoogle() async {
+    if (_isSubmitting) return;
+    _isSubmitting = true;
+    final controller = AuthScope.of(context);
+    try {
+      final signedIn = await controller.signInWithGoogle();
+      if (!mounted) return;
+      if (!signedIn) {
+        // A cancelled chooser leaves no failure; stay silent in that case.
+        final failure = controller.failure;
+        if (failure != null) {
+          _showFailure(
+            _failureMessage(failure),
+            retry: _continueWithGoogle,
+          );
+        }
+        return;
+      }
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(AppRoutes.home, (_) => false);
+    } finally {
+      if (mounted) _isSubmitting = false;
+    }
+  }
+
   void _showFailure(String message, {VoidCallback? retry}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -183,6 +209,42 @@ class _LoginPageState extends State<LoginPage> {
                         : Text(context.l10n.continueLabel),
                   ),
                 ),
+                if (AppEnvironment.googleServerClientId.isNotEmpty) ...[
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          context.l10n.orLabel,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  AppPressable(
+                    enabled: !authController.isLoading,
+                    haptic: AppPressableHaptic.medium,
+                    child: OutlinedButton.icon(
+                      onPressed: authController.isLoading
+                          ? null
+                          : _continueWithGoogle,
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(54),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      icon: const Icon(Icons.g_mobiledata, size: 28),
+                      label: Text(context.l10n.signInWithGoogle),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 22),
                 Text(
                   context.l10n.termsNotice,

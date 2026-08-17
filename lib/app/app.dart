@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:krishi_sech/app/router/app_router.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/app/theme/app_theme.dart';
-import 'package:krishi_sech/features/ai_assistant/data/repositories/local_ai_response_repository.dart';
+import 'package:krishi_sech/core/network/api_config.dart';
+import 'package:krishi_sech/features/ai_assistant/data/datasources/remote_ai_chat_data_source.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/ai_chat_scope.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
 import 'package:krishi_sech/core/localization/locale_controller.dart';
 import 'package:krishi_sech/core/localization/locale_scope.dart';
 import 'package:krishi_sech/core/localization/app_localization_config.dart';
+import 'package:krishi_sech/core/observability/analytics_service.dart';
 import 'package:krishi_sech/features/location/presentation/controllers/location_controller.dart';
 import 'package:krishi_sech/features/login/data/repositories/in_memory_auth_repository.dart';
 import 'package:krishi_sech/features/login/presentation/auth_scope.dart';
@@ -27,7 +29,8 @@ import 'package:krishi_sech/l10n/generated/app_localizations.dart';
 import 'package:krishi_sech/features/profile/data/repositories/in_memory_profile_repository.dart';
 import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:krishi_sech/features/profile/presentation/profile_scope.dart';
-import 'package:krishi_sech/features/notifications/data/repositories/local_app_notification_repository.dart';
+import 'package:krishi_sech/features/notifications/data/datasources/remote_app_notification_data_source.dart';
+import 'package:krishi_sech/features/notifications/data/repositories/app_notification_repository_impl.dart';
 import 'package:krishi_sech/features/notifications/presentation/app_notification_scope.dart';
 import 'package:krishi_sech/features/notifications/presentation/controllers/app_notification_controller.dart';
 
@@ -105,7 +108,11 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
     _aiChatController =
         widget.aiChatController ??
         AiChatController(
-          repository: const LocalAiResponseRepository(),
+          gateway: RemoteAiChatDataSource(
+            baseUrl: ApiConfig.baseUrl,
+            accessTokenProvider: ({bool forceRefresh = false}) =>
+                _authController.getAccessToken(forceRefresh: forceRefresh),
+          ),
           locationController: _locationController,
           weatherController: _weatherController,
         );
@@ -129,7 +136,15 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
     _ownsNotificationController = widget.notificationController == null;
     _notificationController =
         widget.notificationController ??
-        AppNotificationController(LocalAppNotificationRepository());
+        AppNotificationController(
+          AppNotificationRepositoryImpl(
+            RemoteAppNotificationDataSource(
+              baseUrl: ApiConfig.baseUrl,
+              accessTokenProvider: ({bool forceRefresh = false}) =>
+                  _authController.getAccessToken(forceRefresh: forceRefresh),
+            ),
+          ),
+        );
     if (widget.notificationController == null) {
       _notificationController.load();
     }
@@ -198,6 +213,9 @@ class _KrishiSechAppState extends State<KrishiSechApp> {
                             builder: (context, _) {
                               return MaterialApp(
                                 navigatorKey: AppRouter.navigatorKey,
+                                navigatorObservers: [
+                                  ?AnalyticsService.navigatorObserver,
+                                ],
                                 onGenerateTitle: (context) =>
                                     AppLocalizations.of(context).appTitle,
                                 debugShowCheckedModeBanner: false,

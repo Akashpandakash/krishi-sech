@@ -209,9 +209,16 @@ class CropTaskController extends ChangeNotifier {
   }
 
   Future<void> reschedulePendingNotifications() async {
-    for (var index = 0; index < _tasks.length; index++) {
-      var task = _tasks[index];
-      task = await _ensureNotificationId(task);
+    // Iterate a snapshot and write back by id, never by index. Both calls
+    // below await, and a crop deletion cascading through _onCropsChanged can
+    // shrink _tasks in that window — indexing into the live list then either
+    // throws RangeError or, worse, overwrites an unrelated task.
+    for (final pending in List<CropTask>.of(_tasks)) {
+      final task = await _ensureNotificationId(pending);
+      final index = _tasks.indexWhere((item) => item.id == task.id);
+      // Removed while we were awaiting; scheduling it would resurrect a
+      // reminder for a task that no longer exists.
+      if (index == -1) continue;
       _tasks[index] = task;
       await _scheduleReminder(task);
     }

@@ -31,6 +31,8 @@ import { AiDiseaseScanService } from './ai-disease-scan-service.js';
 const user: AuthUser = {
   id: 'user-1',
   phone: '+919876543210',
+  email: null,
+  googleId: null,
   name: 'Amit',
   preferredLanguage: 'hi',
   isActive: true,
@@ -42,6 +44,12 @@ class ContextAuthRepository implements AuthRepository {
   async findUserById(id: string) {
     return id === user.id ? user : null;
   }
+  async findUserByGoogleId(_googleId: string): Promise<AuthUser | null> {
+    return null;
+  }
+  async createGoogleUser(): Promise<AuthUser> {
+    return user;
+  }
   async createOtp(_phone: string, _hash: string, _expires: Date) {}
   async countOtpRequests(_phone: string, _since: Date) { return 0; }
   async findLatestOtp(_phone: string): Promise<AuthOtp | null> { return null; }
@@ -50,6 +58,7 @@ class ContextAuthRepository implements AuthRepository {
   async findUserByPhone(_phone: string): Promise<AuthUser | null> { return null; }
   async createUser(_phone: string): Promise<AuthUser> { return user; }
   async ensureDemoUser(_phone: string): Promise<AuthUser> { return user; }
+  async deleteUser(_id: string) {}
   async createRefreshToken(_userId: string, _hash: string, _expires: Date) {}
   async findRefreshToken(_hash: string): Promise<AuthRefreshToken | null> { return null; }
   async rotateRefreshToken(_id: string, _userId: string, _hash: string, _expires: Date) {}

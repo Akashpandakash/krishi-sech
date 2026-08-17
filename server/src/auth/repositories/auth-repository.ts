@@ -1,6 +1,9 @@
 export interface AuthUser {
   id: string;
-  phone: string;
+  /** Null for accounts created through Google sign-in. */
+  phone: string | null;
+  email: string | null;
+  googleId: string | null;
   name: string | null;
   preferredLanguage: string;
   profilePhotoUrl?: string | null;
@@ -29,7 +32,16 @@ export interface AuthRefreshToken {
   revokedAt: Date | null;
 }
 
+export interface GoogleUserInput {
+  googleId: string;
+  email: string;
+  name: string | null;
+  profilePhotoUrl: string | null;
+}
+
 export interface AuthRepository {
+  findUserByGoogleId(googleId: string): Promise<AuthUser | null>;
+  createGoogleUser(input: GoogleUserInput): Promise<AuthUser>;
   createOtp(phone: string, codeHash: string, expiresAt: Date): Promise<void>;
   countOtpRequests(phone: string, since: Date): Promise<number>;
   findLatestOtp(phone: string): Promise<AuthOtp | null>;
@@ -39,6 +51,8 @@ export interface AuthRepository {
   findUserById(id: string): Promise<AuthUser | null>;
   createUser(phone: string): Promise<AuthUser>;
   ensureDemoUser(phone: string): Promise<AuthUser>;
+  /** Erases the account record itself; owned data is removed by its own repository. */
+  deleteUser(id: string): Promise<void>;
   createRefreshToken(
     userId: string,
     tokenHash: string,

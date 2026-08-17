@@ -46,7 +46,7 @@ class ProductDetailsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  product.name(context),
+                  product.name,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),
@@ -62,7 +62,7 @@ class ProductDetailsPage extends StatelessWidget {
                 const SizedBox(height: 22),
                 _DetailSection(
                   title: context.l10n.marketDescription,
-                  value: product.description(context),
+                  value: product.description,
                 ),
                 _DetailSection(
                   title: context.l10n.marketAvailability,

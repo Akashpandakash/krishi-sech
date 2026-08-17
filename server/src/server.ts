@@ -1,6 +1,6 @@
 import './config/load-environment.js';
 
-import { app, mongoDatabase } from './app.js';
+import { app, broadcastService, mongoDatabase } from './composition.js';
 import { loadAppConfig } from './config/app-config.js';
 
 const appConfig = loadAppConfig();
@@ -24,11 +24,16 @@ if (mongoDatabase) {
   });
 }
 
+// Scheduled broadcasts are dispatched by whichever instance is running; a
+// single web service is the deployment shape, so no leader election is needed.
+broadcastService.startScheduler();
+
 let shuttingDown = false;
 
 function shutdown(): void {
   if (shuttingDown) return;
   shuttingDown = true;
+  broadcastService.stopScheduler();
   const forceShutdown = setTimeout(() => process.exit(1), 25_000);
   forceShutdown.unref();
   server.close(async (error) => {

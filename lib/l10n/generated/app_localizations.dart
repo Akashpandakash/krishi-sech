@@ -686,42 +686,6 @@ abstract class AppLocalizations {
   /// **'Notifications could not be loaded.'**
   String get notificationsLoadError;
 
-  /// No description provided for @notificationWeatherTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Rain expected today'**
-  String get notificationWeatherTitle;
-
-  /// No description provided for @notificationWeatherMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Rain is likely this afternoon. Consider delaying irrigation.'**
-  String get notificationWeatherMessage;
-
-  /// No description provided for @notificationCropTaskTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Crop task reminder'**
-  String get notificationCropTaskTitle;
-
-  /// No description provided for @notificationCropTaskMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Inspect your paddy crop for pests today.'**
-  String get notificationCropTaskMessage;
-
-  /// No description provided for @notificationMarketTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Market price update'**
-  String get notificationMarketTitle;
-
-  /// No description provided for @notificationMarketMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Wheat prices have increased in the local mandi.'**
-  String get notificationMarketMessage;
-
   /// No description provided for @goodMorning.
   ///
   /// In en, this message translates to:
@@ -1670,114 +1634,6 @@ abstract class AppLocalizations {
   /// **'Krishi AI is typing...'**
   String get aiTyping;
 
-  /// No description provided for @aiResponseGreeting.
-  ///
-  /// In en, this message translates to:
-  /// **'Namaste! Tell me your crop name and what help you need today.'**
-  String get aiResponseGreeting;
-
-  /// No description provided for @aiResponseLanguageSupport.
-  ///
-  /// In en, this message translates to:
-  /// **'Yes, I can understand Bengali. You can ask your farming question in Bangla.'**
-  String get aiResponseLanguageSupport;
-
-  /// No description provided for @aiResponseCropProblemWheat.
-  ///
-  /// In en, this message translates to:
-  /// **'I can help with your wheat problem. Please tell me what you see, such as yellow leaves, spots, insects, weak growth, or drying.'**
-  String get aiResponseCropProblemWheat;
-
-  /// No description provided for @aiResponseCropProblemRice.
-  ///
-  /// In en, this message translates to:
-  /// **'I can help with your rice problem. Please describe whether you see yellow leaves, spots, insects, poor tillering, wilting, or drying.'**
-  String get aiResponseCropProblemRice;
-
-  /// No description provided for @aiResponseCropProblemGeneral.
-  ///
-  /// In en, this message translates to:
-  /// **'I can help diagnose the crop problem. Please tell me the crop name and whether you see yellow leaves, spots, insects, weak growth, wilting, or drying.'**
-  String get aiResponseCropProblemGeneral;
-
-  /// No description provided for @aiResponseIrrigationRain.
-  ///
-  /// In en, this message translates to:
-  /// **'Rain is likely today, so delay irrigation and check soil moisture after the rain.'**
-  String get aiResponseIrrigationRain;
-
-  /// No description provided for @aiResponseIrrigationNormal.
-  ///
-  /// In en, this message translates to:
-  /// **'No heavy rain is expected. Check soil moisture 5–7 cm deep and irrigate in the early morning if it feels dry.'**
-  String get aiResponseIrrigationNormal;
-
-  /// No description provided for @aiResponseRainExpected.
-  ///
-  /// In en, this message translates to:
-  /// **'Rain is likely today. Keep drainage channels clear and protect harvested produce and farm inputs.'**
-  String get aiResponseRainExpected;
-
-  /// No description provided for @aiResponseWeatherNormal.
-  ///
-  /// In en, this message translates to:
-  /// **'No strong rain signal is available right now. Continue routine work, but check the latest weather before spraying.'**
-  String get aiResponseWeatherNormal;
-
-  /// No description provided for @aiResponseFertilizer.
-  ///
-  /// In en, this message translates to:
-  /// **'Fertilizer depends on the crop, growth stage and soil test. Avoid guessing doses; share those details or consult your local soil-testing centre.'**
-  String get aiResponseFertilizer;
-
-  /// No description provided for @aiResponsePests.
-  ///
-  /// In en, this message translates to:
-  /// **'Inspect both sides of affected leaves, isolate badly affected plants and use traps first. Identify the pest before applying any pesticide.'**
-  String get aiResponsePests;
-
-  /// No description provided for @aiResponseYellowLeaves.
-  ///
-  /// In en, this message translates to:
-  /// **'Yellow leaves can result from excess water, nitrogen deficiency, root damage or disease. Check soil moisture and whether yellowing starts on old or new leaves.'**
-  String get aiResponseYellowLeaves;
-
-  /// No description provided for @aiResponseCropDisease.
-  ///
-  /// In en, this message translates to:
-  /// **'Check for spots, wilting, fungal growth and affected stem areas. Avoid unnecessary spraying until the crop and symptoms are correctly identified.'**
-  String get aiResponseCropDisease;
-
-  /// No description provided for @aiResponseMarketPrice.
-  ///
-  /// In en, this message translates to:
-  /// **'Market prices change by crop, grade and mandi. Check the Market section and compare nearby mandis before deciding where to sell.'**
-  String get aiResponseMarketPrice;
-
-  /// No description provided for @aiResponseSowingTime.
-  ///
-  /// In en, this message translates to:
-  /// **'The best sowing time depends on crop, variety, local rainfall and soil temperature. Tell me the crop and your area for a more useful recommendation.'**
-  String get aiResponseSowingTime;
-
-  /// No description provided for @aiResponseGovernmentSchemes.
-  ///
-  /// In en, this message translates to:
-  /// **'Scheme eligibility varies by state and farmer category. Check your state agriculture portal or nearest agriculture office with Aadhaar, land and bank documents.'**
-  String get aiResponseGovernmentSchemes;
-
-  /// No description provided for @aiResponseAgriculturalExpert.
-  ///
-  /// In en, this message translates to:
-  /// **'For expert help, contact your nearest Krishi Vigyan Kendra, agriculture extension officer or state agriculture helpline.'**
-  String get aiResponseAgriculturalExpert;
-
-  /// No description provided for @aiResponseGeneral.
-  ///
-  /// In en, this message translates to:
-  /// **'Please tell me the crop name and the problem you are seeing.'**
-  String get aiResponseGeneral;
-
   /// No description provided for @krishiMarket.
   ///
   /// In en, this message translates to:
@@ -1850,12 +1706,6 @@ abstract class AppLocalizations {
   /// **'Price unit: ₹ per {unit}'**
   String mandiPriceUnit(String unit);
 
-  /// No description provided for @mandiUpdatedAt.
-  ///
-  /// In en, this message translates to:
-  /// **'Last updated: {time}'**
-  String mandiUpdatedAt(String time);
-
   /// No description provided for @trendUp.
   ///
   /// In en, this message translates to:
@@ -1927,30 +1777,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tools'**
   String get tools;
-
-  /// No description provided for @premiumWheatSeeds.
-  ///
-  /// In en, this message translates to:
-  /// **'Premium Wheat Seeds'**
-  String get premiumWheatSeeds;
-
-  /// No description provided for @organicFertilizer.
-  ///
-  /// In en, this message translates to:
-  /// **'Organic Fertilizer'**
-  String get organicFertilizer;
-
-  /// No description provided for @gardenSprayer.
-  ///
-  /// In en, this message translates to:
-  /// **'Garden Sprayer'**
-  String get gardenSprayer;
-
-  /// No description provided for @tomatoSeeds.
-  ///
-  /// In en, this message translates to:
-  /// **'Tomato Seeds'**
-  String get tomatoSeeds;
 
   /// No description provided for @pricePerBag.
   ///
@@ -2041,30 +1867,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Checkout and payment are not available yet.'**
   String get marketCheckoutComingSoon;
-
-  /// No description provided for @premiumWheatSeedsDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Clean, high-quality wheat seed suitable for timely sowing and dependable field establishment.'**
-  String get premiumWheatSeedsDescription;
-
-  /// No description provided for @organicFertilizerDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Organic soil conditioner that supports soil structure and gradual nutrient availability.'**
-  String get organicFertilizerDescription;
-
-  /// No description provided for @gardenSprayerDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Durable hand-operated sprayer for careful application of water and approved crop treatments.'**
-  String get gardenSprayerDescription;
-
-  /// No description provided for @tomatoSeedsDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Selected tomato seeds suitable for kitchen gardens and small vegetable plots.'**
-  String get tomatoSeedsDescription;
 
   /// No description provided for @profile.
   ///
@@ -3617,6 +3419,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Farmer'**
   String get farmer;
+
+  /// Google sign-in button on the login screen
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get signInWithGoogle;
+
+  /// Divider between phone and Google sign-in
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orLabel;
+
+  /// Shown when Google sign-in cannot complete
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed. Please try again.'**
+  String get googleSignInFailed;
+
+  /// No description provided for @marketKilogram.
+  ///
+  /// In en, this message translates to:
+  /// **'kg'**
+  String get marketKilogram;
+
+  /// No description provided for @marketLitre.
+  ///
+  /// In en, this message translates to:
+  /// **'litre'**
+  String get marketLitre;
+
+  /// No description provided for @marketOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Connect to the internet to see the market.'**
+  String get marketOffline;
+
+  /// No description provided for @marketCatalogueEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No products have been listed yet. Please check back soon.'**
+  String get marketCatalogueEmpty;
+
+  /// No description provided for @mandiOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Connect to the internet to see mandi prices.'**
+  String get mandiOffline;
+
+  /// No description provided for @mandiUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Live mandi prices are unavailable right now. Please try again later.'**
+  String get mandiUnavailable;
+
+  /// No description provided for @mandiLocationMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your farm location to see mandi prices from your state.'**
+  String get mandiLocationMissing;
+
+  /// No description provided for @noMandiPricesPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'No mandi prices have been published for your state today.'**
+  String get noMandiPricesPublished;
+
+  /// No description provided for @aiResponseUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant could not answer just now. Please try again.'**
+  String get aiResponseUnavailable;
+
+  /// No description provided for @mandiArrivalDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Price date: {date}'**
+  String mandiArrivalDate(String date);
+
+  /// No description provided for @consultExpertGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'For expert help, contact your nearest Krishi Vigyan Kendra, agriculture extension officer or state agriculture helpline.'**
+  String get consultExpertGuidance;
+
+  /// No description provided for @mandiPartialList.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {count} prices entered by our team. The live mandi feed is unavailable, so this is not the full market today.'**
+  String mandiPartialList(int count);
+
+  /// No description provided for @mandiPartialListShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial list — the live mandi feed is unavailable.'**
+  String get mandiPartialListShort;
 }
 
 class _AppLocalizationsDelegate

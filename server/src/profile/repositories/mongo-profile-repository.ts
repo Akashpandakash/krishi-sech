@@ -22,7 +22,7 @@ export class MongoProfileRepository implements ProfileRepository {
   constructor(private readonly database: MongoDatabase) {}
 
   async getUserProfile(userId: string): Promise<AuthUser | null> {
-    const document = await this.database.users.findOne({ _id: userId });
+    const document = await this.database.users.findOne({ _id: userId }).lean();
     return document ? toAuthUser(document) : null;
   }
 
@@ -34,13 +34,13 @@ export class MongoProfileRepository implements ProfileRepository {
       { _id: userId },
       { $set: { ...input, updatedAt: new Date() } },
       { returnDocument: 'after' },
-    );
+    ).lean();
     if (!document) throw new Error('User not found');
     return toAuthUser(document);
   }
 
   async getFarmProfile(userId: string): Promise<FarmProfile | null> {
-    const document = await this.database.farmProfiles.findOne({ userId });
+    const document = await this.database.farmProfiles.findOne({ userId }).lean();
     return document ? toFarmProfile(document) : null;
   }
 
@@ -60,7 +60,7 @@ export class MongoProfileRepository implements ProfileRepository {
         $setOnInsert: { _id: randomUUID(), createdAt: now },
       },
       { upsert: true, returnDocument: 'after' },
-    );
+    ).lean();
     if (!document) throw new Error('Failed to upsert farm profile');
     return toFarmProfile(document);
   }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>810187577371-f5rshgmavbhockn3onqrl3mehf6ifpuo.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.810187577371-f5rshgmavbhockn3onqrl3mehf6ifpuo</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>810187577371-89mmeh62aiia2kmhcmvu69hgfaruaqkn.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB_0tde_u5VBB6Mgzm6jKw93pTlr0RopdQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>810187577371</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.krishisech.app</string>
+	<key>PROJECT_ID</key>
+	<string>krishi-sech</string>
+	<key>STORAGE_BUCKET</key>
+	<string>krishi-sech.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:810187577371:ios:097b73a54d47dfe0c540be</string>
+</dict>
+</plist>

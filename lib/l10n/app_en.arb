@@ -62,7 +62,13 @@
   "languageStatusEnglishFallback": "English fallback",
   "translationComingSoon": "Translation coming soon",
   "fallbackLanguageNotice": "{language} is selected. Full translation is coming soon, so the app will use English for now.",
-  "@fallbackLanguageNotice": {"placeholders": {"language": {"type": "String"}}},
+  "@fallbackLanguageNotice": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "bangla": "Bangla",
   "banglaNative": "বাংলা",
   "hindi": "Hindi",
@@ -74,7 +80,13 @@
   "authVerifyOtp": "Verify OTP",
   "authOtpLabel": "6-digit OTP",
   "authOtpSent": "Enter the OTP sent to {phone}",
-  "@authOtpSent": {"placeholders": {"phone": {"type": "String"}}},
+  "@authOtpSent": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
   "authInvalidPhone": "Enter a valid 10-digit mobile number.",
   "authInvalidOtp": "Enter a valid 6-digit OTP.",
   "authOffline": "You are offline. Check your connection and retry.",
@@ -93,18 +105,21 @@
   "noNotifications": "No notifications yet",
   "noNotificationsDescription": "Important farming updates will appear here.",
   "notificationsLoadError": "Notifications could not be loaded.",
-  "notificationWeatherTitle": "Rain expected today",
-  "notificationWeatherMessage": "Rain is likely this afternoon. Consider delaying irrigation.",
-  "notificationCropTaskTitle": "Crop task reminder",
-  "notificationCropTaskMessage": "Inspect your paddy crop for pests today.",
-  "notificationMarketTitle": "Market price update",
-  "notificationMarketMessage": "Wheat prices have increased in the local mandi.",
   "goodMorning": "Good morning,",
   "productiveFarm": "Let’s make today productive for your farm.",
   "partlyCloudy": "Partly cloudy",
   "humidityWind": "Humidity 62%  •  Wind 8 km/h",
   "humidityWindValues": "Humidity {humidity}%  •  Wind {windSpeed} km/h",
-  "@humidityWindValues": {"placeholders": {"humidity": {"type": "int"}, "windSpeed": {"type": "int"}}},
+  "@humidityWindValues": {
+    "placeholders": {
+      "humidity": {
+        "type": "int"
+      },
+      "windSpeed": {
+        "type": "int"
+      }
+    }
+  },
   "loadingWeather": "Loading weather...",
   "weatherUnavailable": "Weather unavailable",
   "weatherLocationRequired": "Select a location for weather",
@@ -135,7 +150,13 @@
   "adviceLocationRequired": "Select a location for seasonal advice",
   "adviceWaitingForWeather": "Waiting for current weather information",
   "updatedAtTime": "Updated at {time}",
-  "@updatedAtTime": {"placeholders": {"time": {"type": "String"}}},
+  "@updatedAtTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "adviceCategoryRain": "RAIN & IRRIGATION",
   "adviceCategoryCropHealth": "CROP HEALTH",
   "adviceCategoryIrrigation": "IRRIGATION",
@@ -164,7 +185,19 @@
   "seasonalAdviceDetails": "Seasonal Advice",
   "currentWeatherSummary": "Current weather",
   "adviceWeatherSummary": "{temperature}°C • Humidity {humidity}% • Wind {windSpeed} km/h",
-  "@adviceWeatherSummary": {"placeholders": {"temperature": {"type": "int"}, "humidity": {"type": "int"}, "windSpeed": {"type": "int"}}},
+  "@adviceWeatherSummary": {
+    "placeholders": {
+      "temperature": {
+        "type": "int"
+      },
+      "humidity": {
+        "type": "int"
+      },
+      "windSpeed": {
+        "type": "int"
+      }
+    }
+  },
   "todaysRecommendation": "Today’s recommendation",
   "recommendationReason": "Why this is recommended",
   "recommendedAction": "Recommended action",
@@ -187,7 +220,13 @@
   "mustard": "Mustard",
   "tomato": "Tomato",
   "priceToday": "{change} today",
-  "@priceToday": {"placeholders": {"change": {"type": "String"}}},
+  "@priceToday": {
+    "placeholders": {
+      "change": {
+        "type": "String"
+      }
+    }
+  },
   "irrigateWheatField": "Irrigate wheat field",
   "todayTime": "Today, 5:30 PM",
   "checkMustardCrop": "Check mustard crop",
@@ -198,7 +237,13 @@
   "farmTips": "Farm Tips",
   "addCrop": "Add crop",
   "daysOld": "{days} days old",
-  "@daysOld": {"placeholders": {"days": {"type": "int"}}},
+  "@daysOld": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "krishiAiAssistant": "Krishi AI Assistant",
   "onlineAskLanguage": "Online • Ask in your language",
   "assistantGreeting": "Namaste! I can help with crop care, pests, weather, and farming questions. What would you like to know?",
@@ -210,10 +255,28 @@
   "smartFarmingCompanion": "Your smart farming companion",
   "newChat": "New chat",
   "aiGreetingUser": "Namaste, {name}!",
-  "@aiGreetingUser": {"placeholders": {"name": {"type": "String"}}},
+  "@aiGreetingUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "aiWelcomeMessage": "Ask me practical questions about crops, irrigation, weather, pests, fertilizer and farm decisions.",
   "aiWeatherContext": "{temperature}°C • Humidity {humidity}% • Rain {rain}%",
-  "@aiWeatherContext": {"placeholders": {"temperature": {"type": "int"}, "humidity": {"type": "int"}, "rain": {"type": "int"}}},
+  "@aiWeatherContext": {
+    "placeholders": {
+      "temperature": {
+        "type": "int"
+      },
+      "humidity": {
+        "type": "int"
+      },
+      "rain": {
+        "type": "int"
+      }
+    }
+  },
   "suggestedQuestions": "Suggested questions",
   "suggestIrrigation": "Should I irrigate today?",
   "suggestYellowLeaves": "Why are my crop leaves turning yellow?",
@@ -247,7 +310,13 @@
   "consultExpert": "Consult Expert",
   "imagePermissionDenied": "Camera or photo access was denied. Allow access in app settings and try again.",
   "uploadProgress": "Uploading {progress}%",
-  "@uploadProgress": {"placeholders": {"progress": {"type": "int"}}},
+  "@uploadProgress": {
+    "placeholders": {
+      "progress": {
+        "type": "int"
+      }
+    }
+  },
   "diseaseScanOffline": "You appear to be offline. Check your connection and retry.",
   "diseaseScanTimeout": "The scan took too long. Please retry with a stable connection.",
   "diseaseScanInvalidResponse": "The scan service returned an invalid response. Please retry.",
@@ -259,31 +328,19 @@
   "notMedicalDiagnosis": "This demonstration result is not a confirmed diagnosis. Consult an agricultural expert before treatment.",
   "lowConfidenceResult": "Low-confidence result. An expert review is recommended before taking action.",
   "scanConfidence": "Confidence: {confidence}%",
-  "@scanConfidence": {"placeholders": {"confidence": {"type": "int"}}},
+  "@scanConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "int"
+      }
+    }
+  },
   "visibleSymptoms": "Visible symptoms",
   "recommendedActions": "Recommended actions",
   "expertReviewRecommended": "Expert review recommended",
   "followUpQuestions": "Follow-up questions",
   "retryResponse": "Retry response",
   "aiTyping": "Krishi AI is typing...",
-  "aiResponseGreeting": "Namaste! Tell me your crop name and what help you need today.",
-  "aiResponseLanguageSupport": "Yes, I can understand Bengali. You can ask your farming question in Bangla.",
-  "aiResponseCropProblemWheat": "I can help with your wheat problem. Please tell me what you see, such as yellow leaves, spots, insects, weak growth, or drying.",
-  "aiResponseCropProblemRice": "I can help with your rice problem. Please describe whether you see yellow leaves, spots, insects, poor tillering, wilting, or drying.",
-  "aiResponseCropProblemGeneral": "I can help diagnose the crop problem. Please tell me the crop name and whether you see yellow leaves, spots, insects, weak growth, wilting, or drying.",
-  "aiResponseIrrigationRain": "Rain is likely today, so delay irrigation and check soil moisture after the rain.",
-  "aiResponseIrrigationNormal": "No heavy rain is expected. Check soil moisture 5–7 cm deep and irrigate in the early morning if it feels dry.",
-  "aiResponseRainExpected": "Rain is likely today. Keep drainage channels clear and protect harvested produce and farm inputs.",
-  "aiResponseWeatherNormal": "No strong rain signal is available right now. Continue routine work, but check the latest weather before spraying.",
-  "aiResponseFertilizer": "Fertilizer depends on the crop, growth stage and soil test. Avoid guessing doses; share those details or consult your local soil-testing centre.",
-  "aiResponsePests": "Inspect both sides of affected leaves, isolate badly affected plants and use traps first. Identify the pest before applying any pesticide.",
-  "aiResponseYellowLeaves": "Yellow leaves can result from excess water, nitrogen deficiency, root damage or disease. Check soil moisture and whether yellowing starts on old or new leaves.",
-  "aiResponseCropDisease": "Check for spots, wilting, fungal growth and affected stem areas. Avoid unnecessary spraying until the crop and symptoms are correctly identified.",
-  "aiResponseMarketPrice": "Market prices change by crop, grade and mandi. Check the Market section and compare nearby mandis before deciding where to sell.",
-  "aiResponseSowingTime": "The best sowing time depends on crop, variety, local rainfall and soil temperature. Tell me the crop and your area for a more useful recommendation.",
-  "aiResponseGovernmentSchemes": "Scheme eligibility varies by state and farmer category. Check your state agriculture portal or nearest agriculture office with Aadhaar, land and bank documents.",
-  "aiResponseAgriculturalExpert": "For expert help, contact your nearest Krishi Vigyan Kendra, agriculture extension officer or state agriculture helpline.",
-  "aiResponseGeneral": "Please tell me the crop name and the problem you are seeing.",
   "krishiMarket": "Krishi Market",
   "mandiPrices": "Mandi Prices",
   "marketShop": "Shop",
@@ -296,9 +353,13 @@
   "maximumPrice": "Maximum",
   "modalPrice": "Modal price",
   "mandiPriceUnit": "Price unit: ₹ per {unit}",
-  "@mandiPriceUnit": {"placeholders": {"unit": {"type": "String"}}},
-  "mandiUpdatedAt": "Last updated: {time}",
-  "@mandiUpdatedAt": {"placeholders": {"time": {"type": "String"}}},
+  "@mandiPriceUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
   "trendUp": "Price trend up",
   "trendDown": "Price trend down",
   "trendStable": "Price trend stable",
@@ -311,33 +372,52 @@
   "seeds": "Seeds",
   "fertilizers": "Fertilizers",
   "tools": "Tools",
-  "premiumWheatSeeds": "Premium Wheat Seeds",
-  "organicFertilizer": "Organic Fertilizer",
-  "gardenSprayer": "Garden Sprayer",
-  "tomatoSeeds": "Tomato Seeds",
   "pricePerBag": "{price} / bag",
-  "@pricePerBag": {"placeholders": {"price": {"type": "String"}}},
+  "@pricePerBag": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "pricePerPack": "{price} / pack",
-  "@pricePerPack": {"placeholders": {"price": {"type": "String"}}},
+  "@pricePerPack": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
   "productDetails": "Product Details",
   "marketDescription": "Description",
   "marketAvailability": "Availability",
   "marketSeller": "Seller / Vendor",
   "marketInStock": "In stock ({quantity} available)",
-  "@marketInStock": {"placeholders": {"quantity": {"type": "int"}}},
+  "@marketInStock": {
+    "placeholders": {
+      "quantity": {
+        "type": "int"
+      }
+    }
+  },
   "marketOutOfStock": "Currently out of stock",
   "marketBag": "bag",
   "marketPack": "pack",
   "marketPiece": "piece",
   "marketPrice": "{price} / {unit}",
-  "@marketPrice": {"placeholders": {"price": {"type": "String"}, "unit": {"type": "String"}}},
+  "@marketPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
   "marketLoadError": "Market products could not be loaded. Please retry.",
   "noMarketProducts": "No products match your search.",
   "marketCheckoutComingSoon": "Checkout and payment are not available yet.",
-  "premiumWheatSeedsDescription": "Clean, high-quality wheat seed suitable for timely sowing and dependable field establishment.",
-  "organicFertilizerDescription": "Organic soil conditioner that supports soil structure and gradual nutrient availability.",
-  "gardenSprayerDescription": "Durable hand-operated sprayer for careful application of water and approved crop treatments.",
-  "tomatoSeedsDescription": "Selected tomato seeds suitable for kitchen gardens and small vegetable plots.",
   "profile": "Profile",
   "personalDetails": "Personal details",
   "farmDetails": "Farm details",
@@ -369,7 +449,13 @@
   "supportReportsLoadError": "Saved reports could not be loaded.",
   "noSupportReports": "No demo reports submitted yet.",
   "supportReportsSaved": "Saved reports on this device: {count}",
-  "@supportReportsSaved": {"placeholders": {"count": {"type": "int"}}},
+  "@supportReportsSaved": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "privacyPolicy": "Privacy Policy",
   "privacyPolicySummary": "Krishi Sech stores demo support reports locally on this device. Do not include passwords, OTPs or other sensitive information.",
   "termsAndConditions": "Terms and Conditions",
@@ -378,7 +464,13 @@
   "logOut": "Log out",
   "shorts": "Shorts",
   "readyForImplementation": "{feature} is ready for implementation.",
-  "@readyForImplementation": {"placeholders": {"feature": {"type": "String"}}},
+  "@readyForImplementation": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
   "locationPermissionTitle": "Location access needed",
   "locationPermissionMessage": "Allow location access to automatically show farming information for your city, district and state.",
   "retry": "Retry",
@@ -395,8 +487,8 @@
   "chooseCity": "Choose or search city",
   "enterVillage": "Enter village name",
   "saveLocation": "Save Location",
-  "selectRequiredLocation": "Please select a state, district and city."
-  ,"yourLocationTitle": "Your Location",
+  "selectRequiredLocation": "Please select a state, district and city.",
+  "yourLocationTitle": "Your Location",
   "locationNotSelected": "Location not selected",
   "locationPermissionHint": "Use GPS or add a location manually",
   "usingSavedLocation": "Using your saved location",
@@ -406,7 +498,13 @@
   "searchLocation": "Search city, district or state",
   "useCurrentLocation": "Use current location",
   "locationAccuracy": "Using current location • Accuracy: {meters} m",
-  "@locationAccuracy": {"placeholders": {"meters": {"type": "int"}}},
+  "@locationAccuracy": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
   "locationServicesDisabled": "Location services are turned off. Turn them on to detect your current location.",
   "preciseLocationRequired": "Approximate location is enabled. Allow precise location for accurate city and district detection.",
   "locationPermissionPermanentlyDenied": "Location permission is blocked. Enable it from app settings or select a location manually.",
@@ -414,31 +512,176 @@
   "locationAddressUnavailable": "Your GPS position was found, but its address could not be determined. Check your internet connection and retry.",
   "openLocationSettings": "Open Location Settings",
   "openAppSettings": "Open App Settings",
-  "cropPaddy": "Paddy", "cropWheat": "Wheat", "cropMaize": "Maize", "cropTomato": "Tomato", "cropBrinjal": "Brinjal", "cropChilli": "Chilli", "cropMustard": "Mustard", "cropPotato": "Potato", "cropOnion": "Onion", "cropOther": "Other",
-  "stageSowing": "Sowing", "stageGermination": "Germination", "stageSeedling": "Seedling", "stageVegetative": "Vegetative", "stageFlowering": "Flowering", "stageFruiting": "Fruiting", "stageMaturity": "Maturity", "stageHarvested": "Harvested",
-  "healthHealthy": "Healthy", "healthModerate": "Moderate", "healthNeedsAttention": "Needs Attention",
-  "unitAcre": "Acre", "unitHectare": "Hectare", "unitBigha": "Bigha", "unitKatha": "Katha",
-  "irrigationDrip": "Drip", "irrigationSprinkler": "Sprinkler", "irrigationFlood": "Flood", "irrigationRainFed": "Rain-fed", "irrigationManual": "Manual",
-  "plantAge": "Plant age", "soilType": "Soil type", "irrigationMethod": "Irrigation method", "plantingMethod": "Planting method", "seedBrand": "Seed brand", "lastFertilizerUsed": "Last fertilizer used", "lastPesticideUsed": "Last pesticide used", "otherOption": "Other",
-  "soilAlluvial": "Alluvial", "soilBlack": "Black soil", "soilRed": "Red soil", "soilLaterite": "Laterite", "soilSandy": "Sandy", "soilClay": "Clay", "soilLoamy": "Loamy",
-  "plantingDirectSowing": "Direct sowing", "plantingTransplanting": "Transplanting", "plantingBroadcasting": "Broadcasting", "plantingRaisedBed": "Raised bed",
-  "taskIrrigationReminder": "Irrigation reminder", "taskFertilizerReminder": "Fertilizer reminder", "taskPestInspection": "Pest inspection", "taskHarvestPreparation": "Harvest preparation", "taskCompleted": "Completed",
-  "totalCrops": "Total Crops", "healthyCrops": "Healthy Crops", "cropsNeedingAttention": "Need Attention", "upcomingTasks": "Upcoming Tasks",
-  "noCropsYet": "No crops added yet.", "cropName": "Crop name", "otherCropName": "Other crop name", "variety": "Variety", "sowingDate": "Sowing date", "landArea": "Land area", "landAreaUnit": "Area unit", "currentGrowthStage": "Current growth stage", "irrigationType": "Irrigation type", "healthStatus": "Health status", "villageFarmOptional": "Village / farm name (optional)", "expectedHarvestOptional": "Expected harvest date (optional)", "notesOptional": "Notes (optional)", "saveCrop": "Save Crop", "selectDate": "Select date",
-  "cropNameRequired": "Please select a crop name.", "varietyRequired": "Please enter the crop variety.", "sowingDateRequired": "Please select the sowing date.", "landAreaPositive": "Land area must be greater than zero.", "sowingDateFutureError": "Sowing date cannot be in the future.",
-  "cropDetails": "Crop Details", "cropAge": "Crop age", "growthProgress": "Growth progress", "nextAction": "Next action", "expectedHarvestDate": "Expected harvest date", "notes": "Notes", "updateHealthStatus": "Mark Healthy / Needs Attention", "updateGrowthStage": "Update Growth Stage", "editCrop": "Edit Crop", "deleteCrop": "Delete Crop", "deleteCropConfirmation": "Are you sure you want to delete this crop?", "cancel": "Cancel", "delete": "Delete", "cropNotFound": "Crop not found.",
-  "cropHealthRecord": "Crop Health Record", "diseaseHistory": "Disease History", "fertilizerHistory": "Fertilizer History", "irrigationHistory": "Irrigation History", "sprayHistory": "Spray History", "scanHistory": "Scan History", "photoHistory": "Photo History", "addRecord": "Add Record", "editRecord": "Edit Record", "deleteRecord": "Delete Record", "deleteRecordConfirmation": "Are you sure you want to delete this record?", "noHealthRecords": "No crop health records yet.", "recordType": "Record type", "recordTitle": "Title", "recordTitleRequired": "Please enter a record title.", "recordDate": "Record date", "recordDetails": "Details (optional)", "saveRecord": "Save Record",
+  "cropPaddy": "Paddy",
+  "cropWheat": "Wheat",
+  "cropMaize": "Maize",
+  "cropTomato": "Tomato",
+  "cropBrinjal": "Brinjal",
+  "cropChilli": "Chilli",
+  "cropMustard": "Mustard",
+  "cropPotato": "Potato",
+  "cropOnion": "Onion",
+  "cropOther": "Other",
+  "stageSowing": "Sowing",
+  "stageGermination": "Germination",
+  "stageSeedling": "Seedling",
+  "stageVegetative": "Vegetative",
+  "stageFlowering": "Flowering",
+  "stageFruiting": "Fruiting",
+  "stageMaturity": "Maturity",
+  "stageHarvested": "Harvested",
+  "healthHealthy": "Healthy",
+  "healthModerate": "Moderate",
+  "healthNeedsAttention": "Needs Attention",
+  "unitAcre": "Acre",
+  "unitHectare": "Hectare",
+  "unitBigha": "Bigha",
+  "unitKatha": "Katha",
+  "irrigationDrip": "Drip",
+  "irrigationSprinkler": "Sprinkler",
+  "irrigationFlood": "Flood",
+  "irrigationRainFed": "Rain-fed",
+  "irrigationManual": "Manual",
+  "plantAge": "Plant age",
+  "soilType": "Soil type",
+  "irrigationMethod": "Irrigation method",
+  "plantingMethod": "Planting method",
+  "seedBrand": "Seed brand",
+  "lastFertilizerUsed": "Last fertilizer used",
+  "lastPesticideUsed": "Last pesticide used",
+  "otherOption": "Other",
+  "soilAlluvial": "Alluvial",
+  "soilBlack": "Black soil",
+  "soilRed": "Red soil",
+  "soilLaterite": "Laterite",
+  "soilSandy": "Sandy",
+  "soilClay": "Clay",
+  "soilLoamy": "Loamy",
+  "plantingDirectSowing": "Direct sowing",
+  "plantingTransplanting": "Transplanting",
+  "plantingBroadcasting": "Broadcasting",
+  "plantingRaisedBed": "Raised bed",
+  "taskIrrigationReminder": "Irrigation reminder",
+  "taskFertilizerReminder": "Fertilizer reminder",
+  "taskPestInspection": "Pest inspection",
+  "taskHarvestPreparation": "Harvest preparation",
+  "taskCompleted": "Completed",
+  "totalCrops": "Total Crops",
+  "healthyCrops": "Healthy Crops",
+  "cropsNeedingAttention": "Need Attention",
+  "upcomingTasks": "Upcoming Tasks",
+  "noCropsYet": "No crops added yet.",
+  "cropName": "Crop name",
+  "otherCropName": "Other crop name",
+  "variety": "Variety",
+  "sowingDate": "Sowing date",
+  "landArea": "Land area",
+  "landAreaUnit": "Area unit",
+  "currentGrowthStage": "Current growth stage",
+  "irrigationType": "Irrigation type",
+  "healthStatus": "Health status",
+  "villageFarmOptional": "Village / farm name (optional)",
+  "expectedHarvestOptional": "Expected harvest date (optional)",
+  "notesOptional": "Notes (optional)",
+  "saveCrop": "Save Crop",
+  "selectDate": "Select date",
+  "cropNameRequired": "Please select a crop name.",
+  "varietyRequired": "Please enter the crop variety.",
+  "sowingDateRequired": "Please select the sowing date.",
+  "landAreaPositive": "Land area must be greater than zero.",
+  "sowingDateFutureError": "Sowing date cannot be in the future.",
+  "cropDetails": "Crop Details",
+  "cropAge": "Crop age",
+  "growthProgress": "Growth progress",
+  "nextAction": "Next action",
+  "expectedHarvestDate": "Expected harvest date",
+  "notes": "Notes",
+  "updateHealthStatus": "Mark Healthy / Needs Attention",
+  "updateGrowthStage": "Update Growth Stage",
+  "editCrop": "Edit Crop",
+  "deleteCrop": "Delete Crop",
+  "deleteCropConfirmation": "Are you sure you want to delete this crop?",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "cropNotFound": "Crop not found.",
+  "cropHealthRecord": "Crop Health Record",
+  "diseaseHistory": "Disease History",
+  "fertilizerHistory": "Fertilizer History",
+  "irrigationHistory": "Irrigation History",
+  "sprayHistory": "Spray History",
+  "scanHistory": "Scan History",
+  "photoHistory": "Photo History",
+  "addRecord": "Add Record",
+  "editRecord": "Edit Record",
+  "deleteRecord": "Delete Record",
+  "deleteRecordConfirmation": "Are you sure you want to delete this record?",
+  "noHealthRecords": "No crop health records yet.",
+  "recordType": "Record type",
+  "recordTitle": "Title",
+  "recordTitleRequired": "Please enter a record title.",
+  "recordDate": "Record date",
+  "recordDetails": "Details (optional)",
+  "saveRecord": "Save Record",
   "scanDisease": "Scan Disease",
-  "inDays": "in {days} days", "@inDays": {"placeholders": {"days": {"type": "int"}}}, "sownOn": "Sown on",
-  "cropCalendar": "Crop Calendar", "viewCalendar": "View Calendar", "addTask": "Add Task", "editTask": "Edit Task", "taskType": "Task type", "dueDate": "Due date", "taskNotes": "Notes (optional)", "saveTask": "Save Task", "selectCropForTask": "Please select a crop.",
-  "irrigationTask": "Irrigation", "fertilizerTask": "Fertilizer", "pestInspectionTask": "Pest inspection", "harvestTask": "Harvest preparation",
-  "tasksForSelectedDate": "Tasks for selected date", "upcomingCropTasks": "Upcoming Crop Tasks", "noTasksForDate": "No tasks scheduled for this date.", "noUpcomingCropTasks": "No upcoming crop tasks.", "deleteTask": "Delete Task", "deleteTaskConfirmation": "Are you sure you want to delete this task?",
-  "noTasksToday": "No crop tasks due today.", "noCropTasksScheduled": "No crop tasks scheduled", "completedTasks": "Completed Tasks", "noCompletedTasks": "No completed tasks yet.", "cropTimeline": "Crop Timeline", "noCropTimelineTasks": "No timeline tasks available.",
-  "today": "Today", "selectTaskType": "Please select a task type.", "cropCalendarLoadError": "The crop calendar could not be loaded. Please try again.",
-  "reminderTime": "Reminder", "reminderAtDueTime": "At due time", "reminderThirtyMinutesBefore": "30 minutes before", "reminderOneHourBefore": "1 hour before", "reminderOneDayBefore": "1 day before", "reminderNone": "No reminder", "dueTime": "Due time",
+  "inDays": "in {days} days",
+  "@inDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "sownOn": "Sown on",
+  "cropCalendar": "Crop Calendar",
+  "viewCalendar": "View Calendar",
+  "addTask": "Add Task",
+  "editTask": "Edit Task",
+  "taskType": "Task type",
+  "dueDate": "Due date",
+  "taskNotes": "Notes (optional)",
+  "saveTask": "Save Task",
+  "selectCropForTask": "Please select a crop.",
+  "irrigationTask": "Irrigation",
+  "fertilizerTask": "Fertilizer",
+  "pestInspectionTask": "Pest inspection",
+  "harvestTask": "Harvest preparation",
+  "tasksForSelectedDate": "Tasks for selected date",
+  "upcomingCropTasks": "Upcoming Crop Tasks",
+  "noTasksForDate": "No tasks scheduled for this date.",
+  "noUpcomingCropTasks": "No upcoming crop tasks.",
+  "deleteTask": "Delete Task",
+  "deleteTaskConfirmation": "Are you sure you want to delete this task?",
+  "noTasksToday": "No crop tasks due today.",
+  "noCropTasksScheduled": "No crop tasks scheduled",
+  "completedTasks": "Completed Tasks",
+  "noCompletedTasks": "No completed tasks yet.",
+  "cropTimeline": "Crop Timeline",
+  "noCropTimelineTasks": "No timeline tasks available.",
+  "today": "Today",
+  "selectTaskType": "Please select a task type.",
+  "cropCalendarLoadError": "The crop calendar could not be loaded. Please try again.",
+  "reminderTime": "Reminder",
+  "reminderAtDueTime": "At due time",
+  "reminderThirtyMinutesBefore": "30 minutes before",
+  "reminderOneHourBefore": "1 hour before",
+  "reminderOneDayBefore": "1 day before",
+  "reminderNone": "No reminder",
+  "dueTime": "Due time",
   "cropTaskNotificationTitle": "Krishi Sech Crop Task",
   "cropTaskNotificationBody": "{cropName} {taskName} is due at {dueTime}. Open Krishi Sech to view the task.",
-  "@cropTaskNotificationBody": {"placeholders": {"cropName": {"type": "String"}, "taskName": {"type": "String"}, "dueTime": {"type": "String"}}},
+  "@cropTaskNotificationBody": {
+    "placeholders": {
+      "cropName": {
+        "type": "String"
+      },
+      "taskName": {
+        "type": "String"
+      },
+      "dueTime": {
+        "type": "String"
+      }
+    }
+  },
   "cropOfflineCache": "Offline — showing saved crops. Changes will sync automatically.",
   "cropServerError": "Crops could not be updated. Please retry.",
   "cropChangesPending": "Crop changes are waiting to sync.",
@@ -452,9 +695,21 @@
   "smartOfflineData": "Offline — showing saved recommendations",
   "smartNoIrrigation": "No irrigation needed today",
   "smartIrrigationRequired": "Irrigate with {liters} L/acre",
-  "@smartIrrigationRequired": {"placeholders": {"liters": {"type": "int"}}},
+  "@smartIrrigationRequired": {
+    "placeholders": {
+      "liters": {
+        "type": "int"
+      }
+    }
+  },
   "smartTaskCount": "{count} tasks remaining",
-  "@smartTaskCount": {"placeholders": {"count": {"type": "int"}}},
+  "@smartTaskCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "smartRiskLow": "Low risk",
   "smartRiskMedium": "Moderate risk",
   "smartRiskHigh": "High risk",
@@ -475,5 +730,44 @@
   "profileUnavailable": "Profile is unavailable",
   "profileLoadError": "Profile could not be loaded. Pull down or tap refresh to retry.",
   "featureComingSoon": "This option is coming soon.",
-  "farmer": "Farmer"
+  "farmer": "Farmer",
+  "signInWithGoogle": "Continue with Google",
+  "@signInWithGoogle": {
+    "description": "Google sign-in button on the login screen"
+  },
+  "orLabel": "or",
+  "@orLabel": {
+    "description": "Divider between phone and Google sign-in"
+  },
+  "googleSignInFailed": "Google sign-in failed. Please try again.",
+  "@googleSignInFailed": {
+    "description": "Shown when Google sign-in cannot complete"
+  },
+  "marketKilogram": "kg",
+  "marketLitre": "litre",
+  "marketOffline": "You are offline. Connect to the internet to see the market.",
+  "marketCatalogueEmpty": "No products have been listed yet. Please check back soon.",
+  "mandiOffline": "You are offline. Connect to the internet to see mandi prices.",
+  "mandiUnavailable": "Live mandi prices are unavailable right now. Please try again later.",
+  "mandiLocationMissing": "Set your farm location to see mandi prices from your state.",
+  "noMandiPricesPublished": "No mandi prices have been published for your state today.",
+  "aiResponseUnavailable": "The assistant could not answer just now. Please try again.",
+  "mandiArrivalDate": "Price date: {date}",
+  "@mandiArrivalDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "consultExpertGuidance": "For expert help, contact your nearest Krishi Vigyan Kendra, agriculture extension officer or state agriculture helpline.",
+  "mandiPartialList": "Showing {count} prices entered by our team. The live mandi feed is unavailable, so this is not the full market today.",
+  "mandiPartialListShort": "Partial list — the live mandi feed is unavailable.",
+  "@mandiPartialList": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

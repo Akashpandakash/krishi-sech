@@ -1,0 +1,16 @@
+# Secrets must never enter the build context — an image layer is readable by
+# anyone who can pull it, and .env holds live database and token credentials.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+node_modules
+dist
+npm-debug.log*
+*.log
+
+.git
+.gitignore
+Dockerfile
+.dockerignore

@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:krishi_sech/features/ai_assistant/data/datasources/local_ai_chat_history_store.dart';
 import 'package:krishi_sech/features/ai_assistant/data/datasources/remote_ai_chat_data_source.dart';
-import 'package:krishi_sech/features/ai_assistant/data/repositories/local_ai_response_repository.dart';
 import 'package:krishi_sech/features/ai_assistant/domain/entities/chat_message.dart';
 import 'package:krishi_sech/features/ai_assistant/domain/repositories/ai_chat_gateway.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
@@ -58,7 +57,6 @@ void main() {
       final preferences = await SharedPreferences.getInstance();
       final store = LocalAiChatHistoryStore(preferences);
       final controller = AiChatController(
-        repository: const LocalAiResponseRepository(),
         gateway: const _SuccessfulGateway(),
         historyStore: store,
         languageProvider: () => 'hi',
@@ -74,7 +72,7 @@ void main() {
       );
 
       final restored = AiChatController(
-        repository: const LocalAiResponseRepository(),
+        gateway: const _SuccessfulGateway(),
         historyStore: store,
         locationController: LocationController.inMemory(),
         weatherController: WeatherController.inMemory(),
@@ -87,23 +85,40 @@ void main() {
     },
   );
 
-  test(
-    'AI failure returns a friendly local fallback and clears loading',
-    () async {
-      final controller = AiChatController(
-        repository: const LocalAiResponseRepository(),
-        gateway: const _FailingGateway(),
-        languageProvider: () => 'en',
-        locationController: LocationController.inMemory(),
-        weatherController: WeatherController.inMemory(),
-      );
+  test('AI failure is reported as a failure, never answered locally', () async {
+    final controller = AiChatController(
+      gateway: const _FailingGateway(),
+      languageProvider: () => 'en',
+      locationController: LocationController.inMemory(),
+      weatherController: WeatherController.inMemory(),
+    );
 
-      expect(await controller.submit('Should I irrigate today?'), isTrue);
-      expect(controller.isTyping, isFalse);
-      expect(controller.canRetry, isTrue);
-      expect(controller.messages.last.responseType, isNotNull);
-    },
-  );
+    expect(await controller.submit('Should I irrigate today?'), isFalse);
+    expect(controller.isTyping, isFalse);
+    expect(controller.canRetry, isTrue);
+    // The turn is marked failed and carries no substituted advice.
+    expect(controller.messages.last.isError, isTrue);
+    expect(controller.messages.last.text, isNull);
+  });
+
+  test('retry replaces the failed turn instead of stacking errors', () async {
+    final gateway = _FlakyGateway();
+    final controller = AiChatController(
+      gateway: gateway,
+      languageProvider: () => 'en',
+      locationController: LocationController.inMemory(),
+      weatherController: WeatherController.inMemory(),
+    );
+
+    expect(await controller.submit('Should I irrigate today?'), isFalse);
+    expect(controller.messages, hasLength(2));
+
+    expect(await controller.retry(), isTrue);
+    expect(controller.messages, hasLength(2));
+    expect(controller.messages.last.isError, isFalse);
+    expect(controller.messages.last.text, 'Check soil moisture first.');
+    expect(controller.canRetry, isFalse);
+  });
 }
 
 class _SuccessfulGateway implements AiChatGateway {
@@ -129,4 +144,20 @@ class _FailingGateway implements AiChatGateway {
     required String language,
     required List<ChatMessage> history,
   }) => throw const AiChatFailure(AiChatFailureType.transient);
+}
+
+/// Fails once, then succeeds — the shape a transient outage actually has.
+class _FlakyGateway implements AiChatGateway {
+  int calls = 0;
+
+  @override
+  Future<AiChatReply> sendMessage({
+    required String question,
+    required String language,
+    required List<ChatMessage> history,
+  }) async {
+    calls++;
+    if (calls == 1) throw Exception('upstream unavailable');
+    return const AiChatReply(text: 'Check soil moisture first.');
+  }
 }

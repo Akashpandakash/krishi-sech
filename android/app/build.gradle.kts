@@ -3,6 +3,10 @@ import java.util.Base64
 
 plugins {
     id("com.android.application")
+    // START: FlutterFire Configuration
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+    // END: FlutterFire Configuration
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -73,7 +77,7 @@ tasks.named("preBuild").configure {
 }
 
 android {
-    namespace = "com.krishisech.app.krishi_sech"
+    namespace = "com.krishisech.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -85,7 +89,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.krishisech.app.krishi_sech"
+        applicationId = "com.krishisech.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -99,6 +103,21 @@ android {
             // Production signing is injected by the release pipeline. Never
             // silently ship an artifact signed with the shared debug key.
             signingConfig = null
+            // Upload the R8 mapping so Crashlytics can deobfuscate release
+            // stack traces. Native (NDK) symbols are not uploaded: Flutter's
+            // AOT libraries carry no useful symbols unless the release is
+            // built with --split-debug-info.
+            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                mappingFileUploadEnabled = true
+                nativeSymbolUploadEnabled = false
+            }
+        }
+        debug {
+            // Debug builds never report, so skip the upload task entirely.
+            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+                nativeSymbolUploadEnabled = false
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
+import 'package:krishi_sech/core/localization/app_date_format.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop.dart';
 import 'package:krishi_sech/features/my_crop/domain/entities/crop_task.dart';
 import 'package:krishi_sech/l10n/generated/app_localizations.dart';
@@ -36,7 +36,7 @@ CropTaskNotificationContent buildCropTaskNotificationContent({
     CropTaskReminderType.pestInspection => l10n.pestInspectionTask,
     CropTaskReminderType.harvest => l10n.harvestTask,
   };
-  final dueTime = DateFormat.jm(languageCode).format(task.dueDate);
+  final dueTime = AppDateFormat.time(languageCode).format(task.dueDate);
   return CropTaskNotificationContent(
     title: l10n.cropTaskNotificationTitle,
     body: l10n.cropTaskNotificationBody(cropName, taskName, dueTime),

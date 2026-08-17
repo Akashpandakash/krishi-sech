@@ -31,6 +31,7 @@ class DemoDiseaseScanRepository implements DiseaseScanRepository {
       organicAlternative: const ['Remove affected leaves'],
       prevention: const ['Monitor new growth'],
       createdAt: DateTime.now(),
+      isDemo: true,
     );
   }
 }

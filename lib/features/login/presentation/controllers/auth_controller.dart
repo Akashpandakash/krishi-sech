@@ -1,3 +1,4 @@
+import 'package:krishi_sech/core/auth/google_sign_in_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:krishi_sech/features/login/domain/entities/auth_session.dart';
 import 'package:krishi_sech/features/login/domain/repositories/auth_repository.dart';
@@ -28,6 +29,19 @@ class AuthController extends ChangeNotifier {
   Future<bool> verifyOtp(String phone, String otp) async {
     await _run(() async => _session = await repository.verifyOtp(phone, otp));
     return _session != null && _failure == null;
+  }
+
+  /// Returns false when the farmer cancels, without surfacing an error.
+  Future<bool> signInWithGoogle() async {
+    var cancelled = false;
+    await _run(() async {
+      try {
+        _session = await repository.signInWithGoogle();
+      } on GoogleSignInCancelled {
+        cancelled = true;
+      }
+    });
+    return !cancelled && _session != null && _failure == null;
   }
 
   Future<bool> verifyDemoOtp(String otp) async {

@@ -16,6 +16,7 @@ class AuthFailure implements Exception {
 abstract interface class AuthRepository {
   Future<OtpDispatch> sendOtp(String phone);
   Future<AuthSession> verifyOtp(String phone, String otp);
+  Future<AuthSession> signInWithGoogle();
   Future<AuthSession> createDemoSession();
   Future<AuthSession?> restoreSession();
   Future<String?> getAccessToken({bool forceRefresh = false});

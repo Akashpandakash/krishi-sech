@@ -1,6 +1,7 @@
 class AuthUser {
   const AuthUser({
     required this.id,
+    /// Null for accounts created through Google sign-in.
     required this.phone,
     required this.preferredLanguage,
     required this.isActive,
@@ -8,7 +9,7 @@ class AuthUser {
   });
 
   final String id;
-  final String phone;
+  final String? phone;
   final String? name;
   final String preferredLanguage;
   final bool isActive;

@@ -21,7 +21,7 @@ class AuthSessionModel {
     return AuthSessionModel(
       user: AuthUser(
         id: _string(user, 'id'),
-        phone: _string(user, 'phone'),
+        phone: user['phone'] as String?,
         name: user['name'] as String?,
         preferredLanguage: _string(user, 'preferredLanguage'),
         isActive: user['isActive'] as bool? ?? false,
@@ -58,7 +58,7 @@ class AuthSessionModel {
     }
     return AuthUser(
       id: _string(json, 'id'),
-      phone: _string(json, 'phone'),
+      phone: json['phone'] as String?,
       name: json['name'] as String?,
       preferredLanguage: _string(json, 'preferredLanguage'),
       isActive: json['isActive'] as bool? ?? false,

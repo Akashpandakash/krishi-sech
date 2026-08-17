@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:krishi_sech/app/app.dart';
 import 'package:krishi_sech/app/router/app_router.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
@@ -9,9 +10,14 @@ import 'package:krishi_sech/core/localization/locale_controller.dart';
 import 'package:krishi_sech/core/localization/app_language.dart';
 import 'package:krishi_sech/core/config/app_environment.dart';
 import 'package:krishi_sech/core/network/api_config.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:krishi_sech/core/notifications/device_registration_data_source.dart';
 import 'package:krishi_sech/core/notifications/local_notification_service.dart';
+import 'package:krishi_sech/core/notifications/push_notification_service.dart';
+import 'package:krishi_sech/core/observability/firebase_initializer.dart';
 import 'package:krishi_sech/core/notifications/notification_service.dart';
-import 'package:krishi_sech/features/ai_assistant/data/repositories/local_ai_response_repository.dart';
+import 'package:krishi_sech/core/observability/analytics_service.dart';
+import 'package:krishi_sech/core/observability/crash_reporting_service.dart';
 import 'package:krishi_sech/features/ai_assistant/data/datasources/local_ai_chat_history_store.dart';
 import 'package:krishi_sech/features/ai_assistant/data/datasources/remote_ai_chat_data_source.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
@@ -48,9 +54,21 @@ import 'package:krishi_sech/features/profile/data/repositories/synced_profile_re
 import 'package:krishi_sech/features/profile/data/services/profile_storage_migrator.dart';
 import 'package:krishi_sech/features/profile/presentation/controllers/profile_controller.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Loads CLDR date symbols for every locale intl ships. Locales it has no
+  // data for are handled separately by AppDateFormat, which falls back rather
+  // than throwing; this call is what makes the supported ones correct without
+  // depending on a MaterialLocalizations delegate having run first.
+  await initializeDateFormatting();
   AppEnvironment.validate();
+  await CrashReportingService.initialize();
+  await AnalyticsService.initialize();
+  // Must be registered before runApp so a push that launches the app from a
+  // terminated state is delivered to the background isolate.
+  if (FirebaseInitializer.isSupportedPlatform) {
+    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+  }
   PaintingBinding.instance.imageCache
     ..maximumSize = 150
     ..maximumSizeBytes = 64 * 1024 * 1024;
@@ -74,6 +92,7 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
   CropTaskController? _cropTaskController;
   CropHealthRecordController? _cropHealthRecordController;
   AuthController? _authController;
+  PushNotificationService? _pushNotifications;
   ProfileController? _profileController;
   String? _loadedProfileUserId;
   int _revision = 0;
@@ -106,6 +125,14 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       _authController = controller;
       _revision++;
     });
+    _pushNotifications ??= PushNotificationService(
+      deviceRegistrations: DeviceRegistrationDataSource(
+        baseUrl: ApiConfig.baseUrl,
+        accessToken: () async =>
+            await _authController?.getAccessToken() ?? Future.value(null),
+      ),
+    );
+    unawaited(_pushNotifications!.initialize());
     await _safeLoad(
       'authentication',
       controller.initialize,
@@ -276,7 +303,6 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
       locationController: locationController,
     );
     final aiChatController = AiChatController(
-      repository: const LocalAiResponseRepository(),
       locationController: locationController,
       weatherController: weatherController,
       gateway: RemoteAiChatDataSource(
@@ -329,6 +355,12 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
   void _handleAuthChange() {
     final session = _authController?.session;
     final userId = session?.user.id;
+    unawaited(CrashReportingService.setUserId(userId));
+    unawaited(AnalyticsService.setUserId(userId));
+    final push = _pushNotifications;
+    if (push != null) {
+      unawaited(userId == null ? push.unregister() : push.syncRegistration());
+    }
     if (_profileController == null) {
       return;
     }
@@ -367,6 +399,13 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
         debugPrint('Startup service failed: $name: $error');
         debugPrintStack(stackTrace: stackTrace);
       }
+      unawaited(
+        CrashReportingService.recordError(
+          error,
+          stackTrace,
+          reason: 'Startup service failed: $name',
+        ),
+      );
       return null;
     }
   }
@@ -383,6 +422,7 @@ class _KrishiSechBootstrapState extends State<_KrishiSechBootstrap> {
     _localeController?.dispose();
     _authController?.removeListener(_handleAuthChange);
     _authController?.dispose();
+    unawaited(_pushNotifications?.dispose() ?? Future<void>.value());
     _profileController?.dispose();
     super.dispose();
   }

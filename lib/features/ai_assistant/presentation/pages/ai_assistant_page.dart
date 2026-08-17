@@ -4,7 +4,6 @@ import 'package:krishi_sech/app/theme/app_colors.dart';
 import 'package:krishi_sech/app/router/app_routes.dart';
 import 'package:krishi_sech/features/ai_assistant/domain/entities/chat_message.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/ai_chat_scope.dart';
-import 'package:krishi_sech/features/ai_assistant/presentation/ai_response_content.dart';
 import 'package:krishi_sech/features/ai_assistant/presentation/controllers/ai_chat_controller.dart';
 import 'package:krishi_sech/features/disease_scan/data/repositories/image_picker_repository.dart';
 import 'package:krishi_sech/features/disease_scan/presentation/pages/disease_scan_page.dart';
@@ -425,25 +424,40 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isUser = message.author == ChatAuthor.user;
-    final text = isUser
-        ? message.text!
-        : message.text ?? localizedAiResponse(context, message.responseType!);
+    final text = message.isError
+        ? context.l10n.aiResponseUnavailable
+        : message.text ?? '';
     final time = MaterialLocalizations.of(
       context,
     ).formatTimeOfDay(TimeOfDay.fromDateTime(message.createdAt));
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
+        key: message.isError ? const Key('ai_message_error') : null,
         constraints: const BoxConstraints(maxWidth: 520),
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
         decoration: BoxDecoration(
-          color: isUser ? AppColors.primary : AppColors.lightGreen,
+          // A failed turn must not look like an answer.
+          color: message.isError
+              ? Theme.of(context).colorScheme.errorContainer
+              : isUser
+              ? AppColors.primary
+              : AppColors.lightGreen,
           borderRadius: BorderRadius.circular(17),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(text, style: TextStyle(color: isUser ? Colors.white : null)),
+            Text(
+              text,
+              style: TextStyle(
+                color: message.isError
+                    ? Theme.of(context).colorScheme.onErrorContainer
+                    : isUser
+                    ? Colors.white
+                    : null,
+              ),
+            ),
             const SizedBox(height: 4),
             Text(
               time,

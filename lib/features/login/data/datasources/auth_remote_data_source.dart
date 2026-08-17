@@ -28,6 +28,11 @@ class AuthRemoteDataSource {
     );
   }
 
+  Future<AuthSession> signInWithGoogle(String idToken) async {
+    final data = await _request('/api/auth/google', body: {'idToken': idToken});
+    return AuthSessionModel.fromJson(data!).toEntity();
+  }
+
   Future<AuthSession> verifyOtp(String phone, String otp) async {
     final data = await _request(
       '/api/auth/verify-otp',

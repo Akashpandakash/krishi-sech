@@ -4,6 +4,7 @@ import { sendSuccess } from '../../common/response.js';
 import type { AuthenticatedRequest } from '../middleware/auth-middleware.js';
 import type { AuthService } from '../services/auth-service.js';
 import {
+  googleSignInSchema,
   refreshTokenSchema,
   sendOtpSchema,
   verifyOtpSchema,
@@ -13,6 +14,12 @@ export class AuthController {
   private static readonly developmentHeader = 'x-krishi-development-client';
 
   constructor(private readonly authService: AuthService) {}
+
+  googleSignIn = async (request: Request, response: Response) => {
+    const { idToken } = googleSignInSchema.parse(request.body);
+    const session = await this.authService.loginWithGoogle(idToken);
+    return sendSuccess(response, 200, 'Signed in successfully', session);
+  };
 
   sendOtp = async (request: Request, response: Response) => {
     const { phone } = sendOtpSchema.parse(request.body);
