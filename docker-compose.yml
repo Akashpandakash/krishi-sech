@@ -79,7 +79,15 @@ services:
       args:
         # Inlined into the client bundle at build time, so a change here needs
         # a rebuild, not a restart.
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:7001}
+        #
+        # No `:-http://localhost:7001` default, deliberately. web/Dockerfile
+        # refuses to build without this value precisely so a panel can never
+        # ship hard-wired to localhost — but a default here SATISFIES that
+        # guard with the very value it exists to prevent, and the panel then
+        # fails in the browser with a bare "Could not reach the API". Leaving
+        # it unset makes the build fail loudly instead. ./.env.example ships
+        # the localhost value for local development.
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
     restart: unless-stopped
     environment:
       PORT: '7002'

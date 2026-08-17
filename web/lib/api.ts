@@ -35,6 +35,31 @@ const API_BASE_URL = (
 
 const ADMIN_BASE = `${API_BASE_URL}/api/admin`;
 
+/**
+ * NEXT_PUBLIC_* values are inlined at build time, so a panel built with the
+ * wrong API origin cannot be corrected by editing a file and restarting — the
+ * image has to be rebuilt. From the browser that misconfiguration is
+ * indistinguishable from a dead server: the fetch simply fails. Name it, or
+ * every occurrence costs an afternoon in the backend's logs, which stay silent
+ * because the request never arrives.
+ *
+ * Only loopback-vs-remote is reported. Any other mismatch is a legitimate
+ * cross-origin deployment (the panel and API sit on different hostnames by
+ * design) and cannot be judged from here.
+ */
+function bakedInLoopbackUrl(): string | null {
+  if (typeof window === 'undefined') return null;
+  const loopback = /^(localhost|127\.0\.0\.1|\[::1\])$/;
+  if (!loopback.test(new URL(API_BASE_URL).hostname)) return null;
+  if (loopback.test(window.location.hostname)) return null;
+  return (
+    `This panel was built with NEXT_PUBLIC_API_BASE_URL=${API_BASE_URL}, ` +
+    `which no browser on ${window.location.origin} can reach. Set the public ` +
+    `API origin in the repo-root .env and rebuild the image: ` +
+    `./scripts/docker.sh build web && ./scripts/docker.sh up`
+  );
+}
+
 const ACCESS_KEY = 'krishi.admin.access';
 const REFRESH_KEY = 'krishi.admin.refresh';
 
@@ -219,7 +244,10 @@ async function request<T>(
     throw new ApiError(
       0,
       'NETWORK_ERROR',
-      'Could not reach the API. Check that the server is running and that this origin is in CORS_ALLOWED_ORIGINS.',
+      bakedInLoopbackUrl() ??
+        `Could not reach the API at ${API_BASE_URL}. Check that the server is running and that ${
+          typeof window === 'undefined' ? 'this origin' : window.location.origin
+        } is in CORS_ALLOWED_ORIGINS.`,
     );
   }
 
