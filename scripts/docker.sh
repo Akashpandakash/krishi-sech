@@ -238,6 +238,40 @@ check_compose_settings() {
     fi
   fi
 
+  # The mirror image, and the more expensive one: a localhost API with a public
+  # panel origin. The check above is blind to it — it only runs when the API
+  # url is NOT localhost — so this shipped once already. Baking localhost into
+  # the bundle points every browser at its own machine, so the request never
+  # leaves the device: no API log line, nothing on the wire, and a panel that
+  # reports the server unreachable while the server is perfectly healthy.
+  # An error, not a warning: no rebuild of this pair can work.
+  if [[ -n $api_url && ( $api_url == *localhost* || $api_url == *127.0.0.1* ) ]]; then
+    local origin
+    local -a origins=()
+    IFS=',' read -ra origins <<<"$cors"
+    for origin in "${origins[@]:-}"; do
+      origin="${origin//[[:space:]]/}"
+      if [[ -n $origin && $origin != *localhost* && $origin != *127.0.0.1* ]]; then
+        bad "NEXT_PUBLIC_API_BASE_URL is localhost but the panel is served from ${origin}"
+        printf "      %sno browser there can reach it; set the API's public origin, e.g. https://stage-api.krishisech.com%s\n" "$DIM" "$RESET"
+        break
+      fi
+    done
+  fi
+
+  # The keys docker-compose.yml passes through by bare name. Present-and-empty
+  # is not the same as absent for any of them: compose substitutes the empty
+  # string and it beats server/.env. APP_ENV is the one that fails quietly
+  # rather than loudly — blank reads as `development`, which turns demo login
+  # and debug OTP back on for a host facing the internet.
+  local key value
+  for key in APP_ENV TRUST_PROXY; do
+    if value="$(env_value "$ROOT_ENV" "$key")" && [[ -z $value ]]; then
+      bad "${key} is present but empty in .env; that empty value overrides server/.env"
+      printf '      %scomment the line out to let server/.env supply it%s\n' "$DIM" "$RESET"
+    fi
+  done
+
 }
 
 # Classifies the effective database without ever printing it: a hosted URI
@@ -246,9 +280,21 @@ check_database() {
   head_ "Database"
 
   local uri source profiles
-  uri="$(env_value "$ROOT_ENV" MONGODB_URI || true)"
-  source=".env"
-  if [[ -z $uri ]]; then
+  # PRESENCE in .env decides this, not emptiness. docker-compose.yml passes
+  # MONGODB_URI through by bare name, so a key that is present and EMPTY there
+  # is substituted as an empty string that overrides server/.env — the server
+  # then dies on "MONGODB_URI is required" with a perfectly good value sitting
+  # in server/.env. Only a commented-out key lets server/.env supply it.
+  # Reading this as "empty means fall back" inverts compose's precedence and
+  # reports a working database for a stack that cannot boot.
+  if uri="$(env_value "$ROOT_ENV" MONGODB_URI)"; then
+    source=".env"
+    if [[ -z $uri ]]; then
+      bad "MONGODB_URI is present but empty in .env; it overrides server/.env with nothing"
+      printf '      %scomment the line out to fall back to server/.env, or give it a value%s\n' "$DIM" "$RESET"
+      return 0
+    fi
+  else
     uri="$(env_value "$SERVER_ENV" MONGODB_URI || true)"
     source="server/.env"
   fi
