@@ -24,7 +24,6 @@ void main() {
     }) => AppEnvironment.validateValues(
       environment: 'production',
       apiUrl: apiUrl,
-      requestTimeoutMs: 25000,
       demoLoginEnabled: demoLoginEnabled,
       debugOtpEnabled: debugOtpEnabled,
     );
@@ -60,7 +59,6 @@ void main() {
           () => AppEnvironment.validateValues(
             environment: 'staging',
             apiUrl: 'https://staging.krishisech.example',
-            requestTimeoutMs: 25000,
             demoLoginEnabled: values.demo,
             debugOtpEnabled: values.debugOtp,
           ),
@@ -74,7 +72,6 @@ void main() {
         () => AppEnvironment.validateValues(
           environment: 'development',
           apiUrl: 'http://192.168.1.10:3000',
-          requestTimeoutMs: 25000,
           demoLoginEnabled: true,
           debugOtpEnabled: true,
         ),

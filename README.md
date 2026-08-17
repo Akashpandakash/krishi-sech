@@ -111,24 +111,19 @@ working directory, so start the backend from `server/`. Keep real staging and
 production files outside Git; use the tracked `.example` files as deployment
 templates.
 
-Flutter configuration is supplied at build time:
+Flutter configuration is compiled in: edit the constants at the top of
+[lib/core/config/app_environment.dart](lib/core/config/app_environment.dart)
+— `appEnv`, `apiBaseUrl`, `googleServerClientId`, and the feature flags — then
+build normally:
 
 ```bash
-# Android emulator
-flutter run --dart-define-from-file=config/development.json
-
-# Physical phone on the same Wi-Fi (replace only the URL at invocation time)
-flutter run --dart-define-from-file=config/development.json \
-  --dart-define=API_BASE_URL=http://MAC_LAN_IP:3000
-
-# Staging
-flutter build apk --dart-define-from-file=config/staging.json
-
-# Production (replace the example HTTPS URL before release)
-flutter build appbundle --release \
-  --dart-define-from-file=config/production.json
+flutter run
+flutter build apk
+flutter build appbundle --release
 ```
 
-Staging and production require HTTPS. Production builds also reject localhost,
-the Android emulator host, private LAN addresses, demo login, and debug OTP.
-No backend secret belongs in a Flutter configuration file.
+`AppEnvironment.validate()` still runs at startup: staging and production
+require HTTPS, and production rejects localhost, the Android emulator host,
+private LAN addresses, demo login, and debug OTP. Change `appEnv` alongside
+`apiBaseUrl` when cutting a staging or production build.
+No backend secret belongs in the Flutter configuration.

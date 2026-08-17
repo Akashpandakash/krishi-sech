@@ -45,7 +45,7 @@ class DeviceRegistrationDataSource {
 
     final streamed = await _client
         .send(request)
-        .timeout(Duration(milliseconds: AppEnvironment.requestTimeoutMs));
+        .timeout(AppEnvironment.requestTimeout);
     final response = await http.Response.fromStream(streamed);
     if (response.statusCode >= 400) {
       throw HttpException(

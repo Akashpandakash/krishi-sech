@@ -61,9 +61,9 @@ Use the platform secret store or a root-readable environment file outside the ch
 3. From `server/`, run `npm ci`, `npm test`, `npm run build`, then `npm run db:indexes` against staging.
 4. Verify health/readiness, login/refresh/logout, weather, calendar, recommendations, AI chat, and disease scanning.
 5. Confirm error responses have a request ID and contain no stack trace or secret.
-6. Build staging with `--dart-define-from-file=config/staging.json` and complete a physical-device smoke test.
+6. Set `appEnv`/`apiBaseUrl` in `lib/core/config/app_environment.dart` to the staging values, build the app, and complete a physical-device smoke test.
 7. Take a production database snapshot, deploy the reviewed commit, run `npm run db:indexes` once, and wait for readiness.
-8. Build production with `--dart-define-from-file=config/production.json`; its guard rejects HTTP, localhost, emulator, private-LAN, demo-login, or debug-OTP configuration.
+8. Set `appEnv`/`apiBaseUrl` in `lib/core/config/app_environment.dart` to the production values and build; the startup guard rejects HTTP, localhost, emulator, private-LAN, demo-login, or debug-OTP configuration.
 9. Observe error rate, latency, database connections, rate-limit responses, and provider failures before widening release.
 
 ## Current blockers before deployment

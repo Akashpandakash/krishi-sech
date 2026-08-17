@@ -1,53 +1,24 @@
 import 'package:flutter/foundation.dart';
 
 abstract final class AppEnvironment {
-  static const appEnv = String.fromEnvironment(
-    'APP_ENV',
-    defaultValue: 'development',
-  );
-  static const apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:3000',
-  );
-  static const requestTimeoutMs = int.fromEnvironment(
-    'REQUEST_TIMEOUT_MS',
-    defaultValue: 25000,
-  );
-  static const _loggingRequested = bool.fromEnvironment(
-    'LOGGING_ENABLED',
-    defaultValue: true,
-  );
-  static const _demoLoginRequested = bool.fromEnvironment(
-    'DEMO_LOGIN_ENABLED',
-    defaultValue: true,
-  );
-  static const debugOtpEnabled = bool.fromEnvironment(
-    'DEBUG_OTP_ENABLED',
-    defaultValue: true,
-  );
-  static const openAiEnabled = bool.fromEnvironment(
-    'OPENAI_ENABLED',
-    defaultValue: true,
-  );
+  static const appEnv = 'development';
+  static const apiBaseUrl = 'https://stage-api.krishisech.com';
+  static const _loggingRequested = true;
+  static const _demoLoginRequested = true;
+  static const debugOtpEnabled = true;
+  static const openAiEnabled = true;
 
-  /// Telemetry is off by default in debug builds so local runs and hot reloads
-  /// do not pollute the Firebase dashboards. Pass the dart-define explicitly to
-  /// exercise Crashlytics or the Analytics DebugView from a debug build.
-  static const crashReportingEnabled = bool.fromEnvironment(
-    'CRASH_REPORTING_ENABLED',
-    defaultValue: !kDebugMode,
-  );
-  static const analyticsEnabled = bool.fromEnvironment(
-    'ANALYTICS_ENABLED',
-    defaultValue: !kDebugMode,
-  );
+  /// Telemetry is off in debug builds so local runs and hot reloads do not
+  /// pollute the Firebase dashboards. Flip these to `true` to exercise
+  /// Crashlytics or the Analytics DebugView from a debug build.
+  static const crashReportingEnabled = !kDebugMode;
+  static const analyticsEnabled = !kDebugMode;
 
   /// Web OAuth client ID. Android only issues an ID token with the audience
   /// the backend expects when this is supplied as serverClientId. Empty hides
   /// the Google sign-in button rather than offering a button that cannot work.
-  static const googleServerClientId = String.fromEnvironment(
-    'GOOGLE_SERVER_CLIENT_ID',
-  );
+  static const googleServerClientId =
+      '810187577371-apob0l8upe5g8qchccpucrvpr1prp2jo.apps.googleusercontent.com';
 
   static const isDevelopment = appEnv == 'development';
   static const isStaging = appEnv == 'staging';
@@ -56,13 +27,11 @@ abstract final class AppEnvironment {
   static const demoModeEnabled =
       isDevelopment && _demoLoginRequested && !kProfileMode && !kReleaseMode;
 
-  static Duration get requestTimeout =>
-      Duration(milliseconds: requestTimeoutMs > 0 ? requestTimeoutMs : 25000);
+  static const requestTimeout = Duration(seconds: 25);
 
   static void validate() => validateValues(
     environment: appEnv,
     apiUrl: apiBaseUrl,
-    requestTimeoutMs: requestTimeoutMs,
     demoLoginEnabled: _demoLoginRequested,
     debugOtpEnabled: debugOtpEnabled,
   );
@@ -71,15 +40,11 @@ abstract final class AppEnvironment {
   static void validateValues({
     required String environment,
     required String apiUrl,
-    required int requestTimeoutMs,
     required bool demoLoginEnabled,
     required bool debugOtpEnabled,
   }) {
     if (!const {'development', 'staging', 'production'}.contains(environment)) {
       throw StateError('APP_ENV must be development, staging, or production');
-    }
-    if (requestTimeoutMs <= 0) {
-      throw StateError('REQUEST_TIMEOUT_MS must be greater than zero');
     }
     final uri = Uri.tryParse(apiUrl);
     if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
