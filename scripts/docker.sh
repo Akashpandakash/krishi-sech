@@ -182,10 +182,34 @@ check_compose_settings() {
     warn "CORS_ALLOWED_ORIGINS is empty; the panel's browser calls will be blocked"
   elif [[ $cors == *"*"* ]]; then
     bad "CORS_ALLOWED_ORIGINS contains a wildcard, which the API rejects in production"
-  elif [[ $cors != *"localhost:${web_port}"* && $cors != *"://"*  ]]; then
-    warn "CORS_ALLOWED_ORIGINS does not look like a URL origin list"
   else
-    ok "CORS_ALLOWED_ORIGINS set"
+    # The server requires each entry to equal new URL(value).origin exactly and
+    # refuses to BOOT otherwise, so a trailing slash here is a crash loop, not a
+    # CORS error. Same rule, checked before the container starts.
+    local entry bad_entries=0
+    local -a entries=()
+    IFS=',' read -ra entries <<<"$cors"
+    for entry in "${entries[@]:-}"; do
+      entry="${entry//[[:space:]]/}"
+      [[ -z $entry ]] && continue
+      if [[ ! $entry =~ ^https?://[^/?#]+$ ]]; then
+        bad_entries=$((bad_entries + 1))
+        bad "CORS origin '${entry}' is not a bare origin"
+        if [[ $entry == */ ]]; then
+          printf '      %sdrop the trailing slash: %s%s\n' "$DIM" "${entry%/}" "$RESET"
+        else
+          printf '      %sit must be scheme://host[:port] — no path, no slash%s\n' "$DIM" "$RESET"
+        fi
+      elif [[ $entry =~ ^https://[^/]+:443$ || $entry =~ ^http://[^/]+:80$ ]]; then
+        bad_entries=$((bad_entries + 1))
+        bad "CORS origin '${entry}' states a default port"
+        printf '      %sURL parsing drops it, so it will never match: use %s%s\n' \
+          "$DIM" "${entry%:*}" "$RESET"
+      fi
+    done
+    if [[ $bad_entries -eq 0 ]]; then
+      ok "CORS_ALLOWED_ORIGINS set"
+    fi
   fi
 
   # A public API with localhost-only CORS is the signature of a half-finished
