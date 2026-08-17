@@ -42,6 +42,10 @@ usage() {
 Usage: ./scripts/docker.sh <command> [args]
 
   check              Validate Docker, env files and required settings
+  env-fix [--app-env <env>]
+                     Add every key server/.env is missing, keeping the values
+                     already there. With --app-env staging|production it also
+                     turns off the debug flags that must not face the internet.
   build [service]    Build images (api, web, or all)
   up                 Validate, build and start the stack in the background
   down [--volumes]   Stop the stack (--volumes also deletes the database)
@@ -314,20 +318,25 @@ check_backend_env() {
     fi
   done
 
-  # Outside production the server falls back to development defaults, so a gap
-  # here is a warning; in production it refuses to boot, so it is an error.
+  # Production refuses to boot without these. Staging does NOT — it falls back
+  # to secrets published in this repository, so a reachable staging host is as
+  # exposed as production would be. Only development gets a warning.
   if [[ ${#missing[@]} -gt 0 ]]; then
-    if [[ $app_env == production ]]; then
-      bad "unset in production: ${missing[*]}"
-    else
+    if [[ $app_env == development ]]; then
       warn "unset (development fallbacks will be used): ${missing[*]}"
+    else
+      bad "unset in ${app_env}: ${missing[*]}"
+      if [[ $app_env != production ]]; then
+        printf '      %sthe server still boots, using secrets from this repo —%s\n' "$DIM" "$RESET"
+        printf '      %sanyone who has read it can forge tokens for this host%s\n' "$DIM" "$RESET"
+      fi
     fi
   fi
   if [[ ${#placeholders[@]} -gt 0 ]]; then
-    if [[ $app_env == production ]]; then
-      bad "still the shipped placeholder: ${placeholders[*]}"
-    else
+    if [[ $app_env == development ]]; then
       warn "still the shipped placeholder: ${placeholders[*]}"
+    else
+      bad "still the shipped placeholder in ${app_env}: ${placeholders[*]}"
     fi
   fi
   if [[ ${#missing[@]} -eq 0 && ${#placeholders[@]} -eq 0 ]]; then

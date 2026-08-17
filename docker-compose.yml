@@ -45,8 +45,23 @@ services:
       # address is ours to set, not server/.env's.
       - HOST=0.0.0.0
       - PORT=7001
-      # The panel is a browser origin and must be allowed explicitly.
-      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:7002}
+      # The panel is a browser origin and must be allowed explicitly. Same
+      # pass-through rule as MONGODB_URI, and for a sharper reason: a default
+      # here (this line used to read `:-http://localhost:7002`) OVERRIDES
+      # server/.env whenever ./.env omits the key, so a correctly configured
+      # backend still answered the panel with 403 ORIGIN_NOT_ALLOWED. That
+      # rejection is also invisible — the CORS middleware runs before the
+      # request logger — so the only symptom is "Could not reach the API".
+      # ./.env.example ships the localhost:7002 value for local development.
+      - CORS_ALLOWED_ORIGINS
+      # Behind Nginx this must be true, or rate limiting and OTP throttling see
+      # the proxy's IP for every farmer and one of them exhausts the budget for
+      # all. Left to server/.env when ./.env does not set it.
+      - TRUST_PROXY
+      # Lets ./.env declare the deployment's identity. Worth setting: at
+      # development the server defaults DEMO_LOGIN_ENABLED and DEBUG_OTP_ENABLED
+      # to true, which on a public host hands out OTPs in API responses.
+      - APP_ENV
     # No depends_on: mongo is behind a profile and usually absent, and Compose
     # rejects a dependency on a service the active profiles exclude. When the
     # local-db profile IS on, /api/ready covers the startup order — the API
