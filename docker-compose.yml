@@ -9,8 +9,12 @@
 name: krishi-sech
 
 services:
+  # Optional. The database is normally hosted (Atlas), so this only starts when
+  # you ask for it:  COMPOSE_PROFILES=local-db  in .env, or --profile local-db.
+  # Using it means pointing MONGODB_URI at mongodb://mongo:27017/krishi_sech.
   mongo:
     image: mongo:${MONGO_VERSION:-7}
+    profiles: [local-db]
     restart: unless-stopped
     volumes:
       - mongo-data:/data/db
@@ -32,19 +36,21 @@ services:
     env_file:
       - ./server/.env
     environment:
-      # These four win over server/.env (compose precedence), which is
-      # deliberate: inside a container `localhost` is the container itself, and
-      # the stack must never silently reach the remote database named in a
-      # developer's server/.env. Point MONGODB_URI in ./.env at Atlas to
-      # override.
-      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/krishi_sech}
-      HOST: 0.0.0.0
-      PORT: '7001'
+      # Named with no value: passed through ONLY when .env defines it, so an
+      # unset MONGODB_URI here leaves server/.env's value in place instead of
+      # blanking it. Set it in whichever of the two files you prefer; this one
+      # wins when both do.
+      - MONGODB_URI
+      # Inside a container `localhost` is the container itself, so the bind
+      # address is ours to set, not server/.env's.
+      - HOST=0.0.0.0
+      - PORT=7001
       # The panel is a browser origin and must be allowed explicitly.
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:7002}
-    depends_on:
-      mongo:
-        condition: service_healthy
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:7002}
+    # No depends_on: mongo is behind a profile and usually absent, and Compose
+    # rejects a dependency on a service the active profiles exclude. When the
+    # local-db profile IS on, /api/ready covers the startup order — the API
+    # reports not-ready until its first successful ping.
     ports:
       - '${API_PORT:-7001}:7001'
 
